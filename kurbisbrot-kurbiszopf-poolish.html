@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kürbisbrot und Kürbiszopf mit Poolish</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Kürbisbrot und Kürbiszopf</h1>
+<p class="sub">Mit Poolish und Hokkaido-Püree. Herzhaft als freigeschobenes Brot oder süss als geflochtener Zopf, auf dem Backblech.</p>
+
+<section>
+<h2>Variante und Menge</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="ri">Richtung</label><select id="ri"><option value="h" selected>Herzhaftes Brot</option><option value="s">Süsser Kürbiszopf</option></select></div>
+    <div><label for="ku">Kürbis (Hokkaido)</label><select id="ku"><option value="back" selected>Gebacken</option><option value="dampf">Gedämpft</option></select></div>
+  </div>
+  <div class="check noprint"><input type="checkbox" id="ke" checked><span>Kürbiskerne im und auf dem Teig</span></div>
+  <div class="regler" style="margin-top:14px"><label for="m">Teigmenge</label><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><output id="mo"></output></div>
+  <div class="grid">
+    <div><label for="sz">Grösse</label><select id="sz"><option value="500">ca. 500 g</option><option value="750" selected>ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
+    <div><label>Ergibt</label><div id="erg" style="font-weight:600;padding-top:8px"></div></div>
+  </div>
+  <p class="kennz" id="kennz"></p>
+</div>
+</section>
+
+<section>
+<h2>Zeitplan und Küche</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="bk">Einschiessen am</label><input id="bk" type="datetime-local"></div>
+    <div><label for="pd">Poolish-Dauer</label><select id="pd"><option value="16" selected>16 Std.</option><option value="20">20 Std.</option><option value="24">24 Std.</option></select></div>
+  </div>
+  <div class="regler" style="margin-top:16px"><label for="rt">Küche</label><input id="rt" type="range" min="18" max="25" step="0.5" value="21"><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="kk"><span>Kürbispüree kommt aus dem Kühlschrank</span></div>
+  <div id="wbox" class="noprint">
+    <div class="check"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
+    <div class="grid" style="margin-top:12px">
+      <div><label for="kw">Quooker CUBE (°C)</label><input id="kw" type="number" min="3" max="15" step="1" value="7"></div>
+      <div><label for="lw">Kaltwasser Leitung (°C)</label><input id="lw" type="number" min="3" max="25" step="1" value="10"></div>
+    </div>
+  </div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="tm">Teigtemperatur gemessen (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="nach dem Kneten"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Zutaten</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis">
+  <p><strong>Zur Rezeptlogik</strong></p>
+  <p>Kürbis: Rohgewicht geschält und entkernt. Ausbeute zum Püree ca. 75 % beim Backen, ca. 95 % beim Dämpfen; gedämpftes Püree ist nasser, deshalb weniger Flüssigkeit. Herzhaft: 25 % Poolish, 40 % Püree, 1,2 % Hefe. Zopf: 20 % Poolish, 40 % Püree, 10 % Zucker und 15 % Butter; wegen des osmotischen Drucks durch den Zucker und der Fettanteile 3,5 % Hefe. Butter erst nach dem Salz, damit sich das Gluten zuerst aufbaut.</p>
+  <p>Temperaturanpassung: Stückgare ca. +9 % pro Grad Küche unter 24 °C, Stockgare zusätzlich ca. +4,5 % pro Grad Teigtemperatur unter 25 °C. Beim Zopf wird mit kalter Milch (5 °C) gerechnet. Richtwerte; massgebend bleibt der Teig.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
+  const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
+  const SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22}, LW={12:8,1:8,2:8,3:8,4:10,11:10,5:12,10:12,6:15,7:15,8:15,9:15};
+  const AUS={back:0.75,dampf:0.95};
+  const R={
+    h:{pool:.25,pu:.40,liq:{back:.52,dampf:.46},sa:.022,hh:.012,fe:.03,ke:.10,stock:70,stueck:50,BZ:{500:35,750:42,1000:50},cool:120},
+    s:{pool:.20,pu:.40,liq:{back:.15,dampf:.10},ei:.10,zu:.10,bu:.15,sa:.018,hh:.035,zi:.005,ke:.08,stock:90,stueck:60,BZ:{500:28,750:35,1000:42},cool:60}};
+  let manuell=false, manuellLW=false, D={}, V={};
+  const mon=()=>{const d=new Date($('#bk').value);return isNaN(d)?10:d.getMonth()+1;};
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  const zr=(t,k,fix)=>`<tr><td class="cb"><input type="checkbox"></td><td>${t}</td><td class="menge"${k?` data-k="${k}"`:''}>${fix||''}</td></tr>`;
+
+  function build(){
+    const s=$('#ri').value==='s', ke=$('#ke').checked, back=$('#ku').value==='back';
+    $('#ztb').innerHTML=grp('Kürbis')+zr('Hokkaido geschält und entkernt, roh','roh')+zr('ergibt Püree ca.','pu')
+      +grp('Poolish')+zr('Weissmehl','pM')+zr('Wasser, Leitung (nicht gekühlt)','pW')+zr('Frischhefe','pH')
+      +grp('Hauptteig')+(s?zr('Weissmehl (Zopfmehl)','hM')+zr('Milch, kalt','li')+zr('Ei','ei')+zr('Zucker','zu')+zr('Butter, weich','bu')+zr('Zimt','zi')
+        :zr('Weissmehl','hM')+zr('Ruchmehl','rM')+zr('Wasser, <span data-k="wq"></span>','li')+zr('Kürbiskernöl','fe'))
+      +zr('Kürbispüree','pu')+zr('Frischhefe','hH')+zr('Salz','sa')
+      +(ke?zr('Kürbiskerne geröstet, in den Teig','ki')+zr('Kürbiskerne für die Oberfläche','ko'):'')
+      +(s?zr('Ei zum Bestreichen','', '1 Stück'):'');
+    $$('#ztb input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+    const st=[
+      ['0','Kürbis vorbereiten',(back?'Hokkaido schälen, entkernen, in 2–3 cm Würfel schneiden und abwägen (<span data-k="roh"></span>). Auf Backpapier bei 200 °C Umluft 25–30 Min. weich backen, fein pürieren, auskühlen lassen.'
+        :'Hokkaido schälen, entkernen, in 2–3 cm Würfel schneiden und abwägen (<span data-k="roh"></span>). 15–20 Min. bei 100 °C dämpfen, 10 Min. gut abtropfen lassen, fein pürieren, auskühlen lassen.')
+        +' Das Püree nochmals wägen und <span data-k="pu"></span> verwenden. Geht gut am Vortag.'],
+      ['0','Poolish ansetzen','<span data-k="pM"></span> Mehl, <span data-k="pW"></span> Leitungswasser und <span data-k="pH"></span> Hefe glatt verrühren. Abgedeckt in der Küche stehen lassen, bis die Oberfläche voller Blasen ist und leicht einsinkt.'],
+      ['5','Kneten, Phase 1',s?'Poolish, <span data-k="hM"></span> Mehl, <span data-k="pu"></span> Kürbispüree, <span data-k="li"></span> kalte Milch, <span data-k="ei"></span> Ei, <span data-k="zu"></span> Zucker, <span data-k="zi"></span> Zimt und <span data-k="hH"></span> Hefe 5 Min. langsam kneten.'
+        :'Poolish, <span data-k="hM"></span> Weissmehl, <span data-k="rM"></span> Ruchmehl, <span data-k="pu"></span> Kürbispüree, 90 % des Wassers (<span data-k="wq"></span>) und <span data-k="hH"></span> Hefe 5 Min. langsam kneten. Restwasser nur, wenn der Teig fest wirkt.'],
+      [s?'10':'7','Kneten, Phase 2',(s?'<span data-k="sa"></span> Salz zugeben, 4–5 Min. schnell, dann <span data-k="bu"></span> Butter in Stücken langsam einarbeiten und nochmals schnell kneten, bis der Teig glänzt und sich von der Schüssel löst.'
+        :'<span data-k="sa"></span> Salz zugeben, 4–6 Min. schnell, dann <span data-k="fe"></span> Kürbiskernöl langsam einarbeiten.')
+        +(ke?' Zuletzt <span data-k="ki"></span> Kerne 1 Min. langsam unterkneten.':'')
+        +' Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters oben eintragen.'],
+      ['stock','Stockgare','Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Lieber nach Teig als nach Uhr.'],
+      ['15','Teilen und vorformen','In <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen'+(s?', jedes nochmals halbieren für die zwei Zopfstränge. Rundwirken, 15 Min. entspannen.':', locker rundwirken, 15 Min. entspannen.')],
+      ['stueck','Formen und Stückgare',s?'Stränge ausrollen, zu Zöpfen flechten, auf Backpapier aufs Blech (<span data-k="pb"></span> pro Blech). Mit verquirltem Ei bestreichen. Ca. <span data-k="stueck"></span> abgedeckt. Ofen auf 180 °C Umluft vorheizen.'
+        :'Straff formen, Oberfläche befeuchten'+(ke?' und in den Kernen wälzen':'')+', mit dem Schluss nach unten auf Backpapier aufs Blech (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen. Vor dem Einschiessen einschneiden.'],
+      ['bake','Backen',s?'Ein zweites Mal mit Ei bestreichen'+(ke?' und mit den Kernen bestreuen':'')+'. Ohne Dampf bei 180 °C Umluft ca. <span data-k="bz"></span> backen. Kerntemperatur 92–94 °C; bräunt er zu schnell, nach halber Zeit locker abdecken.'
+        :'Einschiessen, sofort ein Dampfstoss. Nach 10 Min. auf 200 °C reduzieren. Total ca. <span data-k="bz"></span>, letzte 10 Min. Dampf ablassen. Kerntemperatur 96–98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
+      [String(R[s?'s':'h'].cool),'Auskühlen',s?'Mindestens 1 Std. auf dem Gitter.':'Mindestens 2 Std. auf dem Gitter.']];
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    timers();
+  }
+
+  function rechnen(){
+    const s=$('#ri').value==='s', r=R[s?'s':'h'], back=$('#ku').value==='back', ke=$('#ke').checked;
+    if(!manuell) $('#rt').value=SAISON[mon()]||21;
+    if(!manuellLW) $('#lw').value=LW[mon()];
+    const t=+$('#m').value, sz=+$('#sz').value, T=+$('#rt').value, ph=+$('#pd').value, kk=$('#kk').checked, cube=$('#cube').checked;
+    const liq=r.liq[back?'back':'dampf'];
+    const sum=1+r.pu+r.pool+liq+r.sa+r.hh+(s?r.ei+r.zu+r.bu+r.zi:r.fe)+(ke?r.ke:0);
+    const F0=t/sum, pM=r.pool*F0;
+    const Tc=s?5:(cube?Math.max(3,Math.min(15,+$('#kw').value||7)):Math.max(3,Math.min(25,+$('#lw').value||10)));
+    $('#wbox').style.opacity=s?.4:1;
+    $('#kw').closest('div').style.opacity=cube?1:.45; $('#lw').closest('div').style.opacity=cube?.45:1;
+    const dtCalc=kk?(Tc+3*T+5+12)/5:(Tc+4*T+12)/5;
+    const tmv=parseFloat($('#tm').value), gem=!isNaN(tmv)&&tmv>=12&&tmv<=32, DT=gem?tmv:dtCalc;
+    const F=Math.pow(1.09,24-T), FT=Math.pow(1.045,25-DT);
+    D={stock:r5(r.stock*F*FT),stueck:r5(r.stueck*F),bake:r.BZ[sz],cool:r.cool};
+    const n=Math.max(1,Math.round(t/sz)), each=t/n;
+    const DTs=(Math.round(DT*2)/2).toLocaleString('de-CH')+' °C', Ts=T.toLocaleString('de-CH')+' °C';
+    $('#mo').textContent=(t/1000).toLocaleString('de-CH',{minimumFractionDigits:2})+' kg';
+    $('#rto').textContent=Ts;
+    $('#rth').textContent=manuell?'Manuell eingestellt':'Aus der Jahreszeit des Backdatums vorgeschlagen';
+    $('#dth').textContent=(gem?'Gemessene Teigtemperatur '+DTs+', Stockgare danach berechnet.':'Erwartete Teigtemperatur ca. '+DTs+(s?' (mit kalter Milch).':'.'))
+      +(DT<21?' Recht kühl: Stockgare wird deutlich länger.':'')+(DT>27?' Recht warm: Teig im Auge behalten.':'');
+    V={roh:g(r.pu*F0/AUS[back?'back':'dampf']),pu:g(r.pu*F0),pM:g(pM),pW:g(pM),pH:g1(pM*0.001*Math.pow(1.09,20-T)*(16/ph)),
+      hM:g((s?1:0.8)*F0-pM),rM:g(0.2*F0),li:g(s?liq*F0:liq*F0-pM),ei:g(r.ei*F0||0),zu:g(r.zu*F0||0),bu:g(r.bu*F0||0),zi:g1(r.zi*F0||0),
+      fe:g(r.fe*F0||0),hH:g1(r.hh*F0),sa:g1(r.sa*F0),ki:g(r.ke*F0),ko:'ca. '+g(r.ke*F0*0.4),
+      wq:(cube?'Quooker CUBE gekühlt, ca. ':'Leitung kalt, ca. ')+Tc+' °C',n:n,g:g(each),pb:sz==500?'max. 3':'max. 2',
+      bz:r.BZ[sz]+' Min.',stock:D.stock+' Min.',stueck:D.stueck+' Min.',rt:Ts,dt:DTs};
+    $$('[data-k]').forEach(e=>{e.textContent=V[e.dataset.k]??''});
+    $('#erg').textContent=n+(s?(n==1?' Zopf':' Zöpfe'):(n==1?' Brot':' Brote'))+' à ca. '+Math.round(each)+' g';
+    $('#kennz').textContent=`Mehl total ${Math.round(F0)} g, Kürbispüree ${Math.round(r.pu*F0)} g`;
+    $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+    plan(s);
+  }
+
+  function plan(s){
+    const b=new Date($('#bk').value); if(isNaN(b)) return;
+    const kn=new Date(b-(D.stueck+10+15+5+D.stock+(s?20:15))*M), ph=+$('#pd').value;
+    const f=d=>d.toLocaleDateString('de-CH',{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    const rows=[[new Date(kn-ph*60*M),'Poolish ansetzen, Kürbis vorbereiten'],[kn,'Kneten beginnen'],
+      [new Date(+kn+((s?20:15)+D.stock)*M),'Teilen und vorformen'],[new Date(b-(D.stueck+10)*M),'Formen, Ofen vorheizen'],
+      [b,'Einschiessen'],[new Date(+b+(D.bake+D.cool)*M),'Anschneiden ab']];
+    $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+      li.appendChild(box);
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let ende=null, rest=0, iv=null;
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+        else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+    });
+  }
+
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  const d=new Date(Date.now()+(16*60+220)*M); d.setMinutes(d.getMinutes()<30?30:60,0,0);
+  $('#bk').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('#rt').addEventListener('input',()=>{manuell=true;rechnen();});
+  $('#lw').addEventListener('input',()=>{manuellLW=true;rechnen();});
+  ['#ri','#ku','#ke'].forEach(s=>$(s).addEventListener('change',()=>{build();rechnen();}));
+  ['#m','#sz','#bk','#pd','#kk','#cube','#kw','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
+  build(); rechnen();
+})();
+</script>
+</body>
+</html>

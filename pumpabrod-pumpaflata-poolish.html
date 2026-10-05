@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pumpabröd och pumpafläta med poolish</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Pumpabröd och pumpafläta</h1>
+<p class="sub">Med poolish och hokkaidopuré. Matigt som frihandsbröd eller sött som flätad längd, bakat på plåt.</p>
+
+<section>
+<h2>Variant och mängd</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="ri">Typ</label><select id="ri"><option value="h" selected>Matbröd</option><option value="s">Söt pumpafläta</option></select></div>
+    <div><label for="ku">Pumpa (hokkaido)</label><select id="ku"><option value="back" selected>Ugnsbakad</option><option value="dampf">Ångkokt</option></select></div>
+  </div>
+  <div class="check noprint"><input type="checkbox" id="ke" checked><span>Pumpafrön i och på degen</span></div>
+  <div class="regler" style="margin-top:14px"><label for="m">Degmängd</label><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><output id="mo"></output></div>
+  <div class="grid">
+    <div><label for="sz">Storlek</label><select id="sz"><option value="500">ca. 500 g</option><option value="750" selected>ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
+    <div><label>Det blir</label><div id="erg" style="font-weight:600;padding-top:8px"></div></div>
+  </div>
+  <p class="kennz" id="kennz"></p>
+</div>
+</section>
+
+<section>
+<h2>Tidsplan och kök</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="bk">In i ugnen</label><input id="bk" type="datetime-local"></div>
+    <div><label for="pd">Poolishens tid</label><select id="pd"><option value="16" selected>16 tim</option><option value="20">20 tim</option><option value="24">24 tim</option></select></div>
+  </div>
+  <div class="regler" style="margin-top:16px"><label for="rt">Köket</label><input id="rt" type="range" min="18" max="25" step="0.5" value="21"><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="kk"><span>Pumpapurén kommer direkt från kylen</span></div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div id="lwbox"><label for="lw">Kallt kranvatten (°C)</label><input id="lw" type="number" min="2" max="25" step="1" value="6"></div>
+    <div><label for="tm">Uppmätt degtemperatur (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="efter knådning"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Ingredienser</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Gör så här</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis">
+  <p><strong>Om receptet</strong></p>
+  <p>Pumpa: vikten är skalad och urkärnad rå pumpa. Ugnsbakad pumpa ger ca. 75 % puré, ångkokt ca. 95 %; ångkokt puré är blötare, därför mindre vätska. Matbröd: 25 % poolish, 40 % puré, 1,2 % jäst. Fläta: 20 % poolish, 40 % puré, 10 % socker och 15 % smör; sockret och fettet bromsar jästen, därför 3,5 % jäst (gärna jäst för söta degar). Smöret tillsätts efter saltet så att glutenet hinner byggas upp först.</p>
+  <p>Temperatur: jästiderna förlängs med ca. 9 % per grad under 24 °C i köket och med ca. 4,5 % per grad under 25 °C i degen. Kranvattnets temperatur följer årstiden som förslag, mät gärna en gång. Flätan räknas med kall mjölk (5 °C). Allt är riktvärden; degen avgör.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Håll skärmen tänd</button>
+  <button id="reset">Rensa bockar</button>
+  <button onclick="window.print()">Skriv ut</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const L='sv-SE';
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString(L,{minimumFractionDigits:1})+' g';
+  const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
+  const KOK={6:22,7:22,8:22}, LW={12:4,1:4,2:4,3:4,4:5,11:6,5:7,10:8,6:10,9:10,7:12,8:12};
+  const AUS={back:0.75,dampf:0.95};
+  const R={
+    h:{pool:.25,pu:.40,liq:{back:.52,dampf:.46},sa:.022,hh:.012,fe:.03,ke:.10,stock:70,stueck:50,BZ:{500:35,750:42,1000:50},cool:120},
+    s:{pool:.20,pu:.40,liq:{back:.15,dampf:.10},ei:.10,zu:.10,bu:.15,sa:.018,hh:.035,zi:.005,ke:.08,stock:90,stueck:60,BZ:{500:28,750:35,1000:42},cool:60}};
+  let manuell=false, manuellLW=false, D={}, V={};
+  const mon=()=>{const d=new Date($('#bk').value);return isNaN(d)?10:d.getMonth()+1;};
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  const zr=(t,k,fix)=>`<tr><td class="cb"><input type="checkbox"></td><td>${t}</td><td class="menge"${k?` data-k="${k}"`:''}>${fix||''}</td></tr>`;
+
+  function build(){
+    const s=$('#ri').value==='s', ke=$('#ke').checked, back=$('#ku').value==='back';
+    $('#ztb').innerHTML=grp('Pumpa')+zr('Hokkaidopumpa, skalad och urkärnad, rå','roh')+zr('ger puré ca.','pu')
+      +grp('Poolish')+zr('Vetemjöl special','pM')+zr('Vatten, rumstempererat','pW')+zr('Färsk jäst','pH')
+      +grp('Deg')+(s?zr('Vetemjöl special','hM')+zr('Mjölk, kall','li')+zr('Ägg','ei')+zr('Strösocker','zu')+zr('Smör, rumstempererat','bu')+zr('Kanel','zi')
+        :zr('Vetemjöl special','hM')+zr('Grahamsmjöl','rM')+zr('Vatten, <span data-k="wq"></span>','li')+zr('Pumpakärnolja (eller rapsolja)','fe'))
+      +zr('Pumpapuré','pu')+zr(s?'Färsk jäst (gärna för söta degar)':'Färsk jäst','hH')+zr('Salt','sa')
+      +(ke?zr('Rostade pumpafrön, i degen','ki')+zr('Pumpafrön till ytan','ko'):'')
+      +(s?zr('Ägg till pensling','','1 st'):'');
+    $$('#ztb input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+    const st=[
+      ['0','Förbered pumpan',(back?'Skala och kärna ur hokkaidopumpan, skär i 2–3 cm tärningar och väg (<span data-k="roh"></span>). Baka på bakplåtspapper i 200 °C varmluft i 25–30 min tills mjuk, mixa slät och låt svalna.'
+        :'Skala och kärna ur hokkaidopumpan, skär i 2–3 cm tärningar och väg (<span data-k="roh"></span>). Ånga i 15–20 min, låt rinna av ordentligt i 10 min, mixa slät och låt svalna.')
+        +' Väg purén igen och använd <span data-k="pu"></span>. Går fint att göra dagen innan.'],
+      ['0','Gör poolishen','Rör ihop <span data-k="pM"></span> mjöl, <span data-k="pW"></span> vatten och <span data-k="pH"></span> jäst till en slät smet. Låt stå övertäckt i köket tills ytan är full av bubblor och börjar sjunka ihop lite.'],
+      ['5','Knåda, steg 1',s?'Poolish, <span data-k="hM"></span> mjöl, <span data-k="pu"></span> pumpapuré, <span data-k="li"></span> kall mjölk, <span data-k="ei"></span> ägg, <span data-k="zu"></span> socker, <span data-k="zi"></span> kanel och <span data-k="hH"></span> jäst knådas 5 min på låg hastighet.'
+        :'Poolish, <span data-k="hM"></span> vetemjöl, <span data-k="rM"></span> grahamsmjöl, <span data-k="pu"></span> pumpapuré, 90 % av vattnet (<span data-k="wq"></span>) och <span data-k="hH"></span> jäst knådas 5 min på låg hastighet. Resten av vattnet bara om degen känns fast.'],
+      [s?'10':'7','Knåda, steg 2',(s?'Tillsätt <span data-k="sa"></span> salt, knåda 4–5 min på hög hastighet, arbeta sedan in <span data-k="bu"></span> smör i bitar på låg hastighet och knåda igen på hög tills degen är blank och släpper från bunken.'
+        :'Tillsätt <span data-k="sa"></span> salt, knåda 4–6 min på hög hastighet och arbeta sedan in <span data-k="fe"></span> olja på låg hastighet.')
+        +(ke?' Knåda sist in <span data-k="ki"></span> frön i 1 min på låg hastighet.':'')
+        +' Förväntad degtemperatur ca. <span data-k="dt"></span>; mät gärna och fyll i värdet ovan.'],
+      ['stock','Jäsning i bunke','Ca. <span data-k="stock"></span> övertäckt i köket (<span data-k="rt"></span>), sträck och vik degen en gång halvvägs. Gå hellre efter degen än efter klockan.'],
+      ['15','Dela och förforma','Dela i <span data-k="n"></span> bitar à ca. <span data-k="g"></span>'+(s?', halvera varje bit till två längder för flätan. Rulla till bollar och låt vila 15 min.':', rulla löst till bollar och låt vila 15 min.')],
+      ['stueck','Forma och jäs',s?'Rulla ut längderna, fläta och lägg på bakplåtspapper på plåt (<span data-k="pb"></span> per plåt). Pensla med uppvispat ägg. Jäs övertäckt ca. <span data-k="stueck"></span>. Sätt ugnen på 180 °C varmluft.'
+        :'Forma stramt, fukta ytan'+(ke?' och rulla i fröna':'')+', lägg skarven nedåt på bakplåtspapper på plåt (<span data-k="pb"></span> per plåt). Jäs övertäckt ca. <span data-k="stueck"></span>. Sätt ugnen på 230 °C varmluft. Snitta precis innan de ska in.'],
+      ['bake','Grädda',s?'Pensla en gång till med ägg'+(ke?' och strö över fröna':'')+'. Grädda utan ånga i 180 °C varmluft ca. <span data-k="bz"></span>. Innertemperatur 92–94 °C; blir de för mörka, täck löst med folie efter halva tiden.'
+        :'In i ugnen med ånga direkt (ånginjektion, eller häll kokande vatten i en långpanna i botten av ugnen). Sänk till 200 °C efter 10 min. Totalt ca. <span data-k="bz"></span>, släpp ut ångan de sista 10 min. Innertemperatur 96–98 °C. Byt plats på plåtarna halvvägs.'],
+      [String(R[s?'s':'h'].cool),'Låt svalna',s?'Minst 1 tim på galler.':'Minst 2 tim på galler.']];
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Steg klart"></div><p>${x[2]}</p></li>`).join('');
+    timers();
+  }
+
+  function rechnen(){
+    const s=$('#ri').value==='s', r=R[s?'s':'h'], back=$('#ku').value==='back', ke=$('#ke').checked;
+    if(!manuell) $('#rt').value=KOK[mon()]||21;
+    if(!manuellLW) $('#lw').value=LW[mon()];
+    const t=+$('#m').value, sz=+$('#sz').value, T=+$('#rt').value, ph=+$('#pd').value, kk=$('#kk').checked;
+    const liq=r.liq[back?'back':'dampf'];
+    const sum=1+r.pu+r.pool+liq+r.sa+r.hh+(s?r.ei+r.zu+r.bu+r.zi:r.fe)+(ke?r.ke:0);
+    const F0=t/sum, pM=r.pool*F0;
+    const Tc=s?5:Math.max(2,Math.min(25,+$('#lw').value||6));
+    $('#lwbox').style.opacity=s?.4:1;
+    const dtCalc=kk?(Tc+3*T+5+12)/5:(Tc+4*T+12)/5;
+    const tmv=parseFloat($('#tm').value), gem=!isNaN(tmv)&&tmv>=12&&tmv<=32, DT=gem?tmv:dtCalc;
+    const F=Math.pow(1.09,24-T), FT=Math.pow(1.045,25-DT);
+    D={stock:r5(r.stock*F*FT),stueck:r5(r.stueck*F),bake:r.BZ[sz],cool:r.cool};
+    const n=Math.max(1,Math.round(t/sz)), each=t/n;
+    const DTs=(Math.round(DT*2)/2).toLocaleString(L)+' °C', Ts=T.toLocaleString(L)+' °C';
+    $('#mo').textContent=(t/1000).toLocaleString(L,{minimumFractionDigits:2})+' kg';
+    $('#rto').textContent=Ts;
+    $('#rth').textContent=manuell?'Inställt manuellt':'Förslag utifrån årstiden för bakdagen';
+    $('#dth').textContent=(gem?'Uppmätt degtemperatur '+DTs+', jästiden räknas om.':'Förväntad degtemperatur ca. '+DTs+(s?' (med kall mjölk).':'.'))
+      +(DT<21?' Ganska sval deg: jäsningen tar klart längre tid. Ljummet vatten eller rumstempererad puré hjälper.':'')+(DT>27?' Ganska varm deg: håll ett öga på den.':'');
+    V={roh:g(r.pu*F0/AUS[back?'back':'dampf']),pu:g(r.pu*F0),pM:g(pM),pW:g(pM),pH:g1(pM*0.001*Math.pow(1.09,20-T)*(16/ph)),
+      hM:g((s?1:0.8)*F0-pM),rM:g(0.2*F0),li:g(s?liq*F0:liq*F0-pM),ei:g(r.ei*F0||0),zu:g(r.zu*F0||0),bu:g(r.bu*F0||0),zi:g1(r.zi*F0||0),
+      fe:g(r.fe*F0||0),hH:g1(r.hh*F0),sa:g1(r.sa*F0),ki:g(r.ke*F0),ko:'ca. '+g(r.ke*F0*0.4),
+      wq:'kallt kranvatten, ca. '+Tc+' °C',n:n,g:g(each),pb:sz==500?'max. 3':'max. 2',
+      bz:r.BZ[sz]+' min',stock:D.stock+' min',stueck:D.stueck+' min',rt:Ts,dt:DTs};
+    $$('[data-k]').forEach(e=>{e.textContent=V[e.dataset.k]??''});
+    $('#erg').textContent=n+(s?(n==1?' fläta':' flätor'):(n==1?' bröd':' bröd'))+' à ca. '+Math.round(each)+' g';
+    $('#kennz').textContent=`Mjöl totalt ${Math.round(F0)} g, pumpapuré ${Math.round(r.pu*F0)} g`;
+    $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+    plan(s);
+  }
+
+  function plan(s){
+    const b=new Date($('#bk').value); if(isNaN(b)) return;
+    const kn=new Date(b-(D.stueck+10+15+5+D.stock+(s?20:15))*M), ph=+$('#pd').value;
+    const f=d=>d.toLocaleDateString(L,{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    const rows=[[new Date(kn-ph*60*M),'Gör poolish, förbered pumpan'],[kn,'Börja knåda'],
+      [new Date(+kn+((s?20:15)+D.stock)*M),'Dela och förforma'],[new Date(b-(D.stueck+10)*M),'Forma, sätt på ugnen'],
+      [b,'In i ugnen'],[new Date(+b+(D.bake+D.cool)*M),'Kan skivas från']];
+    $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Starta</button><button>Återställ</button>';
+      li.appendChild(box);
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let ende=null, rest=0, iv=null;
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Starta'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Klart';bs.textContent='Starta';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Fortsätt';}
+        else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Paus';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+    });
+  }
+
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Håll skärmen tänd';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Skärmen hålls tänd';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Håll skärmen tänd';});
+    }catch(e){$('#wach').textContent='Inte tillgängligt';}
+  };
+
+  const d=new Date(Date.now()+(16*60+220)*M); d.setMinutes(d.getMinutes()<30?30:60,0,0);
+  $('#bk').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('#rt').addEventListener('input',()=>{manuell=true;rechnen();});
+  $('#lw').addEventListener('input',()=>{manuellLW=true;rechnen();});
+  ['#ri','#ku','#ke'].forEach(s=>$(s).addEventListener('change',()=>{build();rechnen();}));
+  ['#m','#sz','#bk','#pd','#kk','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
+  build(); rechnen();
+})();
+</script>
+</body>
+</html>

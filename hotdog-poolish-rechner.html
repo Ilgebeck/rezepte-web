@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hot-Dog-Brötchen mit Poolish</title>
+<style>
+  :root{
+    --bg: #F3ECDF;
+    --surface: #FBF7EF;
+    --border: #E3D6C0;
+    --ink: #3A2A1C;
+    --ink-soft: #7A6A57;
+    --accent: #C1832E;
+    --accent-dark: #9C6A24;
+    --track: #E8DAC1;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    padding: 32px 18px 64px;
+  }
+  .page{
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  h1{
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.9rem;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle{
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    margin: 0 0 28px;
+    max-width: 46ch;
+  }
+  h2{
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0 0 14px;
+  }
+  section{ margin-bottom: 26px; }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 22px 8px;
+  }
+
+  .control-row{ margin-bottom: 22px; }
+  .control-row:last-child{ margin-bottom: 6px; }
+  .control-label{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+  }
+  .control-label .name{ color: var(--ink); }
+  .control-label .value{
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+  input[type="range"]{
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--track);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent-dark);
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent-dark);
+    cursor: pointer;
+  }
+  .range-ticks{
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  .ing-group{ margin-bottom: 18px; }
+  .ing-group h3{
+    font-size: 0.8rem;
+    text-transform: none;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  table{ width: 100%; border-collapse: collapse; }
+  td{
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.98rem;
+  }
+  td.amount{
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .total-line{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .total-line strong{ color: var(--ink); }
+
+  .schedule p{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  ol.steps{
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  ol.steps li{
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 20px 38px;
+    font-size: 0.98rem;
+  }
+  ol.steps li::before{
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  ol.steps li strong{ display: block; margin-bottom: 2px; }
+  ol.steps li .note{
+    display: block;
+    margin-top: 4px;
+    color: var(--accent-dark);
+    font-size: 0.9rem;
+  }
+
+  footer{
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    padding-top: 4px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Hot-Dog-Brötchen mit Poolish</h1>
+    <p class="subtitle">68% Hydration, ca. 15 cm lang, stumpf geformt. Stelle Menge und Reifezeiten ein &mdash; Zutaten und Zeitplan passen sich automatisch an.</p>
+  </header>
+
+  <section class="card">
+    <div class="control-row">
+      <div class="control-label">
+        <span class="name">Anzahl Brötchen</span>
+        <span class="value"><span id="rollsVal">8</span> Stück</span>
+      </div>
+      <input type="range" id="rolls" min="4" max="24" step="1" value="8">
+      <div class="range-ticks"><span>4</span><span>24</span></div>
+    </div>
+
+    <div class="control-row">
+      <div class="control-label">
+        <span class="name">Poolish-Reifezeit</span>
+        <span class="value"><span id="poolishVal">17</span> Std.</span>
+      </div>
+      <input type="range" id="poolish" min="12" max="24" step="1" value="17">
+      <div class="range-ticks"><span>12 Std.</span><span>24 Std.</span></div>
+    </div>
+
+    <div class="control-row">
+      <div class="control-label">
+        <span class="name">Stockgare im Kühlschrank</span>
+        <span class="value"><span id="stockgareVal">0</span> Std.</span>
+      </div>
+      <input type="range" id="stockgare" min="0" max="24" step="1" value="0">
+      <div class="range-ticks"><span>0 = Raumtemperatur</span><span>24 Std.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Zutaten</h2>
+    <div class="card">
+      <div class="ing-group">
+        <h3>Poolish</h3>
+        <table>
+          <tr><td>Weissmehl Type 550</td><td class="amount"><span id="pFlour"></span> g</td></tr>
+          <tr><td>Wasser</td><td class="amount"><span id="pWater"></span> ml</td></tr>
+          <tr><td>Frischhefe</td><td class="amount"><span id="pYeast"></span></td></tr>
+        </table>
+      </div>
+      <div class="ing-group">
+        <h3>Hauptteig</h3>
+        <table>
+          <tr><td>Weissmehl Type 550</td><td class="amount"><span id="fFlour"></span> g</td></tr>
+          <tr><td>Wasser</td><td class="amount"><span id="fWater"></span> ml</td></tr>
+          <tr><td>Salz</td><td class="amount"><span id="fSalt"></span> g</td></tr>
+          <tr><td>Frischhefe</td><td class="amount"><span id="fYeast"></span></td></tr>
+        </table>
+      </div>
+      <div class="total-line">
+        <span>Teig gesamt</span>
+        <strong><span id="totalDough"></span> g &nbsp;(&asymp; <span id="perRoll"></span> g / Brötchen)</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="schedule">
+    <h2>Zeitplan</h2>
+    <p id="scheduleText"></p>
+  </section>
+
+  <section>
+    <h2>Zubereitung</h2>
+    <ol class="steps">
+      <li>
+        <strong>Poolish ansetzen</strong>
+        Frischhefe in der Poolish-Wassermenge auflösen, Poolish-Mehl einrühren, bis keine trockenen Stellen mehr da sind. Zugedeckt bei Raumtemperatur (ca. 20&nbsp;°C) reifen lassen, bis die Oberfläche blasig ist und leicht einfällt.
+      </li>
+      <li>
+        <strong>Hauptteig mischen &amp; Autolyse</strong>
+        Poolish mit dem restlichen Mehl und Wasser im Sunmix EVO 6 auf niedrigster Stufe grob vermengen, 30 Minuten autolysieren lassen (ohne Salz und Hefe).
+      </li>
+      <li>
+        <strong>Kneten</strong>
+        Salz und restliche Hefe zugeben, 8&ndash;10 Minuten auf mittlerer Stufe kneten, bis der Teig glatt ist und sich vom Kesselrand löst.
+      </li>
+      <li>
+        <strong>Stockgare</strong>
+        <span id="stockgareStep"></span>
+      </li>
+      <li>
+        <strong>Teilen &amp; Formen</strong>
+        Teig entgasen, in <span id="stepRollCount"></span> Stücke à ca. <span id="stepRollWeight"></span>&nbsp;g teilen. Zu kurzen, gleichmässig dicken Röllchen von ca. 15&nbsp;cm Länge formen, Enden stumpf auswellen. Auf einem bemehlten Leinentuch (Couche) ablegen.
+      </li>
+      <li>
+        <strong>Stückgare</strong>
+        <span id="stueckgareStep"></span>
+      </li>
+      <li>
+        <strong>Backen mit Dampf</strong>
+        Ofen mit Pizzastein auf 250&nbsp;°C O/U-Hitze vorheizen (bei Umluft ca. 230&nbsp;°C). Brötchen einmal flach längs einschneiden oder ungeschnitten lassen. Über Klimagaren 2 Dampfstösse in den ersten 6&ndash;8 Minuten geben, danach trocken fertigbacken &ndash; insgesamt ca. 20&ndash;23 Minuten, nach Bräunung richten statt strikt nach Uhr.
+        <span class="note" id="batchNote"></span>
+      </li>
+    </ol>
+  </section>
+
+  <footer>
+    Hefemengen, Portionsgrösse (140&nbsp;g) und Backzeit sind nach zwei Testbakes kalibriert &ndash; die Poolish-Hefe ist jetzt unabhängig von der Reifezeit, die Hauptteig-Hefe reagiert nur noch leicht auf eine lange Kühlschrank-Stockgare. Bei Bedarf weiter nach Erfahrung feinjustieren.
+  </footer>
+
+</div>
+
+<script>
+  const FLOUR_RATIO = 1000/1705.5;
+  const WATER_RATIO = 680/1705.5;
+  const SALT_RATIO  = 20/1705.5;
+  const POOLISH_FLOUR_SHARE = 0.30;
+  // Hefe-Baseline anhand des erfolgreichen 20er-Bakes kalibriert (Poolish 24h/Stockgare 7h,
+  // real verwendet: 1.2g auf 500g Poolish-Mehl = 0.24%; 14.2g auf ca. 1150g Hauptteig-Mehl ≈ 1.24%).
+  // Poolish-Menge reagierte in der Praxis NICHT auf die Reifezeit -> flacher Wert ohne Dauer-Faktor.
+  const POOLISH_YEAST_PCT = 0.0024;   // Anteil Frischhefe am Poolish-Mehl
+  const FINAL_YEAST_PCT   = 0.0125;   // Anteil Frischhefe am Hauptteig-Mehl (bei Stockgare 0h)
+  const ROLL_WEIGHT = 140; // nach Testbake: 130–150 g ergaben bei gutem Trieb bessere Brötchen als 100 g
+  const BATCH_SIZE = 10;
+
+  const rollsEl = document.getElementById('rolls');
+  const poolishEl = document.getElementById('poolish');
+  const stockgareEl = document.getElementById('stockgare');
+
+  function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+
+  function formatYeast(g){
+    if (g <= 0) return '0 g';
+    const dry = g / 3; // Faustregel: Trockenhefe ≈ 1/3 der Frischhefe-Menge
+    const freshStr = g < 0.1 ? '&lt; 0.1 g' : g.toFixed(1) + ' g';
+    const dryStr = dry < 0.1 ? '&lt; 0.1 g' : dry.toFixed(1) + ' g';
+    return freshStr + ' <span style="color:var(--ink-soft); font-weight:400;">(&asymp; ' + dryStr + ' Trockenhefe)</span>';
+  }
+
+  function update(){
+    const N = parseInt(rollsEl.value, 10);
+    const poolishH = parseInt(poolishEl.value, 10);
+    const stockgareH = parseInt(stockgareEl.value, 10);
+
+    document.getElementById('rollsVal').textContent = N;
+    document.getElementById('poolishVal').textContent = poolishH;
+    document.getElementById('stockgareVal').textContent = stockgareH;
+
+    const totalDough = N * ROLL_WEIGHT;
+    const flourTotal = totalDough * FLOUR_RATIO;
+    const waterTotal  = totalDough * WATER_RATIO;
+    const salt        = totalDough * SALT_RATIO;
+
+    const poolishFlour = flourTotal * POOLISH_FLOUR_SHARE;
+    const poolishWater = poolishFlour;
+    const finalFlour = flourTotal - poolishFlour;
+    const finalWater = waterTotal - poolishWater;
+
+    // Poolish-Hefe: fester Anteil, unabhängig von der Reifezeit (im Test bei 24h genauso nötig wie bei 17h)
+    const poolishYeast = poolishFlour * POOLISH_YEAST_PCT;
+
+    // Hauptteig-Hefe: nur leichte Reduktion bei langer Kühlschrank-Stockgare
+    const stockgareFactor = 1 - clamp(stockgareH / 24, 0, 1) * 0.10;
+    const finalYeast = finalFlour * FINAL_YEAST_PCT * stockgareFactor;
+
+    document.getElementById('pFlour').textContent = Math.round(poolishFlour);
+    document.getElementById('pWater').textContent = Math.round(poolishWater);
+    document.getElementById('pYeast').innerHTML = formatYeast(poolishYeast);
+
+    document.getElementById('fFlour').textContent = Math.round(finalFlour);
+    document.getElementById('fWater').textContent = Math.round(finalWater);
+    document.getElementById('fSalt').textContent = Math.round(salt);
+    document.getElementById('fYeast').innerHTML = formatYeast(finalYeast);
+
+    document.getElementById('totalDough').textContent = Math.round(totalDough);
+    document.getElementById('perRoll').textContent = ROLL_WEIGHT;
+    document.getElementById('stepRollCount').textContent = N;
+    document.getElementById('stepRollWeight').textContent = ROLL_WEIGHT;
+
+    // Zeitplan-Text
+    let schedule = `Poolish: ca. ${poolishH} Std. bei Raumtemperatur (&sim;20&nbsp;°C). `;
+    if (stockgareH > 0){
+      schedule += `Stockgare: ${stockgareH} Std. im Kühlschrank bei 5&ndash;6&nbsp;°C. Gesamte Vorlaufzeit von Poolish-Ansatz bis Backbeginn: ca. ${poolishH + stockgareH + 5} Std. (inkl. grosszügiger Akklimatisierung und Stückgare).`;
+    } else {
+      schedule += `Stockgare: ca. 2 Std. bei Raumtemperatur mit Dehnen &amp; Falten. Gesamte Vorlaufzeit von Poolish-Ansatz bis Backbeginn: ca. ${poolishH + 3} Std.`;
+    }
+    document.getElementById('scheduleText').innerHTML = schedule;
+
+    // Stockgare-Schritt
+    const stockgareStepEl = document.getElementById('stockgareStep');
+    if (stockgareH > 0){
+      stockgareStepEl.innerHTML = `Teig zugedeckt <strong>${stockgareH} Std. im Kühlschrank</strong> bei 5&ndash;6&nbsp;°C reifen lassen. Danach grosszügig akklimatisieren lassen (ca. 90&ndash;120 Min., je nach Küchentemperatur auch länger) &ndash; der Teig sollte sich spürbar lockerer anfühlen und nicht mehr kühlschrankkalt sein, bevor geteilt wird. Eher am Zustand als an der Uhr orientieren.`;
+    } else {
+      stockgareStepEl.innerHTML = `Teig zugedeckt <strong>ca. 2 Std. bei Raumtemperatur</strong> gehen lassen, dabei alle 30 Minuten einmal dehnen und falten (3&ndash;4 Faltvorgänge).`;
+    }
+
+    // Stückgare-Schritt (abhängig davon, ob Teig kalt aus dem Kühlschrank kommt)
+    const stueckgareEl = document.getElementById('stueckgareStep');
+    if (stockgareH > 0){
+      stueckgareEl.textContent = 'Zugedeckt 75–120 Minuten gehen lassen (nach Kühlschrankgare oft länger als gedacht), bis er sich deutlich vergrössert hat und beim Fingertest langsam zurückfedert. Im Zweifel eher länger warten als zu früh backen.';
+    } else {
+      stueckgareEl.textContent = 'Zugedeckt 45–60 Minuten gehen lassen, bis er sich sichtbar vergrössert hat und beim Fingertest langsam zurückfedert.';
+    }
+
+    // Batch-Hinweis
+    const batchNoteEl = document.getElementById('batchNote');
+    const batches = Math.ceil(N / BATCH_SIZE);
+    if (batches > 1){
+      batchNoteEl.textContent = `Bei ${N} Brötchen passt vermutlich nicht alles auf einmal auf den Stein — auf ${batches} Backdurchgänge à ca. ${Math.ceil(N/batches)} Stück aufteilen.`;
+    } else {
+      batchNoteEl.textContent = '';
+    }
+  }
+
+  [rollsEl, poolishEl, stockgareEl].forEach(el => el.addEventListener('input', update));
+  update();
+</script>
+
+</body>
+</html>

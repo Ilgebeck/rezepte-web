@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panettone mit Frischhefe</title>
+<style>
+  :root{
+    --cream:#F6EFE1;
+    --card:#FFFCF6;
+    --espresso:#3C2A1E;
+    --espresso-soft:#6B5647;
+    --gold:#B8863A;
+    --gold-soft:#EFDDB8;
+    --wine:#7A2E2E;
+    --wine-soft:#EFD9D3;
+    --line:#E3D6BE;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--espresso);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;
+    padding-bottom:80px;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px;}
+
+  header{
+    padding:38px 18px 22px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#FBF3E1,var(--cream));
+  }
+  h1{
+    font-family:Iowan Old Style,Palatino Linotype,Palatino,Georgia,serif;
+    font-weight:400;
+    font-size:34px;
+    margin:0 0 6px;
+    letter-spacing:0.2px;
+  }
+  header p{
+    margin:0;
+    color:var(--espresso-soft);
+    font-size:15px;
+  }
+
+  .scale-bar{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--card);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 2px 8px rgba(60,42,30,0.06);
+  }
+  .scale-inner{
+    max-width:640px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 18px;
+    gap:14px;
+  }
+  .scale-label{font-size:13px;color:var(--espresso-soft);}
+  .scale-controls{display:flex;align-items:center;gap:10px;}
+  .scale-btn{
+    width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--line);background:var(--cream);
+    font-size:19px;color:var(--espresso);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .scale-btn:active{background:var(--gold-soft);}
+  .scale-value{
+    min-width:64px;text-align:center;
+    font-variant-numeric:tabular-nums;
+    font-weight:600;font-size:16px;
+  }
+  .scale-value small{display:block;font-weight:400;font-size:11px;color:var(--espresso-soft);}
+
+  section{padding:26px 0;}
+  h2{
+    font-family:Iowan Old Style,Palatino Linotype,Palatino,Georgia,serif;
+    font-weight:400;
+    font-size:22px;
+    margin:0 0 4px;
+  }
+  .section-sub{font-size:13px;color:var(--espresso-soft);margin:0 0 16px;}
+
+  .tag{
+    display:inline-block;
+    font-size:11px;
+    padding:2px 9px;
+    border-radius:100px;
+    font-weight:600;
+    letter-spacing:0.3px;
+    margin-bottom:8px;
+  }
+  .tag.gold{background:var(--gold-soft);color:#7A5A1F;}
+  .tag.wine{background:var(--wine-soft);color:var(--wine);}
+
+  .ing-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:6px 16px;
+    margin-bottom:14px;
+  }
+  .ing-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:11px 0;
+    border-bottom:1px solid var(--line);
+    font-size:15px;
+  }
+  .ing-row:last-child{border-bottom:none;}
+  .ing-amt{
+    font-variant-numeric:tabular-nums;
+    font-weight:600;
+    color:var(--espresso);
+    white-space:nowrap;
+    margin-left:12px;
+  }
+
+  .steps{list-style:none;margin:0;padding:0;}
+  .step{
+    display:flex;gap:14px;
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:none;}
+  .step-check{
+    flex:none;
+    width:26px;height:26px;
+    border-radius:50%;
+    border:1.5px solid var(--gold);
+    margin-top:2px;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--card);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .step-check.done{background:var(--gold);}
+  .step-check svg{width:14px;height:14px;display:none;}
+  .step-check.done svg{display:block;}
+  .step-body{flex:1;}
+  .step-body.done{opacity:0.45;}
+  .step-title{font-weight:600;font-size:15.5px;margin-bottom:3px;}
+  .step-text{font-size:14.5px;color:var(--espresso-soft);}
+  .step-text b{color:var(--espresso);font-weight:600;}
+
+  .timer-row{margin-top:9px;display:flex;align-items:center;gap:10px;}
+  .timer-btn{
+    font-size:12.5px;font-weight:600;
+    border:1px solid var(--gold);color:var(--gold);
+    background:transparent;
+    padding:6px 12px;border-radius:100px;
+    cursor:pointer;
+  }
+  .timer-btn.running{background:var(--gold);color:var(--card);}
+  .timer-display{font-variant-numeric:tabular-nums;font-size:13.5px;color:var(--espresso-soft);}
+  .timer-display.done{color:var(--wine);font-weight:600;}
+
+  .notes{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    font-size:14px;
+    color:var(--espresso-soft);
+  }
+  .notes b{color:var(--espresso);}
+
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:var(--espresso-soft);
+    padding:24px 18px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Panettone</h1>
+  <p>mit Frischhefe, ohne Lievito Madre — ergibt 1× 1&nbsp;kg Panettone</p>
+</header>
+
+<div class="scale-bar">
+  <div class="scale-inner">
+    <span class="scale-label">Menge</span>
+    <div class="scale-controls">
+      <div class="scale-btn" id="minus">–</div>
+      <div class="scale-value" id="scaleVal">1×<small id="scaleHint">1 kg Form</small></div>
+      <div class="scale-btn" id="plus">+</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <span class="tag gold">Teig 1 · Primo impasto</span>
+    <div class="ing-card" id="ing-teig1"></div>
+  </section>
+
+  <section>
+    <span class="tag wine">Teig 2 · Secondo impasto</span>
+    <div class="ing-card" id="ing-teig2"></div>
+  </section>
+
+  <section>
+    <span class="tag gold">Früchte &amp; Aromen</span>
+    <div class="ing-card" id="ing-fruit"></div>
+  </section>
+
+  <section>
+    <h2>Zubereitung</h2>
+    <p class="section-sub">Schritte antippen, um sie abzuhaken. Timer starten, wenn nötig.</p>
+    <ul class="steps" id="steps"></ul>
+  </section>
+
+  <section>
+    <h2>Notizen</h2>
+    <div class="notes" id="notes"></div>
+  </section>
+
+  <footer>VERA · Panettone-Notizen · für den eigenen Gebrauch</footer>
+</div>
+
+<script>
+const state = { scale: 1 };
+
+const ingredients = {
+  teig1: [
+    {id:'mehl1', name:'Mehl (Manitoba, W350+)', base:300, unit:'g'},
+    {id:'hefe', name:'Frischhefe', base:12, unit:'g'},
+    {id:'wasser', name:'Wasser, lauwarm', base:100, unit:'ml'},
+    {id:'zucker1', name:'Zucker', base:70, unit:'g'},
+    {id:'butter1', name:'Butter, weich', base:90, unit:'g'},
+    {id:'eigelb1', name:'Eigelb (reiner Dotter)', base:90, unit:'g'},
+  ],
+  teig2: [
+    {id:'mehl2', name:'Mehl', base:100, unit:'g'},
+    {id:'zucker2', name:'Zucker', base:50, unit:'g'},
+    {id:'salz', name:'Salz', base:6, unit:'g'},
+    {id:'butter2', name:'Butter, weich', base:60, unit:'g'},
+    {id:'eigelb2', name:'Eigelb (reiner Dotter)', base:60, unit:'g'},
+    {id:'honig', name:'Honig', base:20, unit:'g'},
+  ],
+  fruit: [
+    {id:'vanille', name:'Vanilleschote', base:1, unit:'stk'},
+    {id:'orange', name:'Orange, nur Abrieb', base:1, unit:'stk'},
+    {id:'zitrone', name:'Zitrone, nur Abrieb', base:1, unit:'stk'},
+    {id:'schale', name:'Kandierte Orangenschale', base:100, unit:'g'},
+    {id:'rosinen', name:'Rosinen', base:100, unit:'g'},
+    {id:'rum', name:'Dunkler Rum', base:30, unit:'ml'},
+  ]
+};
+
+function fmt(base, unit){
+  const v = base * state.scale;
+  if(unit === 'stk'){
+    const fracs = {0:'0',0.5:'½',1:'1',1.5:'1½',2:'2',2.5:'2½',3:'3',3.5:'3½',4:'4',4.5:'4½',5:'5',6:'6',7:'7',8:'8',9:'9'};
+    const rounded = Math.round(v*2)/2;
+    return (fracs[rounded] !== undefined ? fracs[rounded] : rounded.toString()) + ' Stk';
+  }
+  const rounded = v < 10 ? Math.round(v*10)/10 : Math.round(v);
+  return rounded.toString().replace('.',',') + ' ' + unit;
+}
+
+function renderIngredients(){
+  ['teig1','teig2','fruit'].forEach(key=>{
+    const el = document.getElementById('ing-'+key);
+    el.innerHTML = ingredients[key].map(i=>`
+      <div class="ing-row">
+        <span>${i.name}</span>
+        <span class="ing-amt">${fmt(i.base, i.unit)}</span>
+      </div>`).join('');
+  });
+}
+
+function updateScaleLabel(){
+  document.getElementById('scaleVal').innerHTML =
+    state.scale.toString().replace('.',',') + '×<small id="scaleHint">' +
+    (state.scale===1 ? '1 kg Form' : Math.round(state.scale*1000) + ' g Teig') + '</small>';
+}
+
+document.getElementById('minus').addEventListener('click', ()=>{
+  if(state.scale > 0.5){ state.scale = Math.round((state.scale-0.5)*10)/10; renderIngredients(); updateScaleLabel(); }
+});
+document.getElementById('plus').addEventListener('click', ()=>{
+  if(state.scale < 3){ state.scale = Math.round((state.scale+0.5)*10)/10; renderIngredients(); updateScaleLabel(); }
+});
+
+renderIngredients();
+updateScaleLabel();
+
+const steps = [
+  {t:'Rosinen einweichen', text:'Rosinen in den Rum einlegen, mindestens 30 Min. ziehen lassen, über Nacht ist noch besser. Vor Gebrauch gut abtropfen.', timer:1800},
+  {t:'Primo impasto: Grundteig kneten', text:'Mehl in die Schüssel geben, Frischhefe darin auflösen, Wasser und Zucker zugeben. Auf niedriger Stufe zu einem glatten, noch festen Teig verkneten.', timer:180},
+  {t:'Butter und Eigelb einkneten', text:'Die Butter in drei Portionen einkneten, jede Portion vollständig aufnehmen lassen, bevor die nächste dazukommt. Dann das Eigelb langsam einlaufen lassen und weiterkneten, bis der Teig glatt und elastisch ist und beim Fenstertest reisst, statt zu bröckeln.', timer:900},
+  {t:'Stockgare Teig 1', text:'Zugedeckt bei 26–28°C gehen lassen, bis sich der Teig verdreifacht hat. Für mehr Aroma: stattdessen 12–16 Std. in den Kühlschrank stellen und danach vor dem Weiterarbeiten auf Raumtemperatur kommen lassen.', timer:7200},
+  {t:'Secondo impasto: Mehl einarbeiten', text:'Mehl zugeben und vollständig einkneten.', timer:180},
+  {t:'Zucker, Salz und Butter einkneten', text:'Zucker und Salz einkneten. Dann Butter in kleinen Portionen zugeben und jeweils vollständig einarbeiten, bevor die nächste Portion folgt.', timer:600},
+  {t:'Eigelb und Aromen einkneten', text:'Eigelb in zwei bis drei Portionen einarbeiten. Danach Honig, das ausgekratzte Mark der Vanilleschote sowie Orangen- und Zitronenabrieb zugeben. Weiterkneten, bis der Teig glatt, glänzend und straff elastisch ist.', timer:1200},
+  {t:'Früchte unterheben', text:'Abgetropfte Rosinen und kandierte Orangenschale von Hand oder auf niedrigster Stufe kurz unterheben, nur bis alles gleichmässig verteilt ist.', timer:120},
+  {t:'Teigruhe', text:'Zugedeckt 30 Min. ruhen lassen, damit sich das Gluten entspannt.', timer:1800},
+  {t:'Formen (Pirlare)', text:'Auf leicht bemehlter Fläche straff rundwirken: mehrfach unter Spannung falten und drehen, bis die Oberfläche glatt ist. In die Panettone-Papierform (1 kg) setzen.', timer:0},
+  {t:'Stückgare', text:'Bei 26–28°C gehen lassen – z.B. im Ofen mit Licht an und einer Schale warmem Wasser für Feuchtigkeit – bis der Teig 1–2 cm unter dem Formenrand steht.', timer:18000},
+  {t:'Kreuzschnitt und Buttertupfer', text:'Mit einer scharfen Klinge kreuzförmig einschneiden, die vier Lappen leicht nach aussen klappen und je ein kleines Stück kalte Butter in die Mitte legen.', timer:0},
+  {t:'Backen', text:'Im vorgeheizten Ofen bei 165°C Ober-/Unterhitze 50–55 Min. backen, bis die Kerntemperatur 92–94°C erreicht (Einstichthermometer verwenden). Bei zu starker Bräunung nach 25 Min. mit Alufolie abdecken.', timer:3300},
+  {t:'Kopfüber auskühlen', text:'Sofort nach dem Backen mit zwei langen Spiessen quer durch den Boden stechen und kopfüber aufhängen, z.B. zwischen zwei Stühlen, damit die Krume nicht zusammenfällt.', timer:28800},
+  {t:'Reifen lassen', text:'In Cellophan einschlagen und mindestens 24 Std. bei Raumtemperatur reifen lassen, bevor angeschnitten wird. Das Aroma entwickelt sich in dieser Zeit noch deutlich weiter.', timer:86400},
+];
+
+const stepsEl = document.getElementById('steps');
+
+function formatTime(s){
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  if(h>0) return `${h}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+steps.forEach((step, idx)=>{
+  const li = document.createElement('li');
+  li.className = 'step';
+  const hasTimer = step.timer > 0;
+  li.innerHTML = `
+    <div class="step-check" id="chk${idx}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <div class="step-body" id="body${idx}">
+      <div class="step-title">${idx+1}. ${step.t}</div>
+      <div class="step-text">${step.text}</div>
+      ${hasTimer ? `
+      <div class="timer-row">
+        <button class="timer-btn" id="tbtn${idx}">Timer starten (${formatTime(step.timer)})</button>
+        <span class="timer-display" id="tdisp${idx}"></span>
+      </div>` : ''}
+    </div>
+  `;
+  stepsEl.appendChild(li);
+
+  document.getElementById('chk'+idx).addEventListener('click', ()=>{
+    document.getElementById('chk'+idx).classList.toggle('done');
+    document.getElementById('body'+idx).classList.toggle('done');
+  });
+
+  if(hasTimer){
+    let remaining = step.timer;
+    let interval = null;
+    const btn = document.getElementById('tbtn'+idx);
+    const disp = document.getElementById('tdisp'+idx);
+    btn.addEventListener('click', ()=>{
+      if(interval){
+        clearInterval(interval); interval = null;
+        btn.classList.remove('running');
+        btn.textContent = 'Timer fortsetzen (' + formatTime(remaining) + ')';
+        return;
+      }
+      btn.classList.add('running');
+      btn.textContent = 'Pause';
+      interval = setInterval(()=>{
+        remaining--;
+        disp.textContent = formatTime(remaining);
+        if(remaining <= 0){
+          clearInterval(interval); interval = null;
+          disp.textContent = 'Fertig';
+          disp.classList.add('done');
+          btn.classList.remove('running');
+          btn.textContent = 'Timer neu starten';
+          remaining = step.timer;
+        }
+      }, 1000);
+    });
+  }
+});
+
+document.getElementById('notes').innerHTML = `
+  Eigelb-Mengen sind reiner Dotter: 90&nbsp;g entsprechen ca. 4–5 Eiern Grösse M, 60&nbsp;g ca. 3 Eiern.
+  Eier trennen, Dotter sammeln und abwiegen statt zu zählen, da die Grösse stark schwankt.<br><br>
+  Mit Frischhefe geht alles schneller als mit Lievito Madre, das Aroma bleibt aber einfacher und die Haltbarkeit kürzer
+  (ca. 5–7 statt 3+ Wochen). Der <b>Kühlschrank-Retard von Teig 1</b> bringt am meisten zusätzliche Tiefe.<br><br>
+  Trockenhefe als Alternative: ca. 1/3 der Frischhefemenge.<br><br>
+  Bei 0,5× oder 1,5× Skalierung: Vanille/Abrieb-Mengen auf halbe/anderthalb Stück gerundet – nach Geschmack anpassen.
+`;
+</script>
+
+</body>
+</html>
