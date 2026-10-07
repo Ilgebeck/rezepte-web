@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Burger Buns mit Tangzhong &amp; Poolish</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Burger Buns mit Tangzhong &amp; Poolish</h1>
+<p class="sub">Saftig, würzig, goldbraun. 25&nbsp;% Poolish (24&nbsp;h, 6&nbsp;°C), 6&nbsp;% Tangzhong-Roux, 10&nbsp;% Butter. Sesam fakultativ.</p>
+
+<section>
+<h2>Teig berechnen</h2>
+<div class="panel">
+  <div class="regler"><label for="anz">Anzahl Buns</label><input id="anz" type="range" min="8" max="24" step="4" value="16"><output id="anzo"></output></div>
+  <div class="regler"><label for="gew">Stückgewicht</label><input id="gew" type="range" min="80" max="130" step="5" value="100"><output id="gewo"></output></div>
+  <p class="kennz" id="kennz"></p>
+  <p class="kennz" id="kapaz" style="margin-top:4px"></p>
+</div>
+</section>
+
+<section>
+<h2>Zeitplan und Küche</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="bk">Einschiessen am</label><input id="bk" type="datetime-local"></div>
+    <div><label for="rt">Küchentemperatur</label>
+      <select id="rt">
+        <option value="18">18 °C</option>
+        <option value="19">19 °C</option>
+        <option value="20">20 °C</option>
+        <option value="21" selected>21 °C</option>
+        <option value="22">22 °C</option>
+        <option value="23">23 °C</option>
+        <option value="24">24 °C</option>
+      </select>
+    </div>
+  </div>
+  <div class="check noprint"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="kw">Quooker CUBE (°C)</label><input id="kw" type="number" min="3" max="15" step="1" value="7"></div>
+    <div><label for="lw">Kaltwasser Leitung (°C)</label><input id="lw" type="number" min="3" max="25" step="1" value="10"></div>
+    <div><label for="tm">Teigtemperatur gemessen (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="nach dem Kneten"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Poolish (24 h, 6 °C)</h2>
+<div class="panel">
+<table id="ztPoolish"><tbody>
+  <tr><td class="cb"><input type="checkbox"></td><td>Weissmehl Typ 550</td><td class="menge" data-k="pM"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Wasser (zimmerwarm)</td><td class="menge" data-k="pW"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Frischhefe</td><td class="menge" data-k="pH"></td></tr>
+</tbody></table>
+<p style="font-size:.85rem;color:var(--grau);margin:8px 0 0">Zutaten verrühren, 1&nbsp;h bei Raumtemperatur anspringen lassen, dann 24&nbsp;h bei 6&nbsp;°C in den Kühlschrank.</p>
+</div>
+</section>
+
+<section>
+<h2>Tangzhong-Roux (1:5)</h2>
+<div class="panel">
+<table id="ztTang"><tbody>
+  <tr><td class="cb"><input type="checkbox"></td><td>Weissmehl Typ 550</td><td class="menge" data-k="tM"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Wasser (kalt, Quooker)</td><td class="menge" data-k="tW"></td></tr>
+</tbody></table>
+<p style="font-size:.85rem;color:var(--grau);margin:8px 0 0">Mehl klümpchenfrei in kaltem Wasser anrühren, unter ständigem Rühren auf 65–70&nbsp;°C erhitzen, bis der Roux eindickt (puddingartige Konsistenz). Auf Raumtemperatur abkühlen lassen. Kann bis 24&nbsp;h im Kühlschrank aufbewahrt werden.</p>
+</div>
+</section>
+
+<section>
+<h2>Hauptteig – Zutaten</h2>
+<div class="panel">
+<table id="ztHaupt"><tbody>
+  <tr class="gruppe"><td colspan="3">Flüssiges und Vorteig</td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Poolish (kalt, aus Kühlschrank)</td><td class="menge" data-k="poGes"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Tangzhong-Roux</td><td class="menge" data-k="tGes"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Wasser, <span data-k="wq"></span></td><td class="menge" data-k="hW"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Eier (ganz, leicht verquirlt)<br><small style="color:var(--grau)">ca. <span data-k="eiAnz"></span> Stück Grösse M</small></td><td class="menge" data-k="ei"></td></tr>
+  <tr class="gruppe"><td colspan="3">Trockenes</td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Weissmehl Typ 550 (Restmehl Hauptteig)</td><td class="menge" data-k="hM"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Vollmilchpulver</td><td class="menge" data-k="mp"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Zucker</td><td class="menge" data-k="zu"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Salz</td><td class="menge" data-k="sa"></td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Frischhefe (Hauptteig)</td><td class="menge" data-k="hH"></td></tr>
+  <tr class="gruppe"><td colspan="3">Fett (verzögert)</td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Butter, weich (nicht kalt!)</td><td class="menge" data-k="bu"></td></tr>
+  <tr class="gruppe"><td colspan="3">Garnitur</td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Ei + 1&nbsp;EL Wasser (Eistreiche)</td><td class="menge" style="font-weight:400">1 Stück</td></tr>
+  <tr><td class="cb"><input type="checkbox"></td><td>Sesam (fakultativ)</td><td class="menge" style="font-weight:400">nach Wunsch</td></tr>
+</tbody></table>
+<p class="kennz" style="margin-top:8px">Gesamtmehl (inkl. Poolish &amp; Tangzhong): <strong data-k="mGes"></strong> · Hydration: 70 % · Butter: 10 %</p>
+</div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte">
+  <li data-t="0"><div class="st"><h3>Poolish ansetzen (D–1, Abends)</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Poolish-Zutaten klümpchenfrei verrühren, 1&nbsp;h bei Raumtemperatur anspringen lassen, dann 24&nbsp;h bei 6&nbsp;°C kühlstellen. Der Poolish ist fertig, wenn die Oberfläche voller Blasen ist und leicht einsinkt.</p></li>
+  <li data-t="0"><div class="st"><h3>Tangzhong herstellen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p><span data-k="tM"></span> Mehl in <span data-k="tW"></span> kaltem Quooker-Wasser klümpchenfrei anrühren. Unter ständigem Rühren auf 65–70&nbsp;°C erhitzen bis der Roux eindickt. Auf Raumtemperatur abkühlen (oder bis zu 24&nbsp;h im Kühlschrank).</p></li>
+  <li data-t="3"><div class="st"><h3>Hauptteig – Phase 1: Kneten</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Poolish, Tangzhong, <span data-k="hW"></span> <span data-k="wq"></span>, <span data-k="ei"></span> Ei, <span data-k="hM"></span> Restmehl, <span data-k="mp"></span> Milchpulver, <span data-k="zu"></span> Zucker und <span data-k="hH"></span> Hefe in den Sunmix geben. 3&nbsp;Min. Stufe&nbsp;1 kneten (Autolyse-Phase ohne Salz).</p></li>
+  <li data-t="12"><div class="st"><h3>Salz einarbeiten und auskneten</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p><span data-k="sa"></span> Salz zugeben, 10–12&nbsp;Min. Stufe&nbsp;2 kneten. Teig sollte elastisch und leicht klebrig sein.</p></li>
+  <li data-t="5"><div class="st"><h3>Butter einarbeiten</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p><span data-k="bu"></span> weiche Butter in Stücken bei laufender Maschine (Stufe&nbsp;2) langsam zugeben. Weiterkneten bis der Teig glatt ist und den Fenstertest besteht (Total ca. 15–18&nbsp;Min. Knetzeit). Erwartete Teigtemperatur ca. <span data-k="dt"></span>.</p></li>
+  <li data-t="stock"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Teig in geölter Teigwanne, abgedeckt, ca. <span data-k="stock"></span> bei <span data-k="rt"></span>. Ziel: +50–60&nbsp;% Volumen. Nach 30&nbsp;Min. einmal Stretch&nbsp;&amp;&nbsp;Fold.</p></li>
+  <li data-t="15"><div class="st"><h3>Portionieren und Vorformen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Teig auf unbemehlter Arbeitsfläche in <span data-k="anz"></span> Stücke à ca. <span data-k="gew"></span> teilen. Jedes Stück straff rund schleifen (tight ball), 10–15&nbsp;Min. abgedeckt entspannen.</p></li>
+  <li data-t="stueck"><div class="st"><h3>Formen und Stückgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Jede Kugel auf ca. 8&nbsp;cm&nbsp;Ø flach drücken. Auf Backpapier legen, abgedeckt ca. <span data-k="stueck"></span> garen bis die Buns deutlich aufgegangen sind und auf Fingerdruck langsam zurückspringen. Ofen auf 200&nbsp;°C Umluft mit Klimagaren vorheizen.</p></li>
+  <li data-t="0"><div class="st"><h3>Bestreichen und Garnitur</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Eistreiche (1 Ei + 1&nbsp;EL Wasser) gleichmässig aufpinseln. Nach Wunsch Sesam aufstreuen. Buns zum Einfrieren: erst nach dem Auftauen bestreichen.</p></li>
+  <li data-t="bake"><div class="st"><h3>Backen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Einschiessen bei 200&nbsp;°C Umluft mit Dampf. Nach 8&nbsp;Min. Dampf abstellen, Ofentür kurz öffnen zum Abblasen. Bei 190&nbsp;°C weitere 6–8&nbsp;Min. bis goldbraun. Kerntemperatur 88–92&nbsp;°C. Bei zwei Blechen auf halber Zeit tauschen.</p></li>
+  <li data-t="20"><div class="st"><h3>Auskühlen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Mindestens 20&nbsp;Min. auf dem Gitter. Der Dampf im Innern muss entweichen – zu früh anschneiden ergibt gummige Buns.</p></li>
+</ol>
+
+<div class="hinweis">
+  <p><strong>Einfrieren</strong></p>
+  <p><strong>Empfohlen – fertig gebacken:</strong> Vollständig abgekühlt, einzeln in Frischhaltefolie einwickeln, dann in Gefrierbeutel. Hält 2–3 Monate. Auftauen bei Raumtemperatur (ca. 45&nbsp;Min.) oder 3&nbsp;Min. Mikrowelle mit feuchtem Tuch. Optional kurz im Ofen bei 150&nbsp;°C auffrischen.</p>
+  <p><strong>Alternativ – Teiglinge einfrieren:</strong> Nach dem Rundschleifen auf Blech schockfrosten (2&nbsp;h), dann in Beutel. Auftauen: 8&nbsp;h Kühlschrank, dann 90&nbsp;Min. Stückgare bei Raumtemperatur, dann normal backen.</p>
+</div>
+
+<div class="hinweis" style="margin-top:10px">
+  <p><strong>Zur Teigtemperatur und Garzeit</strong></p>
+  <p>Stückgare: ca. +9&nbsp;% Zeit pro Grad Küche unter 24&nbsp;°C. Stockgare: zusätzlich ca. +4,5&nbsp;% pro Grad Teigtemperatur unter 25&nbsp;°C. Die Poolish-Hefe ist bewusst tief (0,3&nbsp;% vom Poolish-Mehl), damit bei 24&nbsp;h/6&nbsp;°C keine Überfermentierung eintritt. Massgebend bleibt immer der Teig, nicht die Uhr.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
+  let D={stock:70,stueck:50,bake:16};
+
+  function rechnen(){
+    const anz=+$('#anz').value, gew=+$('#gew').value;
+    const T=+$('#rt').value;
+    const cube=$('#cube').checked;
+    const Tc=cube?Math.max(3,Math.min(15,+$('#kw').value||7)):Math.max(3,Math.min(25,+$('#lw').value||10));
+    $('#kw').closest('div').style.opacity=cube?1:.45;
+    $('#lw').closest('div').style.opacity=cube?.45:1;
+
+    // Baker's Math – Basis: Gesamtmehl
+    // Poolish: 25% Mehl, 100% Hydration, 0.3% Hefe
+    // Tangzhong: 6% Mehl, 30% Wasser (1:5)
+    // Hauptteig: 69% Restmehl, 10% Ei, 10% Butter, 8% Zucker, 4% Milchpulver, 1.8% Salz, 2% Hefe
+    // Total Wasser: 70% des Gesamtmehls (inkl. Poolish- und Tangzhong-Wasser)
+    // Geschätztes Teiggewicht = Mehl * Faktor
+    // Faktor = 1 + 0.70(W) + 0.10(Ei) + 0.10(Bu) + 0.08(Zu) + 0.04(MP) + 0.018(Sa) = ~2.038
+    const FAKTOR = 1 + 0.70 + 0.10 + 0.10 + 0.08 + 0.04 + 0.018;
+    const zielTeig = anz * gew * 1.05; // 5% Überschuss für Verluste
+    const mGes = Math.round(zielTeig / FAKTOR);
+
+    const pM = Math.round(mGes * 0.25);
+    const pW = pM; // 100% Hydration Poolish
+    const pH = Math.max(0.3, Math.round(pM * 0.003 * 10) / 10); // 0.3% Hefe Poolish
+
+    const tM = Math.round(mGes * 0.06);
+    const tW = tM * 5; // 1:5 Tangzhong
+
+    const hM = mGes - pM - tM; // Restmehl Hauptteig
+
+    const wGes = Math.round(mGes * 0.70);
+    const hW = wGes - pW - tW; // Restwasser Hauptteig
+
+    const ei = Math.round(mGes * 0.10);
+    const bu = Math.round(mGes * 0.10);
+    const zu = Math.round(mGes * 0.08);
+    const mp = Math.round(mGes * 0.04);
+    const sa = Math.round(mGes * 0.018 * 10) / 10;
+    const hH = Math.round(mGes * 0.02 * 10) / 10;
+
+    const poGes = pM + pW + Math.round(pH);
+    const tGes = tM + tW;
+    const eiAnz = (Math.round(ei / 55 * 2) / 2).toLocaleString("de-CH");
+
+    // Teigtemperatur Schätzung: Bäckerformel vereinfacht
+    const dtCalc = (Tc + 4 * T + 12) / 5;
+    const tmv = parseFloat($('#tm').value);
+    const gemessen = !isNaN(tmv) && tmv >= 12 && tmv <= 32;
+    const DT = gemessen ? tmv : dtCalc;
+    const F = Math.pow(1.09, 24 - T), FT = Math.pow(1.045, 25 - DT);
+    D = {stock: r5(65 * F * FT), stueck: r5(50 * F), bake: 16};
+
+    const DTs = (Math.round(DT * 2) / 2).toLocaleString('de-CH') + ' °C';
+    $('#dth').textContent = (gemessen ? 'Gemessene Teigtemperatur ' + DTs + '.' : 'Erwartete Teigtemperatur ca. ' + DTs + '.')
+      + (DT < 21 ? ' Etwas kühl: Stockgare verlängert sich.' : '')
+      + (DT > 27 ? ' Recht warm: Teig im Auge behalten.' : '');
+
+    const Ts = T.toLocaleString('de-CH') + ' °C';
+    const wqLabel = (cube ? 'Quooker CUBE gekühlt, ca. ' : 'Leitung kalt, ca. ') + Tc + ' °C';
+
+    const totalTeig = mGes + wGes + ei + bu + zu + mp + Math.round(sa);
+    const sunmixWarn = totalTeig > 6000;
+
+    $('#anzo').textContent = anz + ' Stück';
+    $('#gewo').textContent = gew + ' g';
+    $('#kennz').textContent = 'Gesamtmehl ' + mGes + ' g · Teiggewicht ca. ' + totalTeig + ' g · Poolish-Anteil 25 % · Tangzhong-Anteil 6 %';
+    $('#kapaz').textContent = sunmixWarn
+      ? '⚠ Teiggewicht > 6 000 g: Charge aufteilen oder Anzahl Buns reduzieren!'
+      : 'Sunmix EVO 6: passt problemlos (max. 6 000 g).';
+    $('#kapaz').style.color = sunmixWarn ? 'var(--kruste)' : 'var(--grau)';
+
+    const v = {
+      pM: g(pM), pW: g(pW), pH: g1(pH),
+      tM: g(tM), tW: g(tW),
+      poGes: g(poGes), tGes: g(tGes),
+      hM: g(hM), hW: g(hW), wq: wqLabel,
+      ei: g(ei), eiAnz: eiAnz, bu: g(bu), zu: g(zu), mp: g(mp),
+      sa: g1(sa), hH: g1(hH),
+      mGes: mGes + ' g', dt: DTs, anz: anz, gew: gew + ' g',
+      stock: D.stock + ' Min.', stueck: D.stueck + ' Min.', rt: Ts
+    };
+    $$('[data-k]').forEach(e => { const k = e.dataset.k; if (k in v) e.textContent = v[k]; });
+    $$('#schritte>li').forEach(li => li._reset && li._reset());
+    plan();
+  }
+
+  function plan(){
+    const b = new Date($('#bk').value); if (isNaN(b)) return;
+    // Rückwärts vom Einschiessen
+    // bake: 16 Min, stueck: var, Formen+Vorheizen: 10 Min, Entspannen: 15 Min, Portionieren: 10 Min, stock: var, Kneten: 20 Min
+    const kneten = new Date(b - (D.stueck + 10 + 15 + 10 + D.stock + 20) * M);
+    const tangzhong = new Date(kneten - 30 * M); // 30 Min vorher Tangzhong (falls frisch)
+    const poolishStart = new Date(kneten - 24 * 60 * M);
+    const f = d => d.toLocaleDateString('de-CH', {weekday:'short', day:'numeric', month:'numeric'}) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    const rows = [
+      [poolishStart, 'Poolish ansetzen (D–1)'],
+      [tangzhong, 'Tangzhong herstellen (falls frisch)'],
+      [kneten, 'Kneten beginnen'],
+      [new Date(+kneten + (20 + D.stock) * M), 'Portionieren und Vorformen'],
+      [new Date(b - (D.stueck + 10) * M), 'Formen, Ofen vorheizen'],
+      [b, 'Einschiessen'],
+      [new Date(+b + (D.bake + 20) * M), 'Auskühlen ab']
+    ];
+    $('#plan').innerHTML = rows.map(([d, t]) => `<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  // Timer
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+
+  $$('#schritte>li').forEach(li=>{
+    const cb=li.querySelector('input[type=checkbox]'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+    if(li.dataset.t==='0') return;
+    const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+    const box=document.createElement('div'); box.className='timer';
+    box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+    li.appendChild(box);
+    const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+    let ende=null, rest=dur(), iv=null;
+    li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+    function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
+      if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+    bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+      else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+        try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+    br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+  });
+
+  $$('#ztPoolish input,#ztTang input,#ztHaupt input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+  $('#reset').onclick=()=>{
+    $$('#ztPoolish input,#ztTang input,#ztHaupt input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'));});
+  };
+
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  // Standardzeit: morgen Mittag
+  const d=new Date(Date.now()+24*60*M); d.setHours(12,0,0,0);
+  $('#bk').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  ['#anz','#gew','#bk','#rt'].forEach(s=>$(s).addEventListener('input',rechnen));
+  ['#kw','#lw','#tm'].forEach(s=>$(s).addEventListener('input',rechnen));
+  $('#cube').addEventListener('change',rechnen);
+  rechnen();
+})();
+</script>
+</body>
+</html>
