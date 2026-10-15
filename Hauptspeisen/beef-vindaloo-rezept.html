@@ -148,7 +148,7 @@ function amount(item, p, h) {
       return q === 0 ? '1 Prise' : frac(q) + ' TL';
     }
     case 'cm': return num(Math.max(1, Math.round(v * 2) / 2)) + ' cm';
-    case 'Zehen': return Math.max(1, Math.round(v)) + ' Zehen';
+    case 'Zehen': { const z = Math.max(1, Math.round(v)); return z + (z === 1 ? ' Zehe' : ' Zehen'); }
     default: return Math.max(1, Math.round(v)) + ' Stk.';
   }
 }
@@ -163,10 +163,14 @@ function itemRow(item) {
 }
 
 function meatKg(p) {
-  const v = 250 * p;
+  const v = (CFG.meatPerPerson || 250) * p;
   return v >= 1000 ? num(v / 1000) + ' kg' : v + ' g';
 }
 function potHint(p) {
+  if (CFG.hints) {
+    for (let i = 0; i < CFG.hints.length; i++) { if (p <= CFG.hints[i][0]) return CFG.hints[i][1]; }
+    return CFG.hints[CFG.hints.length - 1][1];
+  }
   if (p <= 5) return 'Schwerer Topf, ca. 3–4 l';
   if (p <= 8) return 'Grosser Topf, ab ca. 5 l';
   return 'Sehr grosser Topf (8 l+) oder auf zwei Töpfe verteilen; Fleisch portionsweise anbraten';
@@ -177,7 +181,7 @@ function render() {
   document.getElementById('p-out').textContent = p + (p === 1 ? ' Person' : ' Personen');
   document.getElementById('h-out').textContent = HEAT_LABELS[h];
   document.getElementById('h-desc').textContent = CFG.heatDesc[h];
-  document.getElementById('info').textContent = 'Fleisch gesamt: ' + meatKg(p) + ' · ' + potHint(p);
+  document.getElementById('info').textContent = (CFG.meatLabel || 'Fleisch gesamt') + ': ' + meatKg(p) + ' · ' + potHint(p);
 
   let html = '';
   let n = 0;
