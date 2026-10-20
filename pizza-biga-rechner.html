@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pizza mit Biga</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Pizza mit Biga</h1>
+<p class="sub">Für den Haushaltsofen mit Pizzastein auf 280 °C. Biga mit 55 % Hydration, Gärplan 24 bis 72 Stunden.</p>
+
+<section>
+<h2>Teig berechnen</h2>
+<div class="panel">
+  <div class="regler"><label for="n">Anzahl Pizzen</label><input id="n" type="range" min="1" max="20" step="1" value="4"><output id="no"></output></div>
+  <div class="regler"><label for="w">Teigling</label><input id="w" type="range" min="180" max="350" step="10" value="280"><output id="wo"></output></div>
+  <div class="regler"><label for="h">Hydration</label><input id="h" type="range" min="60" max="72" step="1" value="70"><output id="ho"></output></div>
+  <div class="regler"><label for="bs">Biga-Anteil</label><input id="bs" type="range" min="0" max="3" step="1" value="2"><output id="bso"></output></div>
+  <div class="regler"><label for="rt">Küche</label><input id="rt" type="range" min="18" max="25" step="0.5" value="21"><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="oil" checked><span>Olivenöl 2 % (zartere Kruste, bräunt bei 280 °C besser)</span></div>
+  <div class="check noprint"><input type="checkbox" id="malt" checked><span>Backmalz oder Zucker 1 % (Bräunung im Haushaltsofen)</span></div>
+  <div class="check noprint"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="kw">Quooker CUBE (°C)</label><input id="kw" type="number" min="3" max="15" step="1" value="7"></div>
+    <div><label for="lw">Kaltwasser Leitung (°C)</label><input id="lw" type="number" min="3" max="25" step="1" value="10"></div>
+  </div>
+  <p class="kennz" id="kennz"></p>
+</div>
+</section>
+
+<section>
+<h2>Zeitplan</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="eat">Pizza essen um</label><input id="eat" type="datetime-local"></div>
+    <div><label for="pl">Gärplan</label><select id="pl"><option value="24">ca. 24 Std.</option><option value="48" selected>ca. 48 Std.</option><option value="72">ca. 72 Std.</option></select></div>
+  </div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="tm">Teigtemperatur gemessen (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="nach dem Kneten"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Zutaten</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis">
+  <p><strong>Zur Rezeptlogik</strong></p>
+  <p>Biga mit 55 % Hydration und ca. 18 Std. Reifezeit in der Küche. Die Biga-Hefe ist auf 18 °C ausgelegt (ca. 0,9 %) und wird pro Grad wärmer um ca. 9 % reduziert. Bei weniger als 100 % Biga kommen Tipo 00 und eine kleine Menge Zusatzhefe in den Hauptteig. Salz 2,8 %, 2 % Teigverlust eingerechnet.</p>
+  <p>Bei 280 °C statt 450 °C bräunt die Pizza schlechter und trocknet länger aus; Olivenöl und Malz (bzw. Zucker) gleichen das aus. Akklimatisierung nach dem Kühlschrank mindestens 3 Std., bei kühlerer Küche länger. Erwartete Teigtemperatur nach Bäckerformel mit ca. 12 °C Reibungswärme des Spiralkneters. Richtwerte; massgebend bleibt der Teig.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
+  const pad=x=>String(x).padStart(2,'0'), M=60000, H=60*M, r5=x=>Math.round(x/5)*5;
+  const SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22}, LW={12:8,1:8,2:8,3:8,4:10,11:10,5:12,10:12,6:15,7:15,8:15,9:15};
+  const BS=[0.5,0.6,0.75,1], BH=0.55, S=0.028;
+  let manuell=false, manuellLW=false, D={app:180,kalt:1440};
+  const mon=()=>{const d=new Date($('#eat').value);return isNaN(d)?10:d.getMonth()+1;};
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  const zr=(t,k)=>`<tr><td class="cb"><input type="checkbox"></td><td>${t}</td><td class="menge" data-k="${k}"></td></tr>`;
+
+  function build(){
+    const kalt=+$('#pl').value>24;
+    const st=[
+      ['0','Biga ansetzen','<span data-k="bF"></span> Mehl, <span data-k="bW"></span> Wasser und <span data-k="bY"></span> Frischhefe (im Wasser aufgelöst) 1–2 Min. langsam zu einem groben, zottigen Teig verbinden, nicht glatt kneten. Abgedeckt ca. 18 Std. in der Küche (<span data-k="rt"></span>). Die Hefemenge ist auf Küchentemperatur und 55 % Biga-Hydration abgestimmt.'],
+      ['5','Kneten, Phase 1','Biga in Stücken<span data-k="extraTxt"></span> und 90 % des Wassers (<span data-k="wq"></span>) 5 Min. langsam kneten.'],
+      ['6','Kneten, Phase 2','<span data-k="sa"></span> Salz<span data-k="maltTxt"></span> zugeben, 4–5 Min. schnell kneten. Restwasser in kleinen Portionen einarbeiten (Bassinage)<span data-k="oilTxt"></span>. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters oben eintragen.'],
+      [kalt?'30':'60','Stockgare',kalt?'Ca. 30 Min. abgedeckt ruhen lassen, dann direkt zu Teiglingen formen.':'Ca. 60 Min. abgedeckt in der Küche ruhen lassen.'],
+      ['10','Teiglinge formen','In <span data-k="n"></span> Teiglinge à <span data-k="w"></span> teilen und straff rundschleifen. In geölte Pizzaboxen oder Dosen mit Deckel legen.'],
+      kalt?['kalt','Kühlschrank','Teiglinge <span data-k="kaltH"></span> bei 4–5 °C.']:null,
+      ['app',kalt?'Akklimatisieren':'Stückgare (Appretto)',kalt?'Ca. <span data-k="app"></span> vor dem Backen aus dem Kühlschrank nehmen und abgedeckt in der Küche gehen lassen. Die Teiglinge sollen sichtbar entspannt und aufgegangen sein und beim Fingerdrucktest langsam zurückfedern.':'Ca. <span data-k="app"></span> abgedeckt in der Küche gehen lassen, bis die Teiglinge sichtbar aufgegangen sind.'],
+      ['60','Ofen vorheizen','Pizzastein auf die zweitoberste Schiene, Ofen auf 280 °C Ober-/Unterhitze, mindestens 60 Min. vorheizen. Die Zeit läuft parallel zur Stück- bzw. Akklimatisierungsgare.'],
+      ['6','Backen','Teigling in Mehl (oder Semola) wenden, von der Mitte nach aussen ausdrücken, Rand nicht flach drücken. Belegen, einschiessen, 5–7 Min. backen. Für die letzte Minute auf Grill umschalten, damit Rand und Belag bräunen.']
+    ].filter(Boolean);
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    timers();
+  }
+
+  function rechnen(){
+    if(!manuell) $('#rt').value=SAISON[mon()]||21;
+    if(!manuellLW) $('#lw').value=LW[mon()];
+    const n=+$('#n').value, w=+$('#w').value, h=+$('#h').value/100, bs=BS[+$('#bs').value], pl=+$('#pl').value, kalt=pl>24;
+    const T=+$('#rt').value, oil=$('#oil').checked?0.02:0, malt=$('#malt').checked?0.01:0, cube=$('#cube').checked;
+    const yb=Math.max(0.0035,Math.min(0.011,0.009*Math.pow(1.09,18-T)));
+    const ex=bs<1?(kalt?0.0005:0.002):0;
+    const total=n*w*1.02, F=total/(1+h+S+oil+malt+yb*bs+ex);
+    const bF=F*bs, bW=bF*BH, W=F*h;
+    const Tc=cube?Math.max(3,Math.min(15,+$('#kw').value||7)):Math.max(3,Math.min(25,+$('#lw').value||10));
+    $('#kw').closest('div').style.opacity=cube?1:.45; $('#lw').closest('div').style.opacity=cube?.45:1;
+    const dtCalc=(T+T+Tc+12)/3, tmv=parseFloat($('#tm').value), gem=!isNaN(tmv)&&tmv>=12&&tmv<=32, DT=gem?tmv:dtCalc;
+    const app=kalt?r5(Math.max(180,180*Math.pow(1.09,24-T))*Math.pow(1.03,23-DT)):r5(240*Math.pow(1.09,24-T)*Math.pow(1.045,24-DT));
+    D={app:app,kalt:pl==48?24*60:48*60};
+    const Ts=T.toLocaleString('de-CH')+' °C', DTs=(Math.round(DT*2)/2).toLocaleString('de-CH')+' °C';
+    $('#no').textContent=n; $('#wo').textContent=w+' g'; $('#ho').textContent=Math.round(h*100)+' %'; $('#bso').textContent=Math.round(bs*100)+' %';
+    $('#rto').textContent=Ts;
+    $('#rth').textContent=manuell?'Manuell eingestellt':'Aus der Jahreszeit des Termins vorgeschlagen';
+    $('#kennz').textContent=`Teig total ${Math.round(total)} g (inkl. 2 % Verlust), Mehl ${Math.round(F)} g`;
+    $('#dth').textContent=(gem?'Gemessene Teigtemperatur '+DTs+', Gare danach berechnet.':'Erwartete Teigtemperatur ca. '+DTs+'.')
+      +(kalt?' Ziel für die Kühlschrankführung: 21–23 °C.':' Ziel: 23–25 °C.')+(DT>24&&kalt?' Eher warm: Teiglinge zügig kühlen.':'');
+    $('#ztb').innerHTML=grp('Biga (55 % Hydration)')+zr('Mehl, Pizzamehl stark (W 300–330) oder Manitoba','bF')+zr('Wasser, Leitung','bW')+zr('Frischhefe','bY')
+      +grp('Hauptteig')+(bs<1?zr('Mehl, Tipo 00','hF'):'')+zr('Wasser, <span data-k="wq"></span>','hW')+(ex?zr('Frischhefe zusätzlich','ex'):'')
+      +zr('Salz','sa')+(oil?zr('Olivenöl extra vergine','oe'):'')+(malt?zr('Backmalz (diastatisch) oder Zucker','ma'):'');
+    $$('#ztb input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+    const V={bF:g(bF),bW:g(bW),bY:g1(bF*yb),hF:g(F-bF),hW:g(W-bW),ex:g1(F*ex),sa:g1(F*S),oe:g(F*oil),ma:g1(F*malt),
+      wq:(cube?'Quooker CUBE gekühlt, ca. ':'Leitung kalt, ca. ')+Tc+' °C',rt:Ts,dt:DTs,n:n,w:w+' g',
+      extraTxt:bs<1?' mit '+g(F-bF)+' Tipo 00'+(ex?', '+g1(F*ex)+' Hefe':''):'',
+      maltTxt:malt?' und '+g1(F*malt)+' Malz':'',oilTxt:oil?', zuletzt '+g(F*oil)+' Olivenöl langsam einarbeiten':'',
+      kaltH:(pl==48?'ca. 24 Std.':'ca. 48 Std.'),app:(app>=60?Math.floor(app/60)+' Std. '+(app%60?app%60+' Min.':''):app+' Min.').trim()};
+    $$('[data-k]').forEach(e=>{e.textContent=V[e.dataset.k]??''});
+    $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+    plan();
+  }
+
+  function plan(){
+    const e=new Date($('#eat').value); if(isNaN(e)) return;
+    const kalt=+$('#pl').value>24;
+    const bake=new Date(e-15*M), appStart=new Date(bake-D.app*M);
+    const balls=kalt?new Date(appStart-D.kalt*M):new Date(appStart-10*M);
+    const knet=new Date(balls-(kalt?45:75)*M), biga=new Date(knet-18*H);
+    const f=d=>d.toLocaleDateString('de-CH',{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    const rows=[[biga,'Biga ansetzen'],[knet,'Kneten beginnen'],[balls,kalt?'Teiglinge in den Kühlschrank':'Teiglinge formen'],
+      kalt?[appStart,'Teiglinge aus dem Kühlschrank']:null,[new Date(bake-60*M),'Ofen mit Stein vorheizen'],[bake,'Erste Pizza einschiessen']].filter(Boolean);
+    $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0'||li.dataset.t==='kalt') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+      li.appendChild(box);
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let ende=null, rest=0, iv=null;
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+        else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+    });
+  }
+
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  const d=new Date(Date.now()+50*H);
+  $('#eat').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T19:00`;
+  $('#rt').addEventListener('input',()=>{manuell=true;rechnen();});
+  $('#lw').addEventListener('input',()=>{manuellLW=true;rechnen();});
+  $('#pl').addEventListener('change',()=>{build();rechnen();});
+  ['#n','#w','#h','#bs','#oil','#malt','#eat','#cube','#kw','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
+  build(); rechnen();
+})();
+</script>
+</body>
+</html>
