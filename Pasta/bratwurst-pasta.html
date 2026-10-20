@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasta mit Bratwurst – Varianten</title>
+<style>
+  :root {
+    --bg: #faf6ef;
+    --card: #ffffff;
+    --ink: #2b2420;
+    --muted: #7a6e64;
+    --accent: #b5471f;
+    --accent-soft: #f6e3d9;
+    --line: #e6dccf;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 20px 16px 64px; }
+  .back { font-size: 0.9rem; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  h1 { font-size: 1.9rem; margin: 10px 0 4px; letter-spacing: -0.01em; }
+  .lead { color: var(--muted); margin: 0 0 22px; }
+
+  /* Kacheln */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .tile {
+    text-align: left;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 14px 12px;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .tile:hover { border-color: #d3b9a5; transform: translateY(-1px); }
+  .tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tile[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 2px 10px rgba(181, 71, 31, .18);
+  }
+  .tile .emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .tile .t-name { font-weight: 650; display: block; line-height: 1.25; }
+  .tile .t-tag { font-size: 0.82rem; color: var(--muted); display: block; margin-top: 4px; }
+  .badge {
+    display: inline-block; font-size: 0.7rem; font-weight: 650; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+  }
+
+  /* Regler */
+  .controls {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 28px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 620px) { .controls { grid-template-columns: 1fr; } }
+  .ctl label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; }
+  .ctl output { color: var(--accent); font-weight: 700; }
+  input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
+  .scale { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
+
+  /* Rezept */
+  .hint {
+    text-align: center; color: var(--muted); padding: 40px 12px;
+    border: 2px dashed var(--line); border-radius: var(--radius);
+  }
+  .recipe { display: none; }
+  .recipe.show { display: block; }
+  .recipe h2 { font-size: 1.5rem; margin: 0 0 6px; }
+  .meta { color: var(--muted); margin: 0 0 18px; }
+  .meta span + span::before { content: "·"; margin: 0 8px; }
+  .grid { display: grid; grid-template-columns: minmax(240px, 1fr) 1.6fr; gap: 28px; align-items: start; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; gap: 20px; } }
+  h3 { font-size: 1.05rem; margin: 0 0 10px; break-after: avoid; page-break-after: avoid; }
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px;
+  }
+  .ing { list-style: none; margin: 0; padding: 0; }
+  .ing li { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px dotted var(--line); }
+  .ing li:last-child { border-bottom: 0; }
+  .ing .amt { min-width: 74px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .ing li.head { display: block; font-weight: 700; color: var(--accent); padding-top: 12px; border-bottom: 0; font-size: .85rem; text-transform: uppercase; letter-spacing: .04em; }
+  .ing li.head:first-child { padding-top: 0; }
+  .opt { color: var(--muted); font-size: .85rem; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s; position: relative; padding: 0 0 14px 40px;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tip {
+    margin-top: 8px; padding: 12px 14px; background: var(--accent-soft);
+    border-left: 4px solid var(--accent); border-radius: 8px;
+  }
+  .tip strong { color: var(--accent); }
+
+  @media print {
+    body { background: #fff; }
+    .tiles, .controls, .back, .hint { display: none !important; }
+    .panel { border: 0; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← Alle Rezepte</a>
+  <h1>Pasta mit Bratwurst</h1>
+  <p class="lead">Grobe Schweinsbratwurst aus der Haut gelöst: sieben Varianten. Variante wählen, Personenzahl einstellen.</p>
+
+  <div class="tiles" id="tiles" role="group" aria-label="Variante wählen"></div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="persons">Personen <output id="personsOut">2</output></label>
+      <input type="range" id="persons" min="2" max="12" step="1" value="2">
+      <div class="scale"><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span></div>
+    </div>
+    <div class="ctl">
+      <label for="heat">Schärfe <output id="heatOut">mild</output></label>
+      <input type="range" id="heat" min="0" max="3" step="1" value="1">
+      <div class="scale"><span>ohne</span><span>mild</span><span>mittel</span><span>scharf</span></div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">Wähle oben eine Variante, dann erscheint das Rezept.</div>
+  <article class="recipe" id="recipe" aria-live="polite"></article>
+</div>
+
+<script>
+(function () {
+  // Alle Mengen gelten für 2 Personen. chili: true = wird vom Schärferegler gesteuert.
+  const R = [
+    {
+      id: "broccoli", emoji: "🥦",
+      name: "Orecchiette mit Broccoli",
+      tag: "Apulische Art, ohne Tomate",
+      time: "ca. 35 Min.",
+      intro: "Der Broccoli wird bewusst weich gekocht und zerfällt zur Sauce. Die Bratwurst liefert Fett und Würze.",
+      ing: [
+        { n: "Orecchiette oder Strozzapreti", a: 200, u: "g" },
+        { n: "Broccoli (Strunk geschält und mitverwendet)", a: 400, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Olivenöl", a: 4, u: "EL" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Fenchelsamen, leicht angestossen", a: 1, u: "TL" },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Sardellenfilet", a: 1, u: "Stk", opt: true },
+        { n: "Bio-Zitrone, nur der Abrieb", a: 0.5, u: "Stk" },
+        { n: "Pecorino oder Parmesan, gerieben", a: 40, u: "g" },
+        { n: "Paniermehl für Pangrattato", a: 2, u: "EL", opt: true }
+      ],
+      steps: [
+        "Reichlich Wasser aufkochen (ca. 10 g Salz pro Liter). Broccoli in Röschen teilen, den geschälten Strunk in Scheiben schneiden.",
+        "Brät in Stückchen zupfen und in 1 EL Öl bei hoher Hitze 2–3 Minuten ohne Rühren anbraten, bis er Röststoffe ansetzt. Dann wenden und krümelig braten. Fenchelsamen zugeben und 1 Minute mitrösten.",
+        "Broccoli ins Salzwasser geben und 4–5 Minuten kochen, bis er sehr weich ist. Mit der Schaumkelle herausheben, das Wasser für die Pasta behalten.",
+        "Pasta in dasselbe Wasser geben und 1–2 Minuten kürzer als auf der Packung angegeben kochen. Eine Tasse Pastawasser abschöpfen.",
+        "Optional Pangrattato: Paniermehl in 1 EL Öl goldbraun rösten, salzen.",
+        "Knoblauch, Chili und Sardelle zur Wurst geben und 1 Minute braten. Broccoli zugeben und mit der Gabel grob zerdrücken, sodass ein Teil zerfällt und die Sauce bindet.",
+        "Pasta mit ca. 100 ml Pastawasser (bei 2 Personen) in die Pfanne geben und 1–2 Minuten kräftig schwenken, bis alles cremig am Teig haftet.",
+        "Vom Herd nehmen, Zitronenabrieb, restliches Olivenöl und Käse unterrühren. Mit Pangrattato bestreuen."
+      ],
+      tip: "Der Broccoli darf ruhig überkocht wirken, nur so entsteht die Sauce. Mit Cime di rapa statt Broccoli wird es die originale apulische Version."
+    },
+    {
+      id: "klassik", emoji: "🍅",
+      name: "Bratwurst-Tomaten-Pasta mit Erbsen",
+      tag: "Die klassische Variante",
+      time: "ca. 40 Min.",
+      intro: "Krümelig angebratenes Brät, Fenchelsamen und Wein geben der Tomatensauce Tiefe. Die Erbsen kommen ganz zum Schluss.",
+      ing: [
+        { n: "Rigatoni oder Orecchiette", a: 200, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 0.5, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Fenchelsamen", a: 1, u: "TL" },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Rosmarin oder Salbei", a: 1, u: "Zweig" },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "Dosentomaten, von Hand zerdrückt", a: 400, u: "g" },
+        { n: "TK-Erbsen", a: 100, u: "g" },
+        { n: "Parmesan oder Pecorino", a: 40, u: "g" }
+      ],
+      steps: [
+        "Brät in Stückchen zupfen und in Öl bei hoher Hitze 2–3 Minuten ohne Rühren anbraten, dann krümelig braten, bis er Farbe hat. Fenchelsamen mitrösten.",
+        "Zwiebel zugeben und 3 Minuten weich dünsten. Knoblauch, Chili und Kräuter 1 Minute mitbraten.",
+        "Mit Wein ablöschen und fast vollständig einkochen lassen. Tomaten zugeben und 15–20 Minuten bei mittlerer Hitze köcheln, bis die Sauce dickflüssig ist. Mit Salz abschmecken, bei säuerlichen Tomaten eine Prise Zucker.",
+        "Pasta in Salzwasser 1–2 Minuten kürzer als angegeben kochen, eine Tasse Pastawasser abschöpfen.",
+        "Erbsen 2 Minuten vor Ende in die Sauce geben. Pasta mit etwas Pastawasser in die Sauce rühren und 1–2 Minuten schwenken, bis alles gebunden ist.",
+        "Mit Käse und einem Faden Olivenöl servieren."
+      ],
+      tip: "Die Sauce lässt sich gut vorbereiten. Mit Dosentomaten ergibt sie leicht die doppelte Menge, der Rest hält im Kühlschrank 3 Tage und lässt sich einfrieren."
+    },
+    {
+      id: "rose", emoji: "🌸",
+      name: "Rosé-Variante mit Mascarpone",
+      tag: "Cremig, passt gut zu Erbsen",
+      time: "ca. 40 Min.",
+      intro: "Tomaten-Bratwurst-Sauce mit Erbsen, am Schluss mit Mascarpone abgerundet. Die Säure der Tomaten wird weicher.",
+      ing: [
+        { n: "Rigatoni oder Orecchiette", a: 200, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 0.5, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Fenchelsamen", a: 1, u: "TL" },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "Dosentomaten, von Hand zerdrückt", a: 300, u: "g" },
+        { n: "TK-Erbsen", a: 100, u: "g" },
+        { n: "Mascarpone (oder Rahm)", a: 50, u: "g" },
+        { n: "Parmesan", a: 40, u: "g" },
+        { n: "Basilikum", a: 1, u: "Handvoll" }
+      ],
+      steps: [
+        "Brät in Stückchen zupfen, in Öl bei hoher Hitze krümelig und kräftig braun anbraten. Fenchelsamen mitrösten.",
+        "Zwiebel 3 Minuten mitdünsten, Knoblauch und Chili 1 Minute zugeben. Mit Wein ablöschen und fast vollständig einkochen.",
+        "Tomaten zugeben und 15 Minuten köcheln, bis die Sauce dick ist.",
+        "Pasta in Salzwasser 1–2 Minuten kürzer als angegeben kochen, eine Tasse Pastawasser abschöpfen.",
+        "Erbsen 2 Minuten in der Sauce garen. Vom Herd ziehen und Mascarpone unterrühren, bis die Sauce einheitlich rosa ist.",
+        "Pasta mit etwas Pastawasser in die Sauce geben, 1–2 Minuten schwenken. Mit Parmesan und Basilikum servieren."
+      ],
+      tip: "Mascarpone erst nach dem Kochen einrühren, sonst kann die Sauce körnig werden."
+    },
+    {
+      id: "weiss", emoji: "🍋",
+      name: "Weiss mit Ricotta, Zitrone und Erbsen",
+      tag: "Ohne Tomate, frisch und leicht",
+      time: "ca. 25 Min.",
+      intro: "Eine helle Variante: Ricotta und Pastawasser bilden eine zarte Sauce, Zitrone und Kräuter halten sie frisch.",
+      ing: [
+        { n: "Orecchiette oder Conchiglie", a: 200, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Schalotte, fein gehackt", a: 1, u: "Stk" },
+        { n: "Knoblauch", a: 1, u: "Zehe" },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Weisswein", a: 50, u: "ml", opt: true },
+        { n: "TK-Erbsen", a: 150, u: "g" },
+        { n: "Ricotta", a: 120, u: "g" },
+        { n: "Bio-Zitrone (Abrieb und Saft)", a: 1, u: "Stk" },
+        { n: "Minze oder Basilikum", a: 1, u: "Handvoll" },
+        { n: "Pecorino oder Parmesan", a: 40, u: "g" }
+      ],
+      steps: [
+        "Brät in Stückchen zupfen und in Öl bei hoher Hitze krümelig und goldbraun braten.",
+        "Schalotte, Knoblauch und Chili 2 Minuten mitbraten. Optional mit Wein ablöschen und einkochen.",
+        "Pasta in Salzwasser 1–2 Minuten kürzer als angegeben kochen. Erbsen in den letzten 2 Minuten mitkochen. Eine Tasse Pastawasser abschöpfen.",
+        "Ricotta in einer Schüssel mit Zitronenabrieb, 2–3 EL Zitronensaft und etwas Pastawasser glattrühren.",
+        "Pasta und Erbsen zur Wurst in die Pfanne geben, vom Herd nehmen, Ricotta unterheben und mit Pastawasser cremig schwenken.",
+        "Mit Kräutern, Käse und Pfeffer servieren."
+      ],
+      tip: "Zitronensaft nach und nach zugeben und abschmecken, die Säure der Zitronen schwankt stark."
+    },
+    {
+      id: "fenchel", emoji: "🍊",
+      name: "Fenchel und Orange",
+      tag: "Mit oder ohne Tomate",
+      time: "ca. 40 Min.",
+      intro: "Fenchel und Bratwurst sind ein klassisches Paar. Orangenabrieb gibt eine helle, leicht süsse Note.",
+      ing: [
+        { n: "Rigatoni", a: 200, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Fenchelknolle, in dünne Streifen (Grün aufheben)", a: 1, u: "Stk" },
+        { n: "Olivenöl", a: 2, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 0.5, u: "Stk" },
+        { n: "Knoblauch", a: 1, u: "Zehe" },
+        { n: "Fenchelsamen", a: 1, u: "TL" },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "Dosentomaten (weglassen für die helle Variante)", a: 300, u: "g", opt: true },
+        { n: "Bio-Orange (Abrieb und etwas Saft)", a: 0.5, u: "Stk" },
+        { n: "Parmesan", a: 40, u: "g" }
+      ],
+      steps: [
+        "Brät in Stückchen zupfen und in 1 EL Öl krümelig braun braten, Fenchelsamen mitrösten. Aus der Pfanne nehmen und beiseitestellen.",
+        "Im verbliebenen Fett Fenchelstreifen 6–8 Minuten bei mittlerer Hitze anbraten, bis sie Farbe nehmen. Zwiebel, Knoblauch und Chili zugeben, 2 Minuten mitbraten.",
+        "Mit Wein ablöschen und einkochen. Tomaten zugeben (falls verwendet) und 10–15 Minuten köcheln. Ohne Tomate mit einer Kelle Pastawasser weiterarbeiten.",
+        "Pasta in Salzwasser 1–2 Minuten kürzer als angegeben kochen, Pastawasser abschöpfen.",
+        "Wurst zurück in die Pfanne geben, Pasta zugeben, mit Pastawasser 1–2 Minuten schwenken.",
+        "Vom Herd nehmen, Orangenabrieb und einen Spritzer Orangensaft unterrühren. Mit Parmesan und Fenchelgrün servieren."
+      ],
+      tip: "Orangenabrieb immer erst nach dem Kochen zugeben, sonst geht das Aroma verloren."
+    },
+    {
+      id: "peperoni", emoji: "🍆",
+      name: "Peperoni und Aubergine",
+      tag: "Süsslich-rauchig mit Basilikum",
+      time: "ca. 45 Min.",
+      intro: "Die Gemüse werden zuerst kräftig angebraten und dann mit Tomaten und Wurst zu einer dichten Sauce verbunden.",
+      ing: [
+        { n: "Penne oder Rigatoni", a: 200, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Aubergine, in 1-cm-Würfel", a: 1, u: "Stk" },
+        { n: "rote Peperoni, in Streifen", a: 1, u: "Stk" },
+        { n: "Olivenöl", a: 3, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 0.5, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Paprika geräuchert", a: 0.5, u: "TL", opt: true },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Dosentomaten, von Hand zerdrückt", a: 400, u: "g" },
+        { n: "Basilikum", a: 1, u: "Handvoll" },
+        { n: "Pecorino oder Ricotta salata", a: 40, u: "g" }
+      ],
+      steps: [
+        "Aubergine in 2 EL Öl bei hoher Hitze in einer grossen Pfanne portionsweise 6–8 Minuten braten, bis sie goldbraun ist. Salzen und herausnehmen.",
+        "Brät in Stückchen zupfen und in derselben Pfanne krümelig braun braten. Peperoni zugeben und 5 Minuten mitbraten.",
+        "Zwiebel, Knoblauch, Chili und Rauchpaprika 2 Minuten mitbraten. Tomaten zugeben und 15 Minuten köcheln.",
+        "Pasta in Salzwasser 1–2 Minuten kürzer als angegeben kochen, Pastawasser abschöpfen.",
+        "Aubergine zur Sauce geben. Pasta zugeben und mit etwas Pastawasser 1–2 Minuten schwenken.",
+        "Mit Basilikum, Käse und einem Faden Olivenöl servieren."
+      ],
+      tip: "Auberginen brauchen genug Fett und Hitze. Zu wenig Öl lässt sie schwammig und grau werden."
+    },
+    {
+      id: "ofen", emoji: "🧀",
+      name: "Ofenpasta mit Mozzarella",
+      tag: "Überbacken, ideal für Gäste",
+      time: "ca. 55 Min.",
+      intro: "Bratwurst-Tomaten-Sauce mit Erbsen, mit Mozzarella und Parmesan überbacken. Lässt sich gut vorbereiten.",
+      ing: [
+        { n: "Rigatoni", a: 220, u: "g" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 300, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 0.5, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Fenchelsamen", a: 1, u: "TL" },
+        { n: "Chili, getrocknet", a: 1, u: "Prise", chili: true },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "Dosentomaten, von Hand zerdrückt", a: 500, u: "g" },
+        { n: "TK-Erbsen", a: 100, u: "g" },
+        { n: "Mozzarella, gezupft", a: 125, u: "g" },
+        { n: "Parmesan, gerieben", a: 40, u: "g" },
+        { n: "Basilikum", a: 1, u: "Handvoll" }
+      ],
+      steps: [
+        "Ofen auf 200 °C Ober-/Unterhitze vorheizen. Eine Gratinform einfetten (bei 2 Personen ca. 20 × 20 cm).",
+        "Brät in Stückchen zupfen und in Öl krümelig und kräftig braun braten. Fenchelsamen mitrösten. Zwiebel, Knoblauch und Chili zugeben und 2 Minuten mitbraten.",
+        "Mit Wein ablöschen, einkochen, Tomaten zugeben und 15 Minuten köcheln. Salzen.",
+        "Pasta in Salzwasser 3 Minuten kürzer als angegeben kochen (sie gart im Ofen nach) und abgiessen.",
+        "Pasta und Erbsen unter die Sauce mischen, in die Form füllen. Mozzarella und Parmesan darauf verteilen.",
+        "15–20 Minuten backen, bis der Käse goldbraun blubbert. 5 Minuten ruhen lassen, mit Basilikum servieren."
+      ],
+      tip: "Die Sauce eher etwas flüssiger lassen, die Pasta nimmt im Ofen noch Flüssigkeit auf."
+    }
+  ];
+
+  const HEAT = [
+    { label: "ohne", f: 0 },
+    { label: "mild", f: 0.5 },
+    { label: "mittel", f: 1 },
+    { label: "scharf", f: 2 }
+  ];
+
+  const tilesEl = document.getElementById("tiles");
+  const recipeEl = document.getElementById("recipe");
+  const hintEl = document.getElementById("hint");
+  const persons = document.getElementById("persons");
+  const personsOut = document.getElementById("personsOut");
+  const heat = document.getElementById("heat");
+  const heatOut = document.getElementById("heatOut");
+  let current = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  // Zahlen schön formatieren, Brüche für Halbe
+  function fmtNum(v, unit) {
+    if (unit === "g" || unit === "ml") {
+      const step = v >= 200 ? 10 : 5;
+      return String(Math.round(v / step) * step);
+    }
+    const r = Math.round(v * 2) / 2;
+    const whole = Math.floor(r);
+    const half = r - whole === 0.5;
+    if (r === 0) return "½";
+    return (whole > 0 ? String(whole) : "") + (half ? "½" : "");
+  }
+
+  function unitLabel(u, amountText) {
+    const plural = !(amountText === "1" || amountText === "½");
+    switch (u) {
+      case "Zehe": return plural ? "Zehen" : "Zehe";
+      case "Prise": return plural ? "Prisen" : "Prise";
+      case "Zweig": return plural ? "Zweige" : "Zweig";
+      case "Handvoll": return plural ? "Handvoll" : "Handvoll";
+      case "Stk": return "Stk";
+      default: return u;
+    }
+  }
+
+  function renderTiles() {
+    tilesEl.innerHTML = R.map(r =>
+      '<button type="button" class="tile" data-id="' + r.id + '" aria-pressed="false">' +
+        (r.badge ? '<span class="badge">' + esc(r.badge) + '</span>' : '') +
+        '<span class="emoji" aria-hidden="true">' + r.emoji + '</span>' +
+        '<span class="t-name">' + esc(r.name) + '</span>' +
+        '<span class="t-tag">' + esc(r.tag) + '</span>' +
+      '</button>'
+    ).join("");
+  }
+
+  function renderRecipe() {
+    const r = R.find(x => x.id === current);
+    if (!r) { recipeEl.classList.remove("show"); hintEl.style.display = ""; return; }
+    hintEl.style.display = "none";
+    const p = parseInt(persons.value, 10);
+    const h = HEAT[parseInt(heat.value, 10)];
+    const k = p / 2;
+
+    const ingHtml = r.ing.map(i => {
+      if (i.chili) {
+        if (h.f === 0) return "";
+        const raw = Math.max(1, Math.round(i.a * k * h.f));
+        const t = String(raw);
+        return '<li><span class="amt">' + t + " " + unitLabel(i.u, t) + '</span><span>' + esc(i.n) + '</span></li>';
+      }
+      const t = fmtNum(i.a * k, i.u);
+      const u = unitLabel(i.u, t);
+      return '<li><span class="amt">' + t + " " + esc(u) + '</span><span>' +
+        esc(i.n) + (i.opt ? ' <span class="opt">(optional)</span>' : '') + '</span></li>';
+    }).join("");
+
+    const stepsHtml = r.steps.map(s => "<li>" + esc(s) + "</li>").join("");
+    const potNote = p > 6
+      ? '<div class="tip"><strong>Bei ' + p + ' Personen:</strong> Brät in zwei Pfannen oder in Portionen anbraten, sonst dünstet er statt zu bräunen. Für die Pasta einen grossen Topf mit entsprechend mehr Wasser verwenden.</div>'
+      : "";
+
+    recipeEl.innerHTML =
+      '<h2>' + r.emoji + " " + esc(r.name) + '</h2>' +
+      '<p class="meta"><span>' + p + ' Personen</span><span>' + esc(r.time) + '</span>' +
+        (h.f === 0 ? "" : '<span>Schärfe: ' + h.label + '</span>') + '</p>' +
+      '<p>' + esc(r.intro) + '</p>' +
+      '<div class="grid">' +
+        '<section class="panel"><h3>Zutaten</h3><ul class="ing">' + ingHtml + '</ul></section>' +
+        '<section class="panel"><h3>Zubereitung</h3><ol class="steps">' + stepsHtml + '</ol>' +
+          (r.tip ? '<div class="tip"><strong>Tipp:</strong> ' + esc(r.tip) + '</div>' : "") +
+          potNote +
+        '</section>' +
+      '</div>';
+    recipeEl.classList.add("show");
+  }
+
+  function select(id, updateHash) {
+    current = id;
+    tilesEl.querySelectorAll(".tile").forEach(t =>
+      t.setAttribute("aria-pressed", t.dataset.id === id ? "true" : "false"));
+    renderRecipe();
+    if (updateHash && history.replaceState) history.replaceState(null, "", "#" + id);
+  }
+
+  tilesEl.addEventListener("click", e => {
+    const t = e.target.closest(".tile");
+    if (!t) return;
+    select(t.dataset.id, true);
+    recipeEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  persons.addEventListener("input", () => { personsOut.textContent = persons.value; renderRecipe(); });
+  heat.addEventListener("input", () => { heatOut.textContent = HEAT[heat.value].label; renderRecipe(); });
+
+  renderTiles();
+  const fromHash = location.hash.replace("#", "");
+  if (R.some(r => r.id === fromHash)) select(fromHash, false);
+})();
+</script>
+</body>
+</html>
