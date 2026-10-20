@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lasagne-Variationen</title>
+<style>
+  :root {
+    --bg: #faf6ef;
+    --card: #ffffff;
+    --ink: #2b2420;
+    --muted: #7a6e64;
+    --accent: #b5471f;
+    --accent-soft: #f6e3d9;
+    --line: #e6dccf;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 20px 16px 64px; }
+  .back { font-size: 0.9rem; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  h1 { font-size: 1.9rem; margin: 10px 0 4px; letter-spacing: -0.01em; }
+  .lead { color: var(--muted); margin: 0 0 22px; }
+
+  .group-title {
+    font-size: 0.8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 8px;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .tile {
+    text-align: left;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 14px 12px;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .tile:hover { border-color: #d3b9a5; transform: translateY(-1px); }
+  .tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tile[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 2px 10px rgba(181, 71, 31, .18);
+  }
+  .tile .emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .tile .t-name { font-weight: 650; display: block; line-height: 1.25; }
+  .tile .t-tag { font-size: 0.82rem; color: var(--muted); display: block; margin-top: 4px; }
+
+  .controls {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin: 6px 0 22px;
+  }
+  .ctl label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; }
+  .ctl output { color: var(--accent); font-weight: 700; }
+  input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
+  .scale { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
+
+  .hint {
+    text-align: center; color: var(--muted); padding: 40px 12px;
+    border: 2px dashed var(--line); border-radius: var(--radius);
+  }
+  .recipe { display: none; }
+  .recipe.show { display: block; }
+  .recipe h2 { font-size: 1.5rem; margin: 0 0 6px; }
+  .meta { color: var(--muted); margin: 0 0 18px; }
+  .meta span + span::before { content: "·"; margin: 0 8px; }
+  .grid { display: grid; grid-template-columns: minmax(240px, 1fr) 1.6fr; gap: 28px; align-items: start; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; gap: 20px; } }
+  h3 { font-size: 1.05rem; margin: 0 0 10px; break-after: avoid; page-break-after: avoid; }
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px;
+  }
+  .ing { list-style: none; margin: 0; padding: 0; }
+  .ing li { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px dotted var(--line); }
+  .ing li:last-child { border-bottom: 0; }
+  .ing .amt { min-width: 84px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .ing li.head {
+    display: block; font-weight: 700; color: var(--accent); padding-top: 12px; border-bottom: 0;
+    font-size: .85rem; text-transform: uppercase; letter-spacing: .04em;
+    break-after: avoid; page-break-after: avoid;
+  }
+  .ing li.head:first-child { padding-top: 0; }
+  .opt { color: var(--muted); font-size: .85rem; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s; position: relative; padding: 0 0 14px 40px;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tip {
+    margin-top: 8px; padding: 12px 14px; background: var(--accent-soft);
+    border-left: 4px solid var(--accent); border-radius: 8px;
+  }
+  .tip strong { color: var(--accent); }
+
+  @media print {
+    body { background: #fff; }
+    .tiles, .group-title, .controls, .back, .hint { display: none !important; }
+    .panel { border: 0; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← Alle Rezepte</a>
+  <h1>Lasagne-Variationen</h1>
+  <p class="lead">Elf Varianten mit fertigen Lasagneplatten, alle ohne Basilikum. Variante wählen, Personenzahl einstellen.</p>
+
+  <div id="tilesWrap"></div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="persons">Personen <output id="personsOut">4</output></label>
+      <input type="range" id="persons" min="2" max="12" step="1" value="4">
+      <div class="scale"><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span></div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">Wähle oben eine Variante, dann erscheint das Rezept.</div>
+  <article class="recipe" id="recipe" aria-live="polite"></article>
+</div>
+
+<script>
+(function () {
+  // Alle Mengen gelten für 4 Personen (1 Form ca. 20 × 25 cm).
+  // n = Name, a = Menge, u = Einheit, opt = optional, t = Freitext statt Menge,
+  // int = ganze Zahl (mindestens 1), h = Zwischenüberschrift.
+
+  function bech(f) {
+    f = f || 1;
+    return [
+      { h: "Béchamel" },
+      { n: "Butter", a: 50 * f, u: "g" },
+      { n: "Mehl", a: 50 * f, u: "g" },
+      { n: "Milch", a: 600 * f, u: "ml" },
+      { n: "Salz, frisch geriebene Muskatnuss", t: "nach Belieben" }
+    ];
+  }
+  const BECH_STEP = "Béchamel: Butter schmelzen, Mehl 1 Minute unter Rühren anschwitzen, Milch nach und nach einrühren und 8–10 Minuten leise köcheln, bis die Sauce dick ist. Mit Salz und Muskat würzen.";
+  const BAKE = "Mit Alufolie abgedeckt 25 Minuten backen, dann ohne Folie weitere 15 Minuten, bis die Oberfläche goldbraun ist. 10 Minuten ruhen lassen, dann schneiden.";
+  const PLATTEN = { n: "Lasagneplatten (ohne Vorkochen)", a: 250, u: "g" };
+
+  const GROUPS = [
+    { title: "Klassiker", ids: ["klassik", "napoletana", "bianco"] },
+    { title: "Mit Wurst und Fleisch", ids: ["bratwurst", "pilz"] },
+    { title: "Vegetarisch", ids: ["kuerbis", "spinat", "melanzane", "radicchio"] },
+    { title: "Anders", ids: ["pesto", "lachs"] }
+  ];
+
+  const R = [
+    {
+      id: "klassik", emoji: "🥩",
+      name: "Lasagne al forno",
+      tag: "Ragù mit Béchamel und Parmesan",
+      time: "ca. 2 Std. 30 Min.",
+      intro: "Die klassische Lasagne aus der Emilia: langsam geschmortes Ragù, cremige Béchamel, viel Parmesan.",
+      ing: [
+        { h: "Ragù" },
+        { n: "Rindhackfleisch", a: 250, u: "g" },
+        { n: "Schweinehackfleisch", a: 250, u: "g" },
+        { n: "Zwiebel, fein gehackt", a: 1, u: "Stk" },
+        { n: "Karotte, fein gehackt", a: 1, u: "Stk" },
+        { n: "Staudensellerie, fein gehackt", a: 1, u: "Stange" },
+        { n: "Olivenöl", a: 2, u: "EL" },
+        { n: "Tomatenmark", a: 2, u: "EL" },
+        { n: "Weisswein oder Rotwein", a: 150, u: "ml" },
+        { n: "Dosentomaten", a: 400, u: "g" },
+        { n: "Milch", a: 100, u: "ml" },
+        { n: "Lorbeerblatt", a: 1, u: "Stk", int: true },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Parmesan, gerieben", a: 80, u: "g" },
+        { n: "Butterflocken für oben", a: 20, u: "g" }
+      ],
+      steps: [
+        "Zwiebel, Karotte und Sellerie im Olivenöl bei mittlerer Hitze 8–10 Minuten weich dünsten.",
+        "Hitze erhöhen, Hackfleisch zugeben und ohne ständiges Rühren krümelig und kräftig braun anbraten. Tomatenmark zugeben und 2 Minuten mitrösten.",
+        "Mit Wein ablöschen und fast vollständig einkochen. Tomaten, Milch und Lorbeer zugeben, salzen. Zugedeckt auf kleinster Stufe 1,5 Stunden köcheln, gelegentlich rühren. Lorbeer entfernen.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Eine Form dünn mit Ragù ausstreichen. Dann abwechselnd Platten, Ragù, Béchamel und Parmesan schichten. Mit Béchamel, Parmesan und Butterflocken abschliessen.",
+        BAKE
+      ],
+      tip: "Das Ragù schmeckt am nächsten Tag noch besser. Es lässt sich gut doppelt kochen und einfrieren."
+    },
+    {
+      id: "napoletana", emoji: "🍅",
+      name: "Napoletana",
+      tag: "Bällchen, Ricotta, Mozzarella",
+      time: "ca. 1 Std. 45 Min.",
+      intro: "Süditalienische Festtagslasagne: kleine Fleischbällchen, kräftige Tomatensauce, Ricotta und Mozzarella ohne Béchamel.",
+      ing: [
+        { h: "Bällchen" },
+        { n: "Rindhackfleisch", a: 300, u: "g" },
+        { n: "Ei", a: 1, u: "Stk", int: true },
+        { n: "Paniermehl", a: 3, u: "EL" },
+        { n: "Parmesan, gerieben", a: 30, u: "g" },
+        { n: "glatte Petersilie, gehackt", a: 1, u: "Handvoll" },
+        { n: "Knoblauch", a: 1, u: "Zehe" },
+        { h: "Tomatensauce" },
+        { n: "Olivenöl", a: 2, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 1, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Dosentomaten (ohne Basilikumzusatz)", a: 800, u: "g" },
+        { n: "Oregano, getrocknet", a: 1, u: "TL" },
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Ricotta", a: 250, u: "g" },
+        { n: "Mozzarella, gezupft oder gewürfelt", a: 250, u: "g" },
+        { n: "Parmesan, gerieben", a: 60, u: "g" },
+        { n: "hartgekochte Eier, in Scheiben", a: 2, u: "Stk", int: true, opt: true }
+      ],
+      steps: [
+        "Hackfleisch mit Ei, Paniermehl, Parmesan, Petersilie, gepresstem Knoblauch, Salz und Pfeffer gut vermengen. Haselnussgrosse Bällchen formen.",
+        "Bällchen in wenig Öl rundum 5–6 Minuten goldbraun anbraten, herausnehmen.",
+        "Zwiebel im selben Topf weich dünsten, Knoblauch kurz mitbraten. Tomaten und Oregano zugeben und 20 Minuten köcheln. Mit Salz abschmecken, Bällchen zurück in die Sauce geben.",
+        "Ricotta mit etwas Salz und Pfeffer glattrühren.",
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Sauce ausstreichen. Dann Platten, Sauce mit Bällchen, Ricotta, Mozzarella, Ei (falls verwendet) und Parmesan schichten, mit Sauce und Mozzarella abschliessen.",
+        BAKE
+      ],
+      tip: "Manche Dosentomaten enthalten Basilikum. Auf die Zutatenliste achten und Sorten ohne Zusatz wählen."
+    },
+    {
+      id: "bianco", emoji: "🤍",
+      name: "Ragù bianco",
+      tag: "Weisse Lasagne ohne Tomate",
+      time: "ca. 2 Std.",
+      intro: "Helles Ragù aus Kalb oder Schwein mit Weisswein, Salbei und viel Béchamel. Fein und mild.",
+      ing: [
+        { h: "Ragù" },
+        { n: "Kalb- oder Schweinehackfleisch", a: 500, u: "g" },
+        { n: "Zwiebel, fein gehackt", a: 1, u: "Stk" },
+        { n: "Karotte, fein gehackt", a: 1, u: "Stk" },
+        { n: "Staudensellerie, fein gehackt", a: 1, u: "Stange" },
+        { n: "Olivenöl", a: 2, u: "EL" },
+        { n: "Weisswein", a: 200, u: "ml" },
+        { n: "Gemüse- oder Fleischbrühe", a: 200, u: "ml" },
+        { n: "Salbeiblätter", a: 4, u: "Stk" },
+        ...bech(1.25),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Parmesan, gerieben", a: 80, u: "g" }
+      ],
+      steps: [
+        "Zwiebel, Karotte und Sellerie in Olivenöl 8 Minuten weich dünsten. Hackfleisch zugeben und krümelig, aber ohne starke Bräunung anbraten.",
+        "Mit Wein ablöschen und einkochen. Brühe und Salbei zugeben, salzen und zugedeckt 1 Stunde leise köcheln. Zum Schluss offen einkochen, bis es nicht mehr nass ist.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Ragù, Béchamel und Parmesan schichten, mit Béchamel und Parmesan abschliessen.",
+        BAKE
+      ],
+      tip: "Eine Prise Muskat im Ragù und etwas Zitronenabrieb auf die Béchamel geben der Lasagne Frische."
+    },
+    {
+      id: "bratwurst", emoji: "🌭",
+      name: "Bratwurst-Lasagne",
+      tag: "Mit Fenchelsamen und Erbsen",
+      time: "ca. 1 Std. 40 Min.",
+      intro: "Das Brät aus der Haut ersetzt das Hackfleisch. Fenchelsamen geben Würze, die Erbsen Süsse.",
+      ing: [
+        { h: "Sauce" },
+        { n: "grobe Schweinsbratwurst, aus der Haut gelöst", a: 400, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 1, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Fenchelsamen", a: 1, u: "TL" },
+        { n: "Rosmarin", a: 1, u: "Zweig" },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "Dosentomaten (ohne Basilikumzusatz)", a: 400, u: "g" },
+        { n: "TK-Erbsen", a: 150, u: "g" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Mozzarella, gezupft", a: 125, u: "g" },
+        { n: "Parmesan, gerieben", a: 60, u: "g" }
+      ],
+      steps: [
+        "Brät in Stückchen zupfen und in Öl bei hoher Hitze 2–3 Minuten ohne Rühren anbraten, dann krümelig braun braten. Fenchelsamen mitrösten.",
+        "Zwiebel 3 Minuten mitdünsten, Knoblauch und Rosmarin 1 Minute zugeben. Mit Wein ablöschen und fast vollständig einkochen. Tomaten zugeben und 15 Minuten köcheln. Rosmarin entfernen.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Erbsen unter die Sauce rühren. Form dünn mit Sauce ausstreichen, dann Platten, Sauce, Béchamel, Mozzarella und Parmesan schichten, mit Béchamel, Mozzarella und Parmesan abschliessen.",
+        BAKE
+      ],
+      tip: "Die Wurst ist bereits gewürzt. Vor dem Salzen der Sauce abschmecken."
+    },
+    {
+      id: "pilz", emoji: "🍄",
+      name: "Pilz, Schinken und Taleggio",
+      tag: "Herbstlich und würzig",
+      time: "ca. 1 Std. 30 Min.",
+      intro: "Gemischte Pilze, gekochter Schinken und Salbei, mit schmelzendem Taleggio statt Blauschimmelkäse.",
+      ing: [
+        { h: "Füllung" },
+        { n: "gemischte Pilze, in Scheiben", a: 500, u: "g" },
+        { n: "Butter", a: 30, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Schalotten, fein gehackt", a: 2, u: "Stk" },
+        { n: "Knoblauch", a: 1, u: "Zehe" },
+        { n: "Thymian", a: 4, u: "Zweig" },
+        { n: "Salbeiblätter, fein geschnitten", a: 6, u: "Stk" },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "gekochter Schinken, in Streifen", a: 150, u: "g" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Taleggio, in Scheiben", a: 150, u: "g" },
+        { n: "Parmesan, gerieben", a: 50, u: "g" }
+      ],
+      steps: [
+        "Pilze in zwei oder drei Portionen in Butter und Öl bei hoher Hitze scharf anbraten, bis das Wasser verdampft und sie Farbe haben. Erst am Schluss salzen.",
+        "Schalotten, Knoblauch, Thymian und Salbei zugeben und 2 Minuten mitbraten. Mit Wein ablöschen und einkochen. Schinken unterrühren.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Pilzmischung, Béchamel, Taleggio und Parmesan schichten, mit Béchamel, Taleggio und Parmesan abschliessen.",
+        BAKE
+      ],
+      tip: "Pilze nicht auf einmal in die Pfanne geben, sonst dünsten sie im eigenen Wasser und werden grau."
+    },
+    {
+      id: "kuerbis", emoji: "🎃",
+      name: "Kürbis und Salbei",
+      tag: "Hokkaido, Ricotta, Salbeibutter",
+      time: "ca. 1 Std. 15 Min.",
+      intro: "Süsslich und cremig. Das Kürbispurée wird zuerst eingedickt, damit die Lasagne nicht wässrig wird.",
+      ing: [
+        { h: "Füllung" },
+        { n: "Hokkaido-Purée", a: 400, u: "g" },
+        { n: "Schalotte, fein gehackt", a: 1, u: "Stk" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Ricotta", a: 250, u: "g" },
+        { n: "Salz, Pfeffer, Muskat", t: "nach Belieben" },
+        { h: "Salbeibutter" },
+        { n: "Butter", a: 50, u: "g" },
+        { n: "Salbeiblätter", a: 10, u: "Stk" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Parmesan, gerieben", a: 80, u: "g" },
+        { n: "Amaretti, zerbröselt", a: 2, u: "Stk", opt: true },
+        { n: "Haselnüsse, gehackt", a: 30, u: "g", opt: true }
+      ],
+      steps: [
+        "Purée in einer Pfanne bei mittlerer Hitze 12–15 Minuten unter Rühren eindicken, bis es fest und stumpf wirkt.",
+        "Schalotte in Öl weich dünsten, unter das Purée mischen. Ricotta unterrühren, mit Salz, Pfeffer und Muskat kräftig abschmecken.",
+        "Butter bei mittlerer Hitze bräunen, Salbei einlegen und knusprig werden lassen. Salbei herausnehmen und beiseitestellen, die Butter für oben aufbewahren.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Kürbismasse, Béchamel und Parmesan schichten, mit Béchamel und Parmesan abschliessen.",
+        BAKE,
+        "Zum Servieren mit Salbeibutter beträufeln, Salbei, Amaretti-Krume und Haselnüsse darüber geben."
+      ],
+      tip: "Das Purée vorher einzudicken ist entscheidend. Frisches Purée enthält zu viel Wasser."
+    },
+    {
+      id: "spinat", emoji: "🥬",
+      name: "Spinat-Ricotta",
+      tag: "Der vegetarische Klassiker",
+      time: "ca. 1 Std. 15 Min.",
+      intro: "Spinat und Ricotta mit Zitronenabrieb, hell und frisch unter einer goldenen Käsekruste.",
+      ing: [
+        { h: "Füllung" },
+        { n: "TK-Blattspinat, aufgetaut und gut ausgedrückt", a: 600, u: "g" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Knoblauch", a: 1, u: "Zehe" },
+        { n: "Ricotta", a: 250, u: "g" },
+        { n: "Ei", a: 1, u: "Stk", int: true },
+        { n: "Bio-Zitrone, nur der Abrieb", a: 0.5, u: "Stk" },
+        { n: "Salz, Pfeffer, Muskat", t: "nach Belieben" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Parmesan, gerieben", a: 80, u: "g" }
+      ],
+      steps: [
+        "Spinat sehr gut ausdrücken. Knoblauch in Öl kurz anbraten, Spinat zugeben und 3 Minuten mitbraten.",
+        "Spinat etwas abkühlen lassen, mit Ricotta, Ei und Zitronenabrieb mischen. Kräftig mit Salz, Pfeffer und Muskat würzen.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Spinatmasse, Béchamel und Parmesan schichten, mit Béchamel und Parmesan abschliessen.",
+        BAKE
+      ],
+      tip: "Spinat unbedingt gut ausdrücken, sonst wird die Lasagne wässrig."
+    },
+    {
+      id: "melanzane", emoji: "🍆",
+      name: "Melanzane",
+      tag: "Auberginen, Tomate, Mozzarella",
+      time: "ca. 1 Std. 30 Min.",
+      intro: "Auberginen im Ofen gebacken, mit Tomatensauce, Oregano und Mozzarella. Leichter als die Fleischvarianten.",
+      ing: [
+        { h: "Auberginen" },
+        { n: "Auberginen, in 1-cm-Scheiben", a: 2, u: "Stk" },
+        { n: "Olivenöl", a: 5, u: "EL" },
+        { h: "Tomatensauce" },
+        { n: "Olivenöl", a: 2, u: "EL" },
+        { n: "Zwiebel, fein gehackt", a: 1, u: "Stk" },
+        { n: "Knoblauch", a: 2, u: "Zehe" },
+        { n: "Dosentomaten (ohne Basilikumzusatz)", a: 800, u: "g" },
+        { n: "Oregano, getrocknet", a: 1, u: "TL" },
+        { n: "glatte Petersilie, gehackt", a: 1, u: "Handvoll" },
+        { h: "Zum Schichten" },
+        { n: "Lasagneplatten (ohne Vorkochen)", a: 200, u: "g" },
+        { n: "Mozzarella, gezupft", a: 250, u: "g" },
+        { n: "Parmesan, gerieben", a: 60, u: "g" }
+      ],
+      steps: [
+        "Ofen auf 220 °C Ober-/Unterhitze vorheizen. Auberginenscheiben auf zwei Blechen verteilen, mit Öl bestreichen, salzen und 20–25 Minuten backen, bis sie goldbraun sind. Ofen auf 180 °C stellen.",
+        "Zwiebel und Knoblauch in Öl weich dünsten. Tomaten und Oregano zugeben und 20 Minuten einkochen. Salzen, Petersilie unterrühren.",
+        "Form dünn mit Sauce ausstreichen. Dann Platten, Auberginen, Sauce, Mozzarella und Parmesan schichten, mit Sauce, Mozzarella und Parmesan abschliessen.",
+        BAKE
+      ],
+      tip: "Auberginen brauchen genug Öl und Hitze. Zu wenig lässt sie zäh und grau werden."
+    },
+    {
+      id: "radicchio", emoji: "🟣",
+      name: "Radicchio und Taleggio",
+      tag: "Leicht bitter und cremig",
+      time: "ca. 1 Std. 20 Min.",
+      intro: "Radicchio wird mit Rotwein geschmort und verliert dabei seine Schärfe. Walnüsse und Taleggio runden ab.",
+      ing: [
+        { h: "Füllung" },
+        { n: "Radicchio, in Streifen", a: 2, u: "Stk" },
+        { n: "Schalotten, fein gehackt", a: 2, u: "Stk" },
+        { n: "Olivenöl", a: 2, u: "EL" },
+        { n: "Rotwein", a: 100, u: "ml" },
+        { n: "Honig", a: 1, u: "TL" },
+        { n: "Thymian", a: 3, u: "Zweig" },
+        { n: "Walnüsse, grob gehackt", a: 50, u: "g" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Taleggio, in Scheiben", a: 200, u: "g" },
+        { n: "Parmesan, gerieben", a: 50, u: "g" }
+      ],
+      steps: [
+        "Schalotten in Öl weich dünsten. Radicchio und Thymian zugeben und 3 Minuten mitbraten, bis er zusammenfällt.",
+        "Mit Rotwein ablöschen, Honig zugeben, salzen und 8–10 Minuten schmoren, bis fast alle Flüssigkeit verdampft ist. Thymianzweige entfernen.",
+        BECH_STEP,
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Radicchio, Walnüsse, Taleggio, Béchamel und Parmesan schichten, mit Béchamel, Taleggio und Parmesan abschliessen.",
+        BAKE
+      ],
+      tip: "Wer es milder mag, nimmt Treviso (länglicher Radicchio) statt des runden."
+    },
+    {
+      id: "pesto", emoji: "🌱",
+      name: "Rucola-Pesto-Lasagne",
+      tag: "Ohne Basilikum, mit Kartoffeln",
+      time: "ca. 1 Std. 20 Min.",
+      intro: "Ligurische Idee, aber mit Rucola-Pesto statt Basilikumpesto. Kartoffeln und Bohnen machen sie sättigend.",
+      ing: [
+        { h: "Rucola-Pesto" },
+        { n: "Rucola", a: 100, u: "g" },
+        { n: "glatte Petersilie", a: 1, u: "Handvoll" },
+        { n: "Pinienkerne oder Mandeln, geröstet", a: 40, u: "g" },
+        { n: "Parmesan, fein gerieben", a: 40, u: "g" },
+        { n: "Knoblauch", a: 0.5, u: "Zehe" },
+        { n: "Olivenöl", a: 100, u: "ml" },
+        { n: "Zitronensaft", a: 1, u: "EL" },
+        { h: "Füllung" },
+        { n: "mehligkochende Kartoffeln", a: 300, u: "g" },
+        { n: "grüne Bohnen", a: 200, u: "g" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Parmesan, gerieben", a: 60, u: "g" }
+      ],
+      steps: [
+        "Pesto: Rucola, Petersilie, Nüsse, Parmesan, Knoblauch, Zitronensaft und die Hälfte des Öls pürieren, restliches Öl zugeben. Mit Salz abschmecken.",
+        "Kartoffeln schälen, in 3 mm dünne Scheiben schneiden und 5 Minuten in Salzwasser vorgaren, abgiessen. Bohnen in Stücke schneiden und 4 Minuten im selben Wasser blanchieren.",
+        BECH_STEP + " Die Hälfte des Pestos unter die abgekühlte Béchamel rühren.",
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Kartoffeln, Bohnen, Pesto-Béchamel und Parmesan schichten, mit Béchamel und Parmesan abschliessen.",
+        BAKE,
+        "Mit dem restlichen Pesto beträufelt servieren."
+      ],
+      tip: "Rucola-Pesto nicht erhitzen, sonst wird er bitter. Deshalb kommt der Rest erst nach dem Backen darauf."
+    },
+    {
+      id: "lachs", emoji: "🐟",
+      name: "Lachs und Spinat",
+      tag: "Helle Sauce mit Dill und Zitrone",
+      time: "ca. 1 Std. 10 Min.",
+      intro: "Frische Lachswürfel mit Spinat in Zitronen-Béchamel. Der Lachs gart im Ofen nur gerade durch.",
+      ing: [
+        { h: "Füllung" },
+        { n: "Lachsfilet, ohne Haut, in 2-cm-Würfel", a: 400, u: "g" },
+        { n: "TK-Blattspinat, aufgetaut und gut ausgedrückt", a: 400, u: "g" },
+        { n: "Schalotte, fein gehackt", a: 1, u: "Stk" },
+        { n: "Knoblauch", a: 1, u: "Zehe" },
+        { n: "Olivenöl", a: 1, u: "EL" },
+        { n: "Weisswein", a: 100, u: "ml" },
+        { n: "Dill, gehackt", a: 1, u: "Handvoll" },
+        { n: "Bio-Zitrone (Abrieb und Saft)", a: 1, u: "Stk" },
+        ...bech(),
+        { h: "Zum Schichten" },
+        PLATTEN,
+        { n: "Gruyère oder Emmentaler, gerieben", a: 80, u: "g" }
+      ],
+      steps: [
+        "Schalotte und Knoblauch in Öl weich dünsten. Spinat zugeben, 3 Minuten mitbraten, mit Wein ablöschen und einkochen. Salzen, pfeffern.",
+        BECH_STEP + " Zitronenabrieb, 1 EL Zitronensaft und Dill einrühren.",
+        "Lachswürfel mit Salz, Pfeffer und etwas Zitronensaft würzen.",
+        "Ofen auf 180 °C Ober-/Unterhitze vorheizen. Form dünn mit Béchamel ausstreichen. Dann Platten, Spinat, Lachs, Béchamel und Käse schichten, mit Béchamel und Käse abschliessen.",
+        "Mit Alufolie abgedeckt 25 Minuten backen, dann ohne Folie 10 Minuten, bis die Oberfläche goldbraun ist. Der Lachs soll innen gerade glasig-gar sein. 10 Minuten ruhen lassen."
+      ],
+      tip: "Lachs nicht übergaren. Er zieht beim Ruhen noch nach, deshalb lieber etwas kürzer backen."
+    }
+  ];
+
+  const tilesWrap = document.getElementById("tilesWrap");
+  const recipeEl = document.getElementById("recipe");
+  const hintEl = document.getElementById("hint");
+  const persons = document.getElementById("persons");
+  const personsOut = document.getElementById("personsOut");
+  let current = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  function fmtNum(v, unit, whole) {
+    if (whole) return String(Math.max(1, Math.round(v)));
+    if (unit === "g" || unit === "ml") {
+      const step = v >= 200 ? 10 : 5;
+      return String(Math.max(step, Math.round(v / step) * step));
+    }
+    const r = Math.max(0.5, Math.round(v * 2) / 2);
+    const w = Math.floor(r);
+    const half = r - w === 0.5;
+    return (w > 0 ? String(w) : "") + (half ? "½" : "");
+  }
+
+  function unitLabel(u, t) {
+    const plural = !(t === "1" || t === "½");
+    switch (u) {
+      case "Zehe": return plural ? "Zehen" : "Zehe";
+      case "Zweig": return plural ? "Zweige" : "Zweig";
+      case "Stange": return plural ? "Stangen" : "Stange";
+      default: return u;
+    }
+  }
+
+  function renderTiles() {
+    tilesWrap.innerHTML = GROUPS.map(g =>
+      '<h2 class="group-title">' + esc(g.title) + '</h2><div class="tiles" role="group" aria-label="' + esc(g.title) + '">' +
+      g.ids.map(id => {
+        const r = R.find(x => x.id === id);
+        return '<button type="button" class="tile" data-id="' + r.id + '" aria-pressed="false">' +
+          '<span class="emoji" aria-hidden="true">' + r.emoji + '</span>' +
+          '<span class="t-name">' + esc(r.name) + '</span>' +
+          '<span class="t-tag">' + esc(r.tag) + '</span></button>';
+      }).join("") + '</div>'
+    ).join("");
+  }
+
+  function renderRecipe() {
+    const r = R.find(x => x.id === current);
+    if (!r) { recipeEl.classList.remove("show"); hintEl.style.display = ""; return; }
+    hintEl.style.display = "none";
+    const p = parseInt(persons.value, 10);
+    const k = p / 4;
+    const forms = Math.max(1, Math.ceil(p / 4));
+    const formText = p <= 2 ? "Form ca. 18 × 18 cm" : (forms === 1 ? "Form ca. 20 × 25 cm" : forms + " Formen ca. 20 × 25 cm");
+
+    const ingHtml = r.ing.map(i => {
+      if (i.h) return '<li class="head">' + esc(i.h) + '</li>';
+      let amt;
+      if (i.t) {
+        amt = i.t;
+      } else {
+        const t = fmtNum(i.a * k, i.u, i.int);
+        amt = t + " " + unitLabel(i.u, t);
+      }
+      return '<li><span class="amt">' + esc(amt) + '</span><span>' +
+        esc(i.n) + (i.opt ? ' <span class="opt">(optional)</span>' : '') + '</span></li>';
+    }).join("");
+
+    const stepsHtml = r.steps.map(s => "<li>" + esc(s) + "</li>").join("");
+    const note = p > 4
+      ? '<div class="tip"><strong>Bei ' + p + ' Personen:</strong> Die Mengen gelten für ' + forms + (forms === 1 ? ' Form' : ' Formen') +
+        '. Mit mehreren Formen alle gleichzeitig auf zwei Ebenen backen und die Formen nach der Hälfte der Zeit tauschen. Das Ragù oder die Füllung in einem grossen Topf zubereiten.</div>'
+      : (p <= 2 ? '<div class="tip"><strong>Bei 2 Personen:</strong> Eine kleinere Form verwenden. Die Backzeit bleibt gleich, bei sehr flacher Schichtung 5 Minuten kürzer prüfen.</div>' : "");
+
+    recipeEl.innerHTML =
+      '<h2>' + r.emoji + " " + esc(r.name) + '</h2>' +
+      '<p class="meta"><span>' + p + ' Personen</span><span>' + esc(formText) + '</span><span>' + esc(r.time) + '</span></p>' +
+      '<p>' + esc(r.intro) + '</p>' +
+      '<div class="grid">' +
+        '<section class="panel"><h3>Zutaten</h3><ul class="ing">' + ingHtml + '</ul></section>' +
+        '<section class="panel"><h3>Zubereitung</h3><ol class="steps">' + stepsHtml + '</ol>' +
+          (r.tip ? '<div class="tip"><strong>Tipp:</strong> ' + esc(r.tip) + '</div>' : "") +
+          note +
+        '</section>' +
+      '</div>';
+    recipeEl.classList.add("show");
+  }
+
+  function select(id, updateHash) {
+    current = id;
+    tilesWrap.querySelectorAll(".tile").forEach(t =>
+      t.setAttribute("aria-pressed", t.dataset.id === id ? "true" : "false"));
+    renderRecipe();
+    if (updateHash && history.replaceState) history.replaceState(null, "", "#" + id);
+  }
+
+  tilesWrap.addEventListener("click", e => {
+    const t = e.target.closest(".tile");
+    if (!t) return;
+    select(t.dataset.id, true);
+    recipeEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  persons.addEventListener("input", () => { personsOut.textContent = persons.value; renderRecipe(); });
+
+  renderTiles();
+  const fromHash = location.hash.replace("#", "");
+  if (R.some(r => r.id === fromHash)) select(fromHash, false);
+})();
+</script>
+</body>
+</html>
