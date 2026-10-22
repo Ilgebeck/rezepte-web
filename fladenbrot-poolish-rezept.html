@@ -218,11 +218,11 @@
     <div class="ing"><span>Frischhefe (Restmenge)</span><span class="ing-amt" id="h-hefe">4 g</span></div>
   </div>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><div class="step-text">Hefe im Wasser auflösen. Mehl, Poolish, Hefe-Wasser und Olivenöl in die Sunmix — <strong>5 Min. langsam</strong>, dann <strong>8 Min. mittel</strong> bis Teig glatt und elastisch.</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-text">Salz zugeben, weitere <strong>3 Min. kneten</strong>. Teig löst sich sauber vom Rand.</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Stockgare 60 Min.</strong> abgedeckt bei Raumtemperatur. Nach 30 Min. einmal falten.</div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-text">Teig in <span id="h-stuecke">4</span> Stücke à <span id="h-gewicht">~220 g</span> teilen, rund schleifen, <strong>15 Min. abgedeckt entspannen</strong>.</div></div>
-    <div class="step"><div class="step-num">5</div><div class="step-text">Jeden Teigling auf <span id="h-groesse">Ø ~22 cm</span> ausrollen (<strong>3–4 mm</strong> dünn). <strong>Körner (Sesam/Schwarzkümmel):</strong> auf die Arbeitsfläche streuen, Teigling darauflegen und nochmals drüberrollen — so werden sie mechanisch eingedrückt und haften zuverlässig. Auf bemehltes Backpapier legen, mit Gabel gleichmässig einstechen. <strong>20–30 Min. Stückgare.</strong></div></div>
+    <div class="step" data-timer="13"><div class="step-num">1</div><div class="step-text">Hefe im Wasser auflösen. Mehl, Poolish, Hefe-Wasser und Olivenöl in die Sunmix — <strong>5 Min. langsam</strong>, dann <strong>8 Min. mittel</strong> bis Teig glatt und elastisch.</div></div>
+    <div class="step" data-timer="3"><div class="step-num">2</div><div class="step-text">Salz zugeben, weitere <strong>3 Min. kneten</strong>. Teig löst sich sauber vom Rand.</div></div>
+    <div class="step" data-timer="60" data-sig="30" data-signame="Falten" data-sigmsg="Jetzt einmal falten"><div class="step-num">3</div><div class="step-text"><strong>Stockgare 60 Min.</strong> abgedeckt bei Raumtemperatur. Nach 30 Min. einmal falten.</div></div>
+    <div class="step" data-timer="15"><div class="step-num">4</div><div class="step-text">Teig in <span id="h-stuecke">4</span> Stücke à <span id="h-gewicht">~220 g</span> teilen, rund schleifen, <strong>15 Min. abgedeckt entspannen</strong>.</div></div>
+    <div class="step" data-timer="20"><div class="step-num">5</div><div class="step-text">Jeden Teigling auf <span id="h-groesse">Ø ~22 cm</span> ausrollen (<strong>3–4 mm</strong> dünn). <strong>Körner (Sesam/Schwarzkümmel):</strong> auf die Arbeitsfläche streuen, Teigling darauflegen und nochmals drüberrollen — so werden sie mechanisch eingedrückt und haften zuverlässig. Auf bemehltes Backpapier legen, mit Gabel gleichmässig einstechen. <strong>20–30 Min. Stückgare.</strong></div></div>
   </div>
 
   <p class="section-head">Backen <span class="badge">260°C O/U + Pizzastein</span></p>
@@ -235,7 +235,7 @@
     <div class="ing"><span>Dampfstoss (Klimagaren)</span><span class="ing-amt">1 × zu Beginn</span></div>
   </div>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><div class="step-text">Pizzastein auf unterste Schiene, Ofen auf <strong>260°C Ober-/Unterhitze</strong> vorheizen — <strong>mind. 45 Min.</strong>, der Stein muss wirklich durchgeheizt sein.</div></div>
+    <div class="step" data-timer="45"><div class="step-num">1</div><div class="step-text">Pizzastein auf unterste Schiene, Ofen auf <strong>260°C Ober-/Unterhitze</strong> vorheizen — <strong>mind. 45 Min.</strong>, der Stein muss wirklich durchgeheizt sein.</div></div>
     <div class="step"><div class="step-num">2</div><div class="step-text">Fladen mit dem Backpapier auf den heissen Stein ziehen. Sofort <strong>1 Dampfstoss</strong> (Klimagaren) abgeben — gibt Glanz und verhindert zu frühe Krustenbildung.</div></div>
     <div class="step"><div class="step-num">3</div><div class="step-text">Backen bis goldbraun mit charakteristischen <strong>Blasen und dunklen Stellen</strong>. Backpapier nach 2–3 Min. wegziehen wenn Boden standfest ist — direkter Steinkontakt für bessere Unterhitze. <strong>Farbe entscheidet</strong>, nicht die Uhr.</div></div>
     <div class="step"><div class="step-num">4</div><div class="step-text">Sofort vom Stein, auf Gitter abkühlen — oder direkt warm servieren. <strong>Stapeln erst wenn abgekühlt</strong>, sonst wird die Kruste weich.</div></div>
@@ -312,6 +312,60 @@ function render() {
 }
 
 render();
+</script>
+<style>
+.rt-box{--rt-acc:var(--accent,#a4491f);--rt-sub:var(--text-secondary,var(--ink-soft,#666));display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.rt-zeit{font-variant-numeric:tabular-nums;font-size:1.15rem;font-weight:600;min-width:5em}
+.rt-zeit.ab{color:var(--rt-acc)}
+.rt-box button{font:inherit;font-size:.9rem;border:1px solid var(--rt-acc);background:transparent;color:var(--rt-acc);border-radius:8px;padding:5px 12px;cursor:pointer}
+.rt-box button.rt-voll{background:var(--rt-acc);color:var(--card,var(--surface,#fff))}
+.rt-box button:focus-visible{outline:3px solid var(--rt-acc);outline-offset:2px}
+.rt-hint{flex-basis:100%;font-size:.85rem;color:var(--rt-sub)}
+.rt-hint.jetzt{color:var(--rt-acc);font-weight:700}
+@media print{.rt-box{display:none}}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const mm=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  let ctx=null, lock=null, aktiv=0;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);
+      g.gain.setValueAtTime(.2,ctx.currentTime+t);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2);});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  async function wach(){try{ if(aktiv>0&&!lock&&navigator.wakeLock){lock=await navigator.wakeLock.request('screen');lock.addEventListener('release',()=>{lock=null;});}
+    if(aktiv===0&&lock){await lock.release();lock=null;} }catch(e){}}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wach();});
+  function attach(el){
+    if(el._rt) return; el._rt=true;
+    const ziel=el.querySelector('.step-text')||el;
+    const box=document.createElement('div'); box.className='rt-box';
+    box.innerHTML='<span class="rt-zeit"></span><button class="rt-voll">Start</button><button>Zurück</button><span class="rt-hint"></span>';
+    ziel.appendChild(box);
+    const z=box.querySelector('.rt-zeit'), [bs,br]=box.querySelectorAll('button'), sh=box.querySelector('.rt-hint');
+    let tot=null, ende=null, rest=0, iv=null, sigs=[];
+    const dur=()=>(+el.dataset.timer||0)*60;
+    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
+    const msg=()=>el.dataset.sigmsg||'Jetzt dehnen und falten';
+    function stopp(){ if(iv){clearInterval(iv);iv=null;aktiv--;wach();} }
+    function reset(){ if(iv) return; tot=null; rest=dur(); z.textContent=mm(rest); z.classList.remove('ab'); bs.textContent='Start'; sh.textContent=''; sh.classList.remove('jetzt'); }
+    el._rtReset=reset;
+    function tick(){ rest=(ende-Date.now())/1000; z.textContent=mm(rest);
+      const elp=tot-rest; sigs.forEach(x=>{ if(!x.done&&elp>=x.at){ x.done=true; sh.textContent=msg(); sh.classList.add('jetzt'); piep(); } });
+      if(rest<=0){ stopp(); tot=null; rest=dur(); z.classList.add('ab'); z.textContent='Fertig'; bs.textContent='Start';
+        sh.textContent=el.dataset.endmsg||''; sh.classList.toggle('jetzt',!!el.dataset.endmsg); piep(); } }
+    bs.onclick=()=>{
+      if(iv){ rest=(ende-Date.now())/1000; stopp(); bs.textContent='Weiter'; return; }
+      if(tot===null){ tot=rest>0?rest:dur(); rest=tot; sigs=mkSig(tot); sh.classList.remove('jetzt');
+        sh.textContent=sigs.length?'Signal zum '+(el.dataset.signame||'Dehnen und Falten')+' nach '+sigs.map(x=>mm(x.at)).join(', '):''; }
+      z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); aktiv++; wach(); tick(); bs.textContent='Pause';
+      try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} };
+    br.onclick=()=>{ stopp(); tot=null; reset(); };
+    reset();
+  }
+  window.rtAttach=attach;
+  document.querySelectorAll('[data-timer]').forEach(attach);
+})();
 </script>
 </body>
 </html>

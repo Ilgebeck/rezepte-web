@@ -112,22 +112,24 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <div><label for="sz">Storlek</label><select id="sz"><option value="500">ca. 500 g</option><option value="750" selected>ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
     <div><label>Det blir</label><div id="erg" style="font-weight:600;padding-top:8px"></div></div>
   </div>
+  <div class="regler" style="margin-top:14px"><label for="rt">Köket</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="kk"><span>Pumpapurén kommer direkt från kylen</span></div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div id="lwbox"><label for="lw">Kallt kranvatten (°C)</label><input id="lw" type="number" min="2" max="25" step="1" value="6"></div>
+  </div>
   <p class="kennz" id="kennz"></p>
 </div>
 </section>
 
 <section>
-<h2>Tidsplan och kök</h2>
+<h2>Tidsplan</h2>
 <div class="panel">
   <div class="grid">
     <div><label for="bk">In i ugnen</label><input id="bk" type="datetime-local"></div>
     <div><label for="pd">Poolishens tid</label><select id="pd"><option value="16" selected>16 tim</option><option value="20">20 tim</option><option value="24">24 tim</option></select></div>
   </div>
-  <div class="regler" style="margin-top:16px"><label for="rt">Köket</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
-  <p class="kennz" id="rth" style="margin-top:-8px"></p>
-  <div class="check noprint"><input type="checkbox" id="kk"><span>Pumpapurén kommer direkt från kylen</span></div>
   <div class="grid noprint" style="margin-top:12px">
-    <div id="lwbox"><label for="lw">Kallt kranvatten (°C)</label><input id="lw" type="number" min="2" max="25" step="1" value="6"></div>
     <div><label for="tm">Uppmätt degtemperatur (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="efter knådning"></div>
   </div>
   <p class="kennz" id="dth"></p>

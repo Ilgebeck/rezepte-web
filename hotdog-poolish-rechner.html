@@ -267,15 +267,15 @@
         <strong>Poolish ansetzen</strong>
         Frischhefe in der Poolish-Wassermenge auflösen, Poolish-Mehl einrühren, bis keine trockenen Stellen mehr da sind. Zugedeckt bei Raumtemperatur (ca. 20&nbsp;°C) reifen lassen, bis die Oberfläche blasig ist und leicht einfällt.
       </li>
-      <li>
+      <li data-timer="30">
         <strong>Hauptteig mischen &amp; Autolyse</strong>
         Poolish mit dem restlichen Mehl und Wasser im Sunmix EVO 6 auf niedrigster Stufe grob vermengen, 30 Minuten autolysieren lassen (ohne Salz und Hefe).
       </li>
-      <li>
+      <li data-timer="9">
         <strong>Kneten</strong>
         Salz und restliche Hefe zugeben, 8&ndash;10 Minuten auf mittlerer Stufe kneten, bis der Teig glatt ist und sich vom Kesselrand löst.
       </li>
-      <li>
+      <li id="liStock" data-timer="120">
         <strong>Stockgare</strong>
         <span id="stockgareStep"></span>
       </li>
@@ -283,11 +283,11 @@
         <strong>Teilen &amp; Formen</strong>
         Teig entgasen, in <span id="stepRollCount"></span> Stücke à ca. <span id="stepRollWeight"></span>&nbsp;g teilen. Zu kurzen, gleichmässig dicken Röllchen von ca. 15&nbsp;cm Länge formen, Enden stumpf auswellen. Auf einem bemehlten Leinentuch (Couche) ablegen.
       </li>
-      <li>
+      <li id="liStueck" data-timer="45">
         <strong>Stückgare</strong>
         <span id="stueckgareStep"></span>
       </li>
-      <li>
+      <li data-timer="20">
         <strong>Backen mit Dampf</strong>
         Ofen mit Pizzastein auf 250&nbsp;°C O/U-Hitze vorheizen (bei Umluft ca. 230&nbsp;°C). Brötchen einmal flach längs einschneiden oder ungeschnitten lassen. Über Klimagaren 2 Dampfstösse in den ersten 6&ndash;8 Minuten geben, danach trocken fertigbacken &ndash; insgesamt ca. 20&ndash;23 Minuten, nach Bräunung richten statt strikt nach Uhr.
         <span class="note" id="batchNote"></span>
@@ -384,6 +384,11 @@
     } else {
       stockgareStepEl.innerHTML = `Teig zugedeckt <strong>ca. 2 Std. bei Raumtemperatur</strong> gehen lassen, dabei alle 30 Minuten einmal dehnen und falten (3&ndash;4 Faltvorgänge).`;
     }
+    { const li=document.getElementById('liStock');
+      if (stockgareH > 0){ li.dataset.timer=90; li.dataset.sig=''; li.dataset.endmsg='Akklimatisiert? Teig soll nicht mehr kühlschrankkalt sein'; }
+      else { li.dataset.timer=120; li.dataset.sig='30,60,90'; li.dataset.endmsg=''; }
+      const st=document.getElementById('liStueck'); st.dataset.timer = stockgareH > 0 ? 75 : 45;
+      [li,st].forEach(x=>{ if(x._rtReset) x._rtReset(); }); }
 
     // Stückgare-Schritt (abhängig davon, ob Teig kalt aus dem Kühlschrank kommt)
     const stueckgareEl = document.getElementById('stueckgareStep');
@@ -407,5 +412,61 @@
   update();
 </script>
 
+<style>
+.rt-box{--rt-acc:var(--accent,#a4491f);--rt-sub:var(--text-secondary,var(--ink-soft,#666));display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.rt-zeit{font-variant-numeric:tabular-nums;font-size:1.15rem;font-weight:600;min-width:5em}
+.rt-zeit.ab{color:var(--rt-acc)}
+.rt-box button{font:inherit;font-size:.9rem;border:1px solid var(--rt-acc);background:transparent;color:var(--rt-acc);border-radius:8px;padding:5px 12px;cursor:pointer}
+.rt-box button.rt-voll{background:var(--rt-acc);color:var(--card,var(--surface,#fff))}
+.rt-box button:focus-visible{outline:3px solid var(--rt-acc);outline-offset:2px}
+.rt-hint{flex-basis:100%;font-size:.85rem;color:var(--rt-sub)}
+.rt-hint.jetzt{color:var(--rt-acc);font-weight:700}
+@media print{.rt-box{display:none}}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const mm=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  let ctx=null, lock=null, aktiv=0;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);
+      g.gain.setValueAtTime(.2,ctx.currentTime+t);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2);});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  async function wach(){try{ if(aktiv>0&&!lock&&navigator.wakeLock){lock=await navigator.wakeLock.request('screen');lock.addEventListener('release',()=>{lock=null;});}
+    if(aktiv===0&&lock){await lock.release();lock=null;} }catch(e){}}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wach();});
+  function attach(el){
+    if(el._rt) return; el._rt=true;
+    const ziel=el.querySelector('.step-text')||el;
+    const box=document.createElement('div'); box.className='rt-box';
+    box.innerHTML='<span class="rt-zeit"></span><button class="rt-voll">Start</button><button>Zurück</button><span class="rt-hint"></span>';
+    ziel.appendChild(box);
+    const z=box.querySelector('.rt-zeit'), [bs,br]=box.querySelectorAll('button'), sh=box.querySelector('.rt-hint');
+    let tot=null, ende=null, rest=0, iv=null, sigs=[];
+    const dur=()=>(+el.dataset.timer||0)*60;
+    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
+    const msg=()=>el.dataset.sigmsg||'Jetzt dehnen und falten';
+    function stopp(){ if(iv){clearInterval(iv);iv=null;aktiv--;wach();} }
+    function reset(){ if(iv) return; tot=null; rest=dur(); z.textContent=mm(rest); z.classList.remove('ab'); bs.textContent='Start'; sh.textContent=''; sh.classList.remove('jetzt'); }
+    el._rtReset=reset;
+    function tick(){ rest=(ende-Date.now())/1000; z.textContent=mm(rest);
+      const elp=tot-rest; sigs.forEach(x=>{ if(!x.done&&elp>=x.at){ x.done=true; sh.textContent=msg(); sh.classList.add('jetzt'); piep(); } });
+      if(rest<=0){ stopp(); tot=null; rest=dur(); z.classList.add('ab'); z.textContent='Fertig'; bs.textContent='Start';
+        sh.textContent=el.dataset.endmsg||''; sh.classList.toggle('jetzt',!!el.dataset.endmsg); piep(); } }
+    bs.onclick=()=>{
+      if(iv){ rest=(ende-Date.now())/1000; stopp(); bs.textContent='Weiter'; return; }
+      if(tot===null){ tot=rest>0?rest:dur(); rest=tot; sigs=mkSig(tot); sh.classList.remove('jetzt');
+        sh.textContent=sigs.length?'Signal zum '+(el.dataset.signame||'Dehnen und Falten')+' nach '+sigs.map(x=>mm(x.at)).join(', '):''; }
+      z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); aktiv++; wach(); tick(); bs.textContent='Pause';
+      try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} };
+    br.onclick=()=>{ stopp(); tot=null; reset(); };
+    reset();
+  }
+  window.rtAttach=attach;
+  document.querySelectorAll('[data-timer]').forEach(attach);
+})();
+</script>
 </body>
+</html>
+
 </html>

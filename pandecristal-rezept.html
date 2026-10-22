@@ -210,13 +210,13 @@
   </div>
   <div class="steps">
     <div class="step"><div class="step-num">1</div><div class="step-text">Poolish, Mehl, Hefe und <strong>¾ des Wassers</strong> in die Sunmix — langsam starten, restliches Wasser nach und nach einarbeiten (<strong>Bassinage</strong>). Kalt arbeiten — Teigtemperatur darf 20°C nicht überschreiten.</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-text"><strong>12–15 Min. kneten</strong> bis der Teig glänzt und sich vom Rand löst. Er bleibt extrem weich — fast flüssig. Das ist normal und gewünscht.</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-text">Salz einarbeiten, nochmals <strong>3 Min. kneten</strong>.</div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-text">Teigbecken grosszügig mit Olivenöl einreiben (kein Mehl!), Teig hineingeben. Abdecken, <strong>alle 30 Min. Stretch & Fold</strong> — insgesamt 4× in den ersten 2 Std.</div></div>
+    <div class="step" data-timer="13"><div class="step-num">2</div><div class="step-text"><strong>12–15 Min. kneten</strong> bis der Teig glänzt und sich vom Rand löst. Er bleibt extrem weich — fast flüssig. Das ist normal und gewünscht.</div></div>
+    <div class="step" data-timer="3"><div class="step-num">3</div><div class="step-text">Salz einarbeiten, nochmals <strong>3 Min. kneten</strong>.</div></div>
+    <div class="step" data-timer="240" data-sig="30,60,90,120" data-endmsg="4 Std. Raumtemperatur vorbei: ab in den Kühlschrank (4–6 °C)" data-signame="Stretch &amp; Fold" data-sigmsg="Jetzt Stretch &amp; Fold"><div class="step-num">4</div><div class="step-text">Teigbecken grosszügig mit Olivenöl einreiben (kein Mehl!), Teig hineingeben. Abdecken, <strong>alle 30 Min. Stretch & Fold</strong> — insgesamt 4× in den ersten 2 Std.</div></div>
     <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Stockgare: 4–5 Std. bei Raumtemperatur</strong>, dann <strong>16 Std. im Kühlschrank</strong> (4–6°C). Der Teig verdoppelt sich — das Becken muss gross genug sein.
       <span class="alt">Alternativ: 12–16 Std. nur im Kühlschrank — etwas weniger Säure, aber einfacher in der Planung.</span>
     </div></div>
-    <div class="step"><div class="step-num">6</div><div class="step-text">Teig <strong>1 Std. vor dem Backen</strong> aus dem Kühlschrank nehmen, antemperieren. <strong>Nicht formen</strong> — Teig direkt aus dem geölten Becken vorsichtig auf Backpapier kippen und in <span id="h-stuecke">4</span> Stücke teilen. Luftblasen unter keinen Umständen zerdrücken.</div></div>
+    <div class="step" data-timer="60"><div class="step-num">6</div><div class="step-text">Teig <strong>1 Std. vor dem Backen</strong> aus dem Kühlschrank nehmen, antemperieren. <strong>Nicht formen</strong> — Teig direkt aus dem geölten Becken vorsichtig auf Backpapier kippen und in <span id="h-stuecke">4</span> Stücke teilen. Luftblasen unter keinen Umständen zerdrücken.</div></div>
   </div>
 
   <!-- BACKEN -->
@@ -230,10 +230,10 @@
     <div class="ing"><span class="ing-name">Teigtemperatur beim Einschuss</span><span class="ing-amt">18–20°C</span></div>
   </div>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><div class="step-text">Pizzastein auf unterste Schiene, Ofen auf <strong>250–260°C Umluft</strong> vorheizen — <strong>mind. 45 Min.</strong> Der Hitzeschock von unten ist das Herzstück des Ofentriebs.</div></div>
+    <div class="step" data-timer="45"><div class="step-num">1</div><div class="step-text">Pizzastein auf unterste Schiene, Ofen auf <strong>250–260°C Umluft</strong> vorheizen — <strong>mind. 45 Min.</strong> Der Hitzeschock von unten ist das Herzstück des Ofentriebs.</div></div>
     <div class="step"><div class="step-num">2</div><div class="step-text">Teiglinge mit dem Backpapier auf den Stein gleiten lassen. Sofort <strong>ersten Dampfstoss</strong> abgeben, zweiten nach ca. 5 Min. Kein dritter — die Kruste soll dann knusprig werden, nicht weich bleiben.</div></div>
     <div class="step"><div class="step-num">3</div><div class="step-text">Backen bis <strong>tief goldbraun mit dunklen Blasen</strong> — mehr Farbe als du denkst. Die hauchdünne Kruste braucht diese Hitze.</div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-text">Sofort auf Gitter. <strong>Mindestens 20 Min. abkühlen</strong> — die Kruste "glasiert" sich erst beim Abkühlen. Wer zu früh anschneidet, bekommt eine weiche Kruste.</div></div>
+    <div class="step" data-timer="20"><div class="step-num">4</div><div class="step-text">Sofort auf Gitter. <strong>Mindestens 20 Min. abkühlen</strong> — die Kruste "glasiert" sich erst beim Abkühlen. Wer zu früh anschneidet, bekommt eine weiche Kruste.</div></div>
     <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Pan de Cristal lebt im Moment</strong> — am besten innerhalb von 1–2 Std. nach dem Backen geniessen. Danach kurz 5 Min. bei 220°C auffrischen.</div></div>
   </div>
 
@@ -310,6 +310,60 @@ function render() {
 }
 
 render();
+</script>
+<style>
+.rt-box{--rt-acc:var(--accent,#a4491f);--rt-sub:var(--text-secondary,var(--ink-soft,#666));display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.rt-zeit{font-variant-numeric:tabular-nums;font-size:1.15rem;font-weight:600;min-width:5em}
+.rt-zeit.ab{color:var(--rt-acc)}
+.rt-box button{font:inherit;font-size:.9rem;border:1px solid var(--rt-acc);background:transparent;color:var(--rt-acc);border-radius:8px;padding:5px 12px;cursor:pointer}
+.rt-box button.rt-voll{background:var(--rt-acc);color:var(--card,var(--surface,#fff))}
+.rt-box button:focus-visible{outline:3px solid var(--rt-acc);outline-offset:2px}
+.rt-hint{flex-basis:100%;font-size:.85rem;color:var(--rt-sub)}
+.rt-hint.jetzt{color:var(--rt-acc);font-weight:700}
+@media print{.rt-box{display:none}}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const mm=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  let ctx=null, lock=null, aktiv=0;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;o.connect(g);g.connect(ctx.destination);
+      g.gain.setValueAtTime(.2,ctx.currentTime+t);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2);});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  async function wach(){try{ if(aktiv>0&&!lock&&navigator.wakeLock){lock=await navigator.wakeLock.request('screen');lock.addEventListener('release',()=>{lock=null;});}
+    if(aktiv===0&&lock){await lock.release();lock=null;} }catch(e){}}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wach();});
+  function attach(el){
+    if(el._rt) return; el._rt=true;
+    const ziel=el.querySelector('.step-text')||el;
+    const box=document.createElement('div'); box.className='rt-box';
+    box.innerHTML='<span class="rt-zeit"></span><button class="rt-voll">Start</button><button>Zurück</button><span class="rt-hint"></span>';
+    ziel.appendChild(box);
+    const z=box.querySelector('.rt-zeit'), [bs,br]=box.querySelectorAll('button'), sh=box.querySelector('.rt-hint');
+    let tot=null, ende=null, rest=0, iv=null, sigs=[];
+    const dur=()=>(+el.dataset.timer||0)*60;
+    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
+    const msg=()=>el.dataset.sigmsg||'Jetzt dehnen und falten';
+    function stopp(){ if(iv){clearInterval(iv);iv=null;aktiv--;wach();} }
+    function reset(){ if(iv) return; tot=null; rest=dur(); z.textContent=mm(rest); z.classList.remove('ab'); bs.textContent='Start'; sh.textContent=''; sh.classList.remove('jetzt'); }
+    el._rtReset=reset;
+    function tick(){ rest=(ende-Date.now())/1000; z.textContent=mm(rest);
+      const elp=tot-rest; sigs.forEach(x=>{ if(!x.done&&elp>=x.at){ x.done=true; sh.textContent=msg(); sh.classList.add('jetzt'); piep(); } });
+      if(rest<=0){ stopp(); tot=null; rest=dur(); z.classList.add('ab'); z.textContent='Fertig'; bs.textContent='Start';
+        sh.textContent=el.dataset.endmsg||''; sh.classList.toggle('jetzt',!!el.dataset.endmsg); piep(); } }
+    bs.onclick=()=>{
+      if(iv){ rest=(ende-Date.now())/1000; stopp(); bs.textContent='Weiter'; return; }
+      if(tot===null){ tot=rest>0?rest:dur(); rest=tot; sigs=mkSig(tot); sh.classList.remove('jetzt');
+        sh.textContent=sigs.length?'Signal zum '+(el.dataset.signame||'Dehnen und Falten')+' nach '+sigs.map(x=>mm(x.at)).join(', '):''; }
+      z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); aktiv++; wach(); tick(); bs.textContent='Pause';
+      try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} };
+    br.onclick=()=>{ stopp(); tot=null; reset(); };
+    reset();
+  }
+  window.rtAttach=attach;
+  document.querySelectorAll('[data-timer]').forEach(attach);
+})();
 </script>
 </body>
 </html>
