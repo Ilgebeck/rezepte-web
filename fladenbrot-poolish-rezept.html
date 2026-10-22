@@ -343,7 +343,7 @@ render();
     box.innerHTML='<span class="rt-zeit"></span><button class="rt-voll">Start</button><button>Zurück</button><span class="rt-hint"></span>';
     ziel.appendChild(box);
     const z=box.querySelector('.rt-zeit'), [bs,br]=box.querySelectorAll('button'), sh=box.querySelector('.rt-hint');
-    let tot=null, ende=null, rest=0, iv=null, sigs=[];
+    let tot=null, ende=null, rest=0, iv=null, sigs=[]; el._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
     const dur=()=>(+el.dataset.timer||0)*60;
     const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
     const msg=()=>el.dataset.sigmsg||'Jetzt dehnen und falten';
@@ -365,6 +365,60 @@ render();
   }
   window.rtAttach=attach;
   document.querySelectorAll('[data-timer]').forEach(attach);
+})();
+</script>
+<style>
+.segs{--s-acc:var(--olive,var(--accent,#5b6b3a));--s-warn:var(--kruste,var(--accent,#a4491f));--s-line:var(--leinen,var(--border,#ddd));
+  flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:6px;margin-top:6px}
+.seg{border:1px solid var(--s-line);border-radius:8px;padding:6px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.seg-lab{font-size:.78rem;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg-zeit{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.05rem}
+.seg.zukunft{opacity:.45;background:var(--s-line)}
+.seg.aktiv{border:2px solid var(--s-acc);padding:5px 7px}
+.seg.aktiv .seg-zeit{color:var(--s-acc)}
+.seg.erledigt{opacity:.6}
+.seg.faellig{border:2px solid var(--s-warn);padding:5px 7px}
+.seg.faellig .seg-zeit,.seg.faellig .seg-lab{color:var(--s-warn);opacity:1}
+.seg-ok{font:inherit;font-size:.8rem;margin-top:3px;padding:3px 8px;border-radius:6px;border:1px solid var(--s-warn);background:var(--s-warn);color:#fff;cursor:pointer;align-self:flex-start}
+@media print{.segs{display:none}}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const mm=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  function bauen(el,st){
+    let bar=el._segbar; const key=st.tot+'|'+st.sigs.map(x=>x.at).join(',');
+    if(bar&&bar._key===key) return bar;
+    if(bar) bar.remove();
+    const box=el.querySelector('.timer,.rt-box'); if(!box) return null;
+    bar=document.createElement('div'); bar.className='segs'; bar._key=key; el._ack=new Set();
+    const b=[0,...st.sigs.map(x=>x.at),st.tot]; bar._b=b;
+    const n=(el.dataset.signame||'Falten').replace('Dehnen und Falten','Falten'), k=b.length-2;
+    for(let i=0;i<b.length-1;i++){
+      const s=document.createElement('div'); s.className='seg';
+      const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
+      const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
+      bar.appendChild(s);
+    }
+    box.appendChild(bar); el._segbar=bar; return bar;
+  }
+  function zeichne(el){
+    const st=el._state&&el._state();
+    if(!st||st.tot===null||!st.sigs||!st.sigs.length){ if(el._segbar){el._segbar.remove();el._segbar=null;} return; }
+    const bar=bauen(el,st); if(!bar) return;
+    const b=bar._b, k=b.length-2, e=st.tot-st.rest;
+    [...bar.children].forEach((s,i)=>{
+      const z=s.querySelector('.seg-zeit'), ok=s.querySelector('.seg-ok'), lab=s.querySelector('.seg-lab');
+      s.className='seg'; lab.textContent=s._lab; if(ok) ok.hidden=true;
+      if(e<b[i]){ s.classList.add('zukunft'); z.textContent=mm(b[i+1]-b[i]); }
+      else if(e<b[i+1]){ s.classList.add('aktiv'); z.textContent=mm(b[i+1]-e); }
+      else if(i<k&&!el._ack.has(i)){ s.classList.add('faellig'); lab.textContent='fällig seit'; z.textContent=mm(e-b[i+1]); if(ok) ok.hidden=false; }
+      else { s.classList.add('erledigt'); z.textContent='✓'; }
+    });
+  }
+  setInterval(()=>document.querySelectorAll('#schritte>li, [data-timer]').forEach(el=>{ if(el._state) zeichne(el); }),500);
 })();
 </script>
 </body>
