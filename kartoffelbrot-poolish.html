@@ -311,5 +311,46 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
 })();
 </script>
+<style>
+.zeitwahl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.zeitwahl input[type=date]{flex:1 1 150px}
+.zeitwahl-uhr{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.zeitwahl-uhr select{width:4.4em;flex:0 0 auto}
+.zeitwahl-sep{font-weight:600}
+.zeitwahl-suf{font-size:.9rem;opacity:.75}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const sv=(document.documentElement.lang||'').startsWith('sv');
+  document.querySelectorAll('input[type=datetime-local]').forEach(inp=>{
+    const cs=getComputedStyle(inp);
+    const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box',minWidth:'0'};
+    const wrap=document.createElement('div'); wrap.className='zeitwahl';
+    const d=document.createElement('input'); d.type='date'; d.id=inp.id+'_d';
+    const row=document.createElement('div'); row.className='zeitwahl-uhr';
+    const h=document.createElement('select'), m=document.createElement('select');
+    h.setAttribute('aria-label',sv?'Timme':'Stunde'); m.setAttribute('aria-label',sv?'Minut':'Minute');
+    for(let i=0;i<24;i++) h.add(new Option(pad(i),pad(i)));
+    for(let i=0;i<60;i+=10) m.add(new Option(pad(i),pad(i)));
+    const sep=document.createElement('span'); sep.className='zeitwahl-sep'; sep.textContent=':';
+    row.append(h,sep,m);
+    if(!sv){ const suf=document.createElement('span'); suf.className='zeitwahl-suf'; suf.textContent='Uhr'; row.append(suf); }
+    wrap.append(d,row);
+    [d,h,m].forEach(e=>Object.assign(e.style,css)); h.style.paddingLeft=m.style.paddingLeft='8px'; h.style.paddingRight=m.style.paddingRight='4px';
+    const zelle=inp.parentElement; if(zelle&&zelle.parentElement&&/grid/.test(zelle.parentElement.className)) zelle.style.gridColumn='1 / -1';
+    inp.insertAdjacentElement('afterend',wrap); inp.type='hidden';
+    const lab=document.querySelector('label[for="'+inp.id+'"]'); if(lab) lab.htmlFor=d.id;
+    const fmt=t=>t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())+'T'+pad(t.getHours())+':'+pad(t.getMinutes());
+    function push(){ if(!d.value) return; inp.value=d.value+'T'+h.value+':'+m.value;
+      inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true})); }
+    const t=new Date(inp.value);
+    if(!isNaN(t)){ const r=new Date(Math.round(t.getTime()/600000)*600000); const v=fmt(r);
+      d.value=v.slice(0,10); h.value=v.slice(11,13); m.value=v.slice(14,16);
+      if(v!==inp.value) push(); }
+    d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
+  });
+})();
+</script>
 </body>
 </html>
