@@ -34,7 +34,24 @@ input,select,button{font:inherit;color:inherit}
 input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
 .regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
 .regler label{margin:0;min-width:5.5em}
-.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler:has(.mit-ticks){align-items:flex-start}
+.regler:has(.mit-ticks)>label,.regler:has(.mit-ticks)>output{line-height:28px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
 .regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
 .kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
 .check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
@@ -85,11 +102,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <section>
 <h2>Teig berechnen</h2>
 <div class="panel">
-  <div class="regler"><label for="n">Anzahl Pizzen</label><input id="n" type="range" min="1" max="20" step="1" value="4"><output id="no"></output></div>
-  <div class="regler"><label for="w">Teigling</label><input id="w" type="range" min="180" max="350" step="10" value="280"><output id="wo"></output></div>
-  <div class="regler"><label for="h">Hydration</label><input id="h" type="range" min="60" max="72" step="1" value="70"><output id="ho"></output></div>
-  <div class="regler"><label for="bs">Biga-Anteil</label><input id="bs" type="range" min="0" max="3" step="1" value="2"><output id="bso"></output></div>
-  <div class="regler"><label for="rt">Küche</label><input id="rt" type="range" min="18" max="25" step="0.5" value="21"><output id="rto"></output></div>
+  <div class="regler"><label for="n">Anzahl Pizzen</label><div class="rwrap"><input id="n" type="range" min="1" max="20" step="1" value="4"></div><output id="no"></output></div>
+  <div class="regler"><label for="w">Teigling</label><div class="rwrap"><input id="w" type="range" min="180" max="350" step="10" value="280"></div><output id="wo"></output></div>
+  <div class="regler"><label for="h">Hydration</label><div class="rwrap"><input id="h" type="range" min="60" max="72" step="1" value="70"></div><output id="ho"></output></div>
+  <div class="regler"><label for="bs">Biga-Anteil</label><div class="rwrap"><input id="bs" type="range" min="0" max="3" step="1" value="2"></div><output id="bso"></output></div>
+  <div class="regler"><label for="rt">Küche</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
   <p class="kennz" id="rth" style="margin-top:-8px"></p>
   <div class="check noprint"><input type="checkbox" id="oil" checked><span>Olivenöl 2 % (zartere Kruste, bräunt bei 280 °C besser)</span></div>
   <div class="check noprint"><input type="checkbox" id="malt" checked><span>Backmalz oder Zucker 1 % (Bräunung im Haushaltsofen)</span></div>
@@ -329,6 +346,31 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
   new MutationObserver(anhaengen).observe(ol,{childList:true});
   anhaengen();
+})();
+</script>
+<script>
+(function(){
+  const m=document.getElementById('m'), t=document.getElementById('mticks');
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
+})();
+</script>
+<script>
+(function(){
+  const r=document.getElementById('rt'); if(!r||r.type!=='range') return;
+  const w=r.closest('.rwrap'); if(!w||w.querySelector('.ticks')) return;
+  w.classList.add('mit-ticks');
+  const t=document.createElement('div'); t.className='ticks'; t.setAttribute('aria-hidden','true'); w.appendChild(t);
+  const lo=+r.min, hi=+r.max;
+  for(let v=Math.ceil(lo); v<=hi; v++){
+    const p=(v-lo)/(hi-lo)*100;
+    const i=document.createElement('i'); i.className='klein'; i.style.left=p+'%'; t.appendChild(i);
+    if(v%2===0){ const s=document.createElement('span'); s.textContent=v+'°'; s.style.left=p+'%'; t.appendChild(s); }
+  }
 })();
 </script>
 </body>

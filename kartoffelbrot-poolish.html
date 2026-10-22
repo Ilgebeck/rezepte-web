@@ -36,6 +36,8 @@ input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px
 .regler label{margin:0;min-width:5.5em}
 .rwrap{flex:1;position:relative;padding-bottom:0}
 .rwrap.mit-ticks{padding-bottom:26px}
+.regler:has(.mit-ticks){align-items:flex-start}
+.regler:has(.mit-ticks)>label,.regler:has(.mit-ticks)>output{line-height:28px}
 .regler.breit{flex-wrap:wrap;row-gap:4px}
 .regler.breit label{flex:1}
 .regler.breit .rwrap{order:3;flex-basis:100%}
@@ -379,6 +381,20 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
   new MutationObserver(anhaengen).observe(ol,{childList:true});
   anhaengen();
+})();
+</script>
+<script>
+(function(){
+  const r=document.getElementById('rt'); if(!r||r.type!=='range') return;
+  const w=r.closest('.rwrap'); if(!w||w.querySelector('.ticks')) return;
+  w.classList.add('mit-ticks');
+  const t=document.createElement('div'); t.className='ticks'; t.setAttribute('aria-hidden','true'); w.appendChild(t);
+  const lo=+r.min, hi=+r.max;
+  for(let v=Math.ceil(lo); v<=hi; v++){
+    const p=(v-lo)/(hi-lo)*100;
+    const i=document.createElement('i'); i.className='klein'; i.style.left=p+'%'; t.appendChild(i);
+    if(v%2===0){ const s=document.createElement('span'); s.textContent=v+'°'; s.style.left=p+'%'; t.appendChild(s); }
+  }
 })();
 </script>
 </body>
