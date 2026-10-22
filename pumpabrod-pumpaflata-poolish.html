@@ -34,7 +34,22 @@ input,select,button{font:inherit;color:inherit}
 input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
 .regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
 .regler label{margin:0;min-width:5.5em}
-.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
 .regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
 .kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
 .check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
@@ -58,6 +73,8 @@ ol.schritte p{margin:0}
 .timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
 .zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
 .zeit.ab{color:var(--kruste)}
+.sighint{flex-basis:100%;font-size:.9rem;color:var(--grau)}
+.sighint.jetzt{color:var(--kruste);font-weight:700}
 button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
 button.voll{background:var(--olive);color:var(--papier)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
@@ -90,7 +107,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <div><label for="ku">Pumpa (hokkaido)</label><select id="ku"><option value="back" selected>Ugnsbakad</option><option value="dampf">Ångkokt</option></select></div>
   </div>
   <div class="check noprint"><input type="checkbox" id="ke" checked><span>Pumpafrön i och på degen</span></div>
-  <div class="regler" style="margin-top:14px"><label for="m">Degmängd</label><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><output id="mo"></output></div>
+  <div class="regler breit" style="margin-top:14px"><label for="m">Degmängd</label><div class="rwrap mit-ticks"><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><div class="ticks" id="mticks" aria-hidden="true"></div></div><output id="mo"></output></div>
   <div class="grid">
     <div><label for="sz">Storlek</label><select id="sz"><option value="500">ca. 500 g</option><option value="750" selected>ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
     <div><label>Det blir</label><div id="erg" style="font-weight:600;padding-top:8px"></div></div>
@@ -106,7 +123,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <div><label for="bk">In i ugnen</label><input id="bk" type="datetime-local"></div>
     <div><label for="pd">Poolishens tid</label><select id="pd"><option value="16" selected>16 tim</option><option value="20">20 tim</option><option value="24">24 tim</option></select></div>
   </div>
-  <div class="regler" style="margin-top:16px"><label for="rt">Köket</label><input id="rt" type="range" min="18" max="25" step="0.5" value="21"><output id="rto"></output></div>
+  <div class="regler" style="margin-top:16px"><label for="rt">Köket</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
   <p class="kennz" id="rth" style="margin-top:-8px"></p>
   <div class="check noprint"><input type="checkbox" id="kk"><span>Pumpapurén kommer direkt från kylen</span></div>
   <div class="grid noprint" style="margin-top:12px">
@@ -184,7 +201,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['bake','Grädda',s?'Pensla en gång till med ägg'+(ke?' och strö över fröna':'')+'. Grädda utan ånga i 180 °C varmluft ca. <span data-k="bz"></span>. Innertemperatur 92–94 °C; blir de för mörka, täck löst med folie efter halva tiden.'
         :'In i ugnen med ånga direkt (ånginjektion, eller häll kokande vatten i en långpanna i botten av ugnen). Sänk till 200 °C efter 10 min. Totalt ca. <span data-k="bz"></span>, släpp ut ångan de sista 10 min. Innertemperatur 96–98 °C. Byt plats på plåtarna halvvägs.'],
       [String(R[s?'s':'h'].cool),'Låt svalna',s?'Minst 1 tim på galler.':'Minst 2 tim på galler.']];
-    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Steg klart"></div><p>${x[2]}</p></li>`).join('');
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Steg klart"></div><p>${x[2]}</p></li>`).join('');
     timers();
   }
 
@@ -238,6 +255,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
     if(navigator.vibrate)navigator.vibrate([300,150,300]);}
   const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
   function timers(){
     $$('#schritte>li').forEach(li=>{
@@ -247,15 +265,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       const box=document.createElement('div'); box.className='timer';
       box.innerHTML='<span class="zeit"></span><button class="voll">Starta</button><button>Återställ</button>';
       li.appendChild(box);
+      const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Dags att sträcka och vika'; sh.classList.add('jetzt'); piep(); } }); };
       const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
-      let ende=null, rest=0, iv=null;
+      let tot=null, ende=null, rest=0, iv=null;
       li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Starta'; };
-      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
-        if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Klart';bs.textContent='Starta';piep();}}
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Klart';bs.textContent='Starta';piep();}}
       bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Fortsätt';}
-        else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Paus';
+        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal för att sträcka och vika efter '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Paus';
           try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
-      br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+      br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
     });
   }
 
@@ -275,6 +295,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   ['#ri','#ku','#ke'].forEach(s=>$(s).addEventListener('change',()=>{build();rechnen();}));
   ['#m','#sz','#bk','#pd','#kk','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
   build(); rechnen();
+})();
+</script>
+<script>
+(function(){
+  const m=document.getElementById('m'), t=document.getElementById('mticks');
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
 })();
 </script>
 </body>

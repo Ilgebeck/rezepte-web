@@ -34,7 +34,22 @@ input,select,button{font:inherit;color:inherit}
 input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
 .regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
 .regler label{margin:0;min-width:5.5em}
-.regler input[type=range]{flex:1;accent-color:var(--olive)}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
 .regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
 .kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
 .check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
@@ -58,6 +73,8 @@ ol.schritte p{margin:0}
 .timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
 .zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
 .zeit.ab{color:var(--kruste)}
+.sighint{flex-basis:100%;font-size:.9rem;color:var(--grau)}
+.sighint.jetzt{color:var(--kruste);font-weight:700}
 button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
 button.voll{background:var(--olive);color:var(--papier)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
@@ -85,7 +102,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <section>
 <h2>Teig berechnen</h2>
 <div class="panel">
-  <div class="regler"><label for="m">Teigmenge</label><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><output id="mo"></output></div>
+  <div class="regler breit"><label for="m">Teigmenge</label><div class="rwrap mit-ticks"><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><div class="ticks" id="mticks" aria-hidden="true"></div></div><output id="mo"></output></div>
   <div class="grid">
     <div><label for="sz">Brotgrösse</label>
       <select id="sz"><option value="500">ca. 500 g</option><option value="750" selected>ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
@@ -103,7 +120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <div><label for="pd">Poolish-Dauer</label>
       <select id="pd"><option value="16" selected>16 Std.</option><option value="20">20 Std.</option><option value="24">24 Std.</option></select></div>
   </div>
-  <div class="regler" style="margin-top:16px"><label for="rt">Küche</label><input id="rt" type="range" min="18" max="25" step="0.5" value="21"><output id="rto"></output></div>
+  <div class="regler" style="margin-top:16px"><label for="rt">Küche</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
   <p class="kennz" id="rth" style="margin-top:-8px"></p>
   <div class="check noprint"><input type="checkbox" id="kk"><span>Kartoffeln kommen aus dem Kühlschrank</span></div>
   <div class="check noprint"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
@@ -148,7 +165,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <p>Poolish, <span data-k="hM"></span> Weissmehl, <span data-k="rM"></span> Ruchmehl, <span data-k="ka"></span> Kartoffeln, <span data-k="hH"></span> Hefe und 90 % des Wassers (<span data-k="wq"></span>) 5 Min. langsam kneten. Restwasser nur zugeben, wenn der Teig fest wirkt; die Kartoffeln geben beim Kneten Feuchtigkeit ab.</p></li>
   <li data-t="6"><div class="st"><h3>Kneten, Phase 2</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p><span data-k="sa"></span> Salz zugeben, 4–6 Min. schnell kneten, dann <span data-k="bu"></span> Butter in 2 Min. langsam einarbeiten. Weich, leicht klebrig, guter Fenstertest. Erwartete Teigtemperatur ca. <span data-k="dt"></span>. Nach dem Kneten messen und oben eintragen; Stockgare und Zeitplan passen sich an.</p></li>
-  <li data-t="stock"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+  <li data-t="stock" data-sig="half"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Der Teig soll gut sichtbar aufgegangen sein; lieber nach Teig als nach Uhr.</p></li>
   <li data-t="15"><div class="st"><h3>Teilen und vorformen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>In <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen, locker rundwirken, 15 Min. entspannen.</p></li>
@@ -237,6 +254,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
     if(navigator.vibrate)navigator.vibrate([300,150,300]);}
   const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
   $$('#schritte>li').forEach(li=>{
     const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
@@ -245,15 +263,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const box=document.createElement('div'); box.className='timer';
     box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
     li.appendChild(box);
+      const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
     const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
-    let ende=null, rest=dur(), iv=null;
+    let tot=null, ende=null, rest=dur(), iv=null;
     li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
-    function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
-      if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+    function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
+      if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
     bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
-      else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+      else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
         try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
-    br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+    br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
   });
 
   $$('#zutaten input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
@@ -276,6 +296,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   ['#m','#sz','#bk','#pd','#kk'].forEach(s=>$(s).addEventListener('input',rechnen));
   $('#kk').addEventListener('change',rechnen);
   rechnen();
+})();
+</script>
+<script>
+(function(){
+  const m=document.getElementById('m'), t=document.getElementById('mticks');
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
 })();
 </script>
 </body>

@@ -58,6 +58,8 @@ ol.schritte p{margin:0}
 .timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
 .zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
 .zeit.ab{color:var(--kruste)}
+.sighint{flex-basis:100%;font-size:.9rem;color:var(--grau)}
+.sighint.jetzt{color:var(--kruste);font-weight:700}
 button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
 button.voll{background:var(--olive);color:var(--papier)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
@@ -181,7 +183,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <p><span data-k="sa"></span> Salz zugeben, 10–12&nbsp;Min. Stufe&nbsp;2 kneten. Teig sollte elastisch und leicht klebrig sein.</p></li>
   <li data-t="5"><div class="st"><h3>Butter einarbeiten</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p><span data-k="bu"></span> weiche Butter in Stücken bei laufender Maschine (Stufe&nbsp;2) langsam zugeben. Weiterkneten bis der Teig glatt ist und den Fenstertest besteht (Total ca. 15–18&nbsp;Min. Knetzeit). Erwartete Teigtemperatur ca. <span data-k="dt"></span>.</p></li>
-  <li data-t="stock"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+  <li data-t="stock" data-sig="30"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Teig in geölter Teigwanne, abgedeckt, ca. <span data-k="stock"></span> bei <span data-k="rt"></span>. Ziel: +50–60&nbsp;% Volumen. Nach 30&nbsp;Min. einmal Stretch&nbsp;&amp;&nbsp;Fold.</p></li>
   <li data-t="15"><div class="st"><h3>Portionieren und Vorformen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Teig auf unbemehlter Arbeitsfläche in <span data-k="anz"></span> Stücke à ca. <span data-k="gew"></span> teilen. Jedes Stück straff rund schleifen (tight ball), 10–15&nbsp;Min. abgedeckt entspannen.</p></li>
@@ -333,6 +335,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
     if(navigator.vibrate)navigator.vibrate([300,150,300]);}
   const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
   $$('#schritte>li').forEach(li=>{
     const cb=li.querySelector('input[type=checkbox]'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
@@ -341,15 +344,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const box=document.createElement('div'); box.className='timer';
     box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
     li.appendChild(box);
+      const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
     const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
-    let ende=null, rest=dur(), iv=null;
+    let tot=null, ende=null, rest=dur(), iv=null;
     li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
-    function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
-      if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+    function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
+      if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
     bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
-      else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+      else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
         try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
-    br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+    br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
   });
 
   $$('#ztPoolish input,#ztTang input,#ztHaupt input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
