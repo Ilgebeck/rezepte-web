@@ -1,393 +1,294 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de-CH">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Panettone mit Frischhefe</title>
 <style>
-  :root{
-    --cream:#F6EFE1;
-    --card:#FFFCF6;
-    --espresso:#3C2A1E;
-    --espresso-soft:#6B5647;
-    --gold:#B8863A;
-    --gold-soft:#EFDDB8;
-    --wine:#7A2E2E;
-    --wine-soft:#EFD9D3;
-    --line:#E3D6BE;
-    --radius:14px;
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--cream);
-    color:var(--espresso);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.55;
-    padding-bottom:80px;
-  }
-  .wrap{max-width:640px;margin:0 auto;padding:0 18px;}
-
-  header{
-    padding:38px 18px 22px;
-    text-align:center;
-    border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg,#FBF3E1,var(--cream));
-  }
-  h1{
-    font-family:Iowan Old Style,Palatino Linotype,Palatino,Georgia,serif;
-    font-weight:400;
-    font-size:34px;
-    margin:0 0 6px;
-    letter-spacing:0.2px;
-  }
-  header p{
-    margin:0;
-    color:var(--espresso-soft);
-    font-size:15px;
-  }
-
-  .scale-bar{
-    position:sticky;
-    top:0;
-    z-index:10;
-    background:var(--card);
-    border-bottom:1px solid var(--line);
-    box-shadow:0 2px 8px rgba(60,42,30,0.06);
-  }
-  .scale-inner{
-    max-width:640px;margin:0 auto;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:10px 18px;
-    gap:14px;
-  }
-  .scale-label{font-size:13px;color:var(--espresso-soft);}
-  .scale-controls{display:flex;align-items:center;gap:10px;}
-  .scale-btn{
-    width:36px;height:36px;border-radius:50%;
-    border:1px solid var(--line);background:var(--cream);
-    font-size:19px;color:var(--espresso);
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;user-select:none;
-    -webkit-tap-highlight-color:transparent;
-  }
-  .scale-btn:active{background:var(--gold-soft);}
-  .scale-value{
-    min-width:64px;text-align:center;
-    font-variant-numeric:tabular-nums;
-    font-weight:600;font-size:16px;
-  }
-  .scale-value small{display:block;font-weight:400;font-size:11px;color:var(--espresso-soft);}
-
-  section{padding:26px 0;}
-  h2{
-    font-family:Iowan Old Style,Palatino Linotype,Palatino,Georgia,serif;
-    font-weight:400;
-    font-size:22px;
-    margin:0 0 4px;
-  }
-  .section-sub{font-size:13px;color:var(--espresso-soft);margin:0 0 16px;}
-
-  .tag{
-    display:inline-block;
-    font-size:11px;
-    padding:2px 9px;
-    border-radius:100px;
-    font-weight:600;
-    letter-spacing:0.3px;
-    margin-bottom:8px;
-  }
-  .tag.gold{background:var(--gold-soft);color:#7A5A1F;}
-  .tag.wine{background:var(--wine-soft);color:var(--wine);}
-
-  .ing-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:6px 16px;
-    margin-bottom:14px;
-  }
-  .ing-row{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:11px 0;
-    border-bottom:1px solid var(--line);
-    font-size:15px;
-  }
-  .ing-row:last-child{border-bottom:none;}
-  .ing-amt{
-    font-variant-numeric:tabular-nums;
-    font-weight:600;
-    color:var(--espresso);
-    white-space:nowrap;
-    margin-left:12px;
-  }
-
-  .steps{list-style:none;margin:0;padding:0;}
-  .step{
-    display:flex;gap:14px;
-    padding:16px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .step:last-child{border-bottom:none;}
-  .step-check{
-    flex:none;
-    width:26px;height:26px;
-    border-radius:50%;
-    border:1.5px solid var(--gold);
-    margin-top:2px;
-    cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    color:var(--card);
-    -webkit-tap-highlight-color:transparent;
-  }
-  .step-check.done{background:var(--gold);}
-  .step-check svg{width:14px;height:14px;display:none;}
-  .step-check.done svg{display:block;}
-  .step-body{flex:1;}
-  .step-body.done{opacity:0.45;}
-  .step-title{font-weight:600;font-size:15.5px;margin-bottom:3px;}
-  .step-text{font-size:14.5px;color:var(--espresso-soft);}
-  .step-text b{color:var(--espresso);font-weight:600;}
-
-  .timer-row{margin-top:9px;display:flex;align-items:center;gap:10px;}
-  .timer-btn{
-    font-size:12.5px;font-weight:600;
-    border:1px solid var(--gold);color:var(--gold);
-    background:transparent;
-    padding:6px 12px;border-radius:100px;
-    cursor:pointer;
-  }
-  .timer-btn.running{background:var(--gold);color:var(--card);}
-  .timer-display{font-variant-numeric:tabular-nums;font-size:13.5px;color:var(--espresso-soft);}
-  .timer-display.done{color:var(--wine);font-weight:600;}
-
-  .notes{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:18px;
-    font-size:14px;
-    color:var(--espresso-soft);
-  }
-  .notes b{color:var(--espresso);}
-
-  footer{
-    text-align:center;
-    font-size:12px;
-    color:var(--espresso-soft);
-    padding:24px 18px 10px;
-  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler:has(.mit-ticks){align-items:flex-start}
+.regler:has(.mit-ticks)>label,.regler:has(.mit-ticks)>output{line-height:28px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+.sighint{flex-basis:100%;font-size:.9rem;color:var(--grau)}
+.sighint.jetzt{color:var(--kruste);font-weight:700}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>Panettone</h1>
-  <p>mit Frischhefe, ohne Lievito Madre — ergibt 1× 1&nbsp;kg Panettone</p>
-</header>
-
-<div class="scale-bar">
-  <div class="scale-inner">
-    <span class="scale-label">Menge</span>
-    <div class="scale-controls">
-      <div class="scale-btn" id="minus">–</div>
-      <div class="scale-value" id="scaleVal">1×<small id="scaleHint">1 kg Form</small></div>
-      <div class="scale-btn" id="plus">+</div>
-    </div>
-  </div>
-</div>
-
-<div class="wrap">
+<main>
 <p class="back noprint" style="margin:0 0 1rem;font-size:15px"><a href="index.html" style="color:inherit;font-weight:600;text-decoration:none">← Alle Rezepte</a></p>
+<h1>Panettone</h1>
+<p class="sub">Mit Frischhefe, ohne Lievito Madre. Primo und secondo impasto, gebacken in der Papierform.</p>
 
-
-  <section>
-    <span class="tag gold">Teig 1 · Primo impasto</span>
-    <div class="ing-card" id="ing-teig1"></div>
-  </section>
-
-  <section>
-    <span class="tag wine">Teig 2 · Secondo impasto</span>
-    <div class="ing-card" id="ing-teig2"></div>
-  </section>
-
-  <section>
-    <span class="tag gold">Früchte &amp; Aromen</span>
-    <div class="ing-card" id="ing-fruit"></div>
-  </section>
-
-  <section>
-    <h2>Zubereitung</h2>
-    <p class="section-sub">Schritte antippen, um sie abzuhaken. Timer starten, wenn nötig.</p>
-    <ul class="steps" id="steps"></ul>
-  </section>
-
-  <section>
-    <h2>Notizen</h2>
-    <div class="notes" id="notes"></div>
-  </section>
-
-  <footer>VERA · Panettone-Notizen · für den eigenen Gebrauch</footer>
+<section>
+<h2>Menge</h2>
+<div class="panel">
+  <div class="regler breit"><label for="sc">Faktor</label><div class="rwrap mit-ticks"><input id="sc" type="range" min="0.5" max="3" step="0.5" value="1"><div class="ticks" id="scticks" aria-hidden="true"></div></div><output id="sco"></output></div>
+  <p class="kennz" id="kennz"></p>
 </div>
+</section>
+
+<section>
+<h2>Zutaten</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis">
+  <p><strong>Notizen</strong></p>
+  <p>Eigelb-Mengen sind reiner Dotter: 90&nbsp;g entsprechen ca. 4–5 Eiern Grösse M, 60&nbsp;g ca. 3 Eiern. Eier trennen, Dotter sammeln und abwiegen statt zu zählen, da die Grösse stark schwankt.</p>
+  <p>Mit Frischhefe geht alles schneller als mit Lievito Madre, das Aroma bleibt aber einfacher und die Haltbarkeit kürzer (ca. 5–7 statt 3+ Wochen). Der <strong>Kühlschrank-Retard von Teig 1</strong> bringt am meisten zusätzliche Tiefe.</p>
+  <p>Trockenhefe als Alternative: ca. 1/3 der Frischhefemenge.</p>
+  <p>Bei 0,5× oder 1,5× Skalierung: Vanille/Abrieb-Mengen auf halbe/anderthalb Stück gerundet – nach Geschmack anpassen.</p>
+</div>
+<p class="kennz" style="margin-top:18px">VERA · Panettone-Notizen · für den eigenen Gebrauch</p>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
 
 <script>
-const state = { scale: 1 };
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const pad=x=>String(x).padStart(2,'0');
+  const D={};
+  const ZUT=[
+    ['Teig 1 · Primo impasto',[['Mehl (Manitoba, W350+)',300,'g'],['Frischhefe',12,'g'],['Wasser, lauwarm',100,'ml'],['Zucker',70,'g'],['Butter, weich',90,'g'],['Eigelb (reiner Dotter)',90,'g']]],
+    ['Teig 2 · Secondo impasto',[['Mehl',100,'g'],['Zucker',50,'g'],['Salz',6,'g'],['Butter, weich',60,'g'],['Eigelb (reiner Dotter)',60,'g'],['Honig',20,'g']]],
+    ['Früchte und Aromen',[['Vanilleschote',1,'stk'],['Orange, nur Abrieb',1,'stk'],['Zitrone, nur Abrieb',1,'stk'],['Kandierte Orangenschale',100,'g'],['Rosinen',100,'g'],['Dunkler Rum',30,'ml']]]];
+  const STEPS=[
+    ['Rosinen einweichen','Rosinen in den Rum einlegen, mindestens 30 Min. ziehen lassen, über Nacht ist noch besser. Vor Gebrauch gut abtropfen.',30],
+    ['Primo impasto: Grundteig kneten','Mehl in die Schüssel geben, Frischhefe darin auflösen, Wasser und Zucker zugeben. Auf niedriger Stufe zu einem glatten, noch festen Teig verkneten.',3],
+    ['Butter und Eigelb einkneten','Die Butter in drei Portionen einkneten, jede Portion vollständig aufnehmen lassen, bevor die nächste dazukommt. Dann das Eigelb langsam einlaufen lassen und weiterkneten, bis der Teig glatt und elastisch ist und beim Fenstertest reisst, statt zu bröckeln.',15],
+    ['Stockgare Teig 1','Zugedeckt bei 26–28°C gehen lassen, bis sich der Teig verdreifacht hat. Für mehr Aroma: stattdessen 12–16 Std. in den Kühlschrank stellen und danach vor dem Weiterarbeiten auf Raumtemperatur kommen lassen.',120],
+    ['Secondo impasto: Mehl einarbeiten','Mehl zugeben und vollständig einkneten.',3],
+    ['Zucker, Salz und Butter einkneten','Zucker und Salz einkneten. Dann Butter in kleinen Portionen zugeben und jeweils vollständig einarbeiten, bevor die nächste Portion folgt.',10],
+    ['Eigelb und Aromen einkneten','Eigelb in zwei bis drei Portionen einarbeiten. Danach Honig, das ausgekratzte Mark der Vanilleschote sowie Orangen- und Zitronenabrieb zugeben. Weiterkneten, bis der Teig glatt, glänzend und straff elastisch ist.',20],
+    ['Früchte unterheben','Abgetropfte Rosinen und kandierte Orangenschale von Hand oder auf niedrigster Stufe kurz unterheben, nur bis alles gleichmässig verteilt ist.',2],
+    ['Teigruhe','Zugedeckt 30 Min. ruhen lassen, damit sich das Gluten entspannt.',30],
+    ['Formen (Pirlare)','Auf leicht bemehlter Fläche straff rundwirken: mehrfach unter Spannung falten und drehen, bis die Oberfläche glatt ist. In die Panettone-Papierform (1 kg) setzen.',0],
+    ['Stückgare','Bei 26–28°C gehen lassen – z.B. im Ofen mit Licht an und einer Schale warmem Wasser für Feuchtigkeit – bis der Teig 1–2 cm unter dem Formenrand steht.',300],
+    ['Kreuzschnitt und Buttertupfer','Mit einer scharfen Klinge kreuzförmig einschneiden, die vier Lappen leicht nach aussen klappen und je ein kleines Stück kalte Butter in die Mitte legen.',0],
+    ['Backen','Im vorgeheizten Ofen bei 165°C Ober-/Unterhitze 50–55 Min. backen, bis die Kerntemperatur 92–94°C erreicht (Einstichthermometer verwenden). Bei zu starker Bräunung nach 25 Min. mit Alufolie abdecken.',55],
+    ['Kopfüber auskühlen','Sofort nach dem Backen mit zwei langen Spiessen quer durch den Boden stechen und kopfüber aufhängen, z.B. zwischen zwei Stühlen, damit die Krume nicht zusammenfällt.',480],
+    ['Reifen lassen','In Cellophan einschlagen und mindestens 24 Std. bei Raumtemperatur reifen lassen, bevor angeschnitten wird. Das Aroma entwickelt sich in dieser Zeit noch deutlich weiter.',1440]];
 
-const ingredients = {
-  teig1: [
-    {id:'mehl1', name:'Mehl (Manitoba, W350+)', base:300, unit:'g'},
-    {id:'hefe', name:'Frischhefe', base:12, unit:'g'},
-    {id:'wasser', name:'Wasser, lauwarm', base:100, unit:'ml'},
-    {id:'zucker1', name:'Zucker', base:70, unit:'g'},
-    {id:'butter1', name:'Butter, weich', base:90, unit:'g'},
-    {id:'eigelb1', name:'Eigelb (reiner Dotter)', base:90, unit:'g'},
-  ],
-  teig2: [
-    {id:'mehl2', name:'Mehl', base:100, unit:'g'},
-    {id:'zucker2', name:'Zucker', base:50, unit:'g'},
-    {id:'salz', name:'Salz', base:6, unit:'g'},
-    {id:'butter2', name:'Butter, weich', base:60, unit:'g'},
-    {id:'eigelb2', name:'Eigelb (reiner Dotter)', base:60, unit:'g'},
-    {id:'honig', name:'Honig', base:20, unit:'g'},
-  ],
-  fruit: [
-    {id:'vanille', name:'Vanilleschote', base:1, unit:'stk'},
-    {id:'orange', name:'Orange, nur Abrieb', base:1, unit:'stk'},
-    {id:'zitrone', name:'Zitrone, nur Abrieb', base:1, unit:'stk'},
-    {id:'schale', name:'Kandierte Orangenschale', base:100, unit:'g'},
-    {id:'rosinen', name:'Rosinen', base:100, unit:'g'},
-    {id:'rum', name:'Dunkler Rum', base:30, unit:'ml'},
-  ]
-};
-
-function fmt(base, unit){
-  const v = base * state.scale;
-  if(unit === 'stk'){
-    const fracs = {0:'0',0.5:'½',1:'1',1.5:'1½',2:'2',2.5:'2½',3:'3',3.5:'3½',4:'4',4.5:'4½',5:'5',6:'6',7:'7',8:'8',9:'9'};
-    const rounded = Math.round(v*2)/2;
-    return (fracs[rounded] !== undefined ? fracs[rounded] : rounded.toString()) + ' Stk';
+  function fmt(base,unit,sc){
+    const v=base*sc;
+    if(unit==='stk'){ const r=Math.round(v*2)/2; const fr={0.5:'½',1.5:'1½',2.5:'2½',3.5:'3½',4.5:'4½'}; return (fr[r]||String(r))+' Stk'; }
+    const r=v<10?Math.round(v*10)/10:Math.round(v);
+    return String(r).replace('.',',')+' '+unit;
   }
-  const rounded = v < 10 ? Math.round(v*10)/10 : Math.round(v);
-  return rounded.toString().replace('.',',') + ' ' + unit;
-}
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  function rechnen(){
+    const sc=+$('#sc').value;
+    $('#sco').textContent=String(sc).replace('.',',')+'×';
+    $('#kennz').textContent=sc===1?'Ergibt 1 Panettone für die 1-kg-Form':'Teig für ca. '+Math.round(sc*1000)+' g (Form entsprechend wählen)';
+    const keep=$$('#ztb input').map(c=>c.checked);
+    $('#ztb').innerHTML=ZUT.map(([g,items])=>grp(g)+items.map(([n,b,u])=>`<tr><td class="cb"><input type="checkbox"></td><td>${n}</td><td class="menge">${fmt(b,u,sc)}</td></tr>`).join('')).join('');
+    $$('#ztb input').forEach((cb,i)=>{ if(keep[i]){cb.checked=true;cb.closest('tr').classList.add('erledigt');}
+      cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)); });
+  }
+  $('#schritte').innerHTML=STEPS.map(([t,x,min])=>`<li data-t="${min}"><div class="st"><h3>${t}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x}</p></li>`).join('');
 
-function renderIngredients(){
-  ['teig1','teig2','fruit'].forEach(key=>{
-    const el = document.getElementById('ing-'+key);
-    el.innerHTML = ingredients[key].map(i=>`
-      <div class="ing-row">
-        <span>${i.name}</span>
-        <span class="ing-amt">${fmt(i.base, i.unit)}</span>
-      </div>`).join('');
-  });
-}
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
-function updateScaleLabel(){
-  document.getElementById('scaleVal').innerHTML =
-    state.scale.toString().replace('.',',') + '×<small id="scaleHint">' +
-    (state.scale===1 ? '1 kg Form' : Math.round(state.scale*1000) + ' g Teig') + '</small>';
-}
-
-document.getElementById('minus').addEventListener('click', ()=>{
-  if(state.scale > 0.5){ state.scale = Math.round((state.scale-0.5)*10)/10; renderIngredients(); updateScaleLabel(); }
-});
-document.getElementById('plus').addEventListener('click', ()=>{
-  if(state.scale < 3){ state.scale = Math.round((state.scale+0.5)*10)/10; renderIngredients(); updateScaleLabel(); }
-});
-
-renderIngredients();
-updateScaleLabel();
-
-const steps = [
-  {t:'Rosinen einweichen', text:'Rosinen in den Rum einlegen, mindestens 30 Min. ziehen lassen, über Nacht ist noch besser. Vor Gebrauch gut abtropfen.', timer:1800},
-  {t:'Primo impasto: Grundteig kneten', text:'Mehl in die Schüssel geben, Frischhefe darin auflösen, Wasser und Zucker zugeben. Auf niedriger Stufe zu einem glatten, noch festen Teig verkneten.', timer:180},
-  {t:'Butter und Eigelb einkneten', text:'Die Butter in drei Portionen einkneten, jede Portion vollständig aufnehmen lassen, bevor die nächste dazukommt. Dann das Eigelb langsam einlaufen lassen und weiterkneten, bis der Teig glatt und elastisch ist und beim Fenstertest reisst, statt zu bröckeln.', timer:900},
-  {t:'Stockgare Teig 1', text:'Zugedeckt bei 26–28°C gehen lassen, bis sich der Teig verdreifacht hat. Für mehr Aroma: stattdessen 12–16 Std. in den Kühlschrank stellen und danach vor dem Weiterarbeiten auf Raumtemperatur kommen lassen.', timer:7200},
-  {t:'Secondo impasto: Mehl einarbeiten', text:'Mehl zugeben und vollständig einkneten.', timer:180},
-  {t:'Zucker, Salz und Butter einkneten', text:'Zucker und Salz einkneten. Dann Butter in kleinen Portionen zugeben und jeweils vollständig einarbeiten, bevor die nächste Portion folgt.', timer:600},
-  {t:'Eigelb und Aromen einkneten', text:'Eigelb in zwei bis drei Portionen einarbeiten. Danach Honig, das ausgekratzte Mark der Vanilleschote sowie Orangen- und Zitronenabrieb zugeben. Weiterkneten, bis der Teig glatt, glänzend und straff elastisch ist.', timer:1200},
-  {t:'Früchte unterheben', text:'Abgetropfte Rosinen und kandierte Orangenschale von Hand oder auf niedrigster Stufe kurz unterheben, nur bis alles gleichmässig verteilt ist.', timer:120},
-  {t:'Teigruhe', text:'Zugedeckt 30 Min. ruhen lassen, damit sich das Gluten entspannt.', timer:1800},
-  {t:'Formen (Pirlare)', text:'Auf leicht bemehlter Fläche straff rundwirken: mehrfach unter Spannung falten und drehen, bis die Oberfläche glatt ist. In die Panettone-Papierform (1 kg) setzen.', timer:0},
-  {t:'Stückgare', text:'Bei 26–28°C gehen lassen – z.B. im Ofen mit Licht an und einer Schale warmem Wasser für Feuchtigkeit – bis der Teig 1–2 cm unter dem Formenrand steht.', timer:18000},
-  {t:'Kreuzschnitt und Buttertupfer', text:'Mit einer scharfen Klinge kreuzförmig einschneiden, die vier Lappen leicht nach aussen klappen und je ein kleines Stück kalte Butter in die Mitte legen.', timer:0},
-  {t:'Backen', text:'Im vorgeheizten Ofen bei 165°C Ober-/Unterhitze 50–55 Min. backen, bis die Kerntemperatur 92–94°C erreicht (Einstichthermometer verwenden). Bei zu starker Bräunung nach 25 Min. mit Alufolie abdecken.', timer:3300},
-  {t:'Kopfüber auskühlen', text:'Sofort nach dem Backen mit zwei langen Spiessen quer durch den Boden stechen und kopfüber aufhängen, z.B. zwischen zwei Stühlen, damit die Krume nicht zusammenfällt.', timer:28800},
-  {t:'Reifen lassen', text:'In Cellophan einschlagen und mindestens 24 Std. bei Raumtemperatur reifen lassen, bevor angeschnitten wird. Das Aroma entwickelt sich in dieser Zeit noch deutlich weiter.', timer:86400},
-];
-
-const stepsEl = document.getElementById('steps');
-
-function formatTime(s){
-  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
-  if(h>0) return `${h}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-  return `${m}:${sec.toString().padStart(2,'0')}`;
-}
-
-steps.forEach((step, idx)=>{
-  const li = document.createElement('li');
-  li.className = 'step';
-  const hasTimer = step.timer > 0;
-  li.innerHTML = `
-    <div class="step-check" id="chk${idx}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-    </div>
-    <div class="step-body" id="body${idx}">
-      <div class="step-title">${idx+1}. ${step.t}</div>
-      <div class="step-text">${step.text}</div>
-      ${hasTimer ? `
-      <div class="timer-row">
-        <button class="timer-btn" id="tbtn${idx}">Timer starten (${formatTime(step.timer)})</button>
-        <span class="timer-display" id="tdisp${idx}"></span>
-      </div>` : ''}
-    </div>
-  `;
-  stepsEl.appendChild(li);
-
-  document.getElementById('chk'+idx).addEventListener('click', ()=>{
-    document.getElementById('chk'+idx).classList.toggle('done');
-    document.getElementById('body'+idx).classList.toggle('done');
-  });
-
-  if(hasTimer){
-    let remaining = step.timer;
-    let interval = null;
-    const btn = document.getElementById('tbtn'+idx);
-    const disp = document.getElementById('tdisp'+idx);
-    btn.addEventListener('click', ()=>{
-      if(interval){
-        clearInterval(interval); interval = null;
-        btn.classList.remove('running');
-        btn.textContent = 'Timer fortsetzen (' + formatTime(remaining) + ')';
-        return;
-      }
-      btn.classList.add('running');
-      btn.textContent = 'Pause';
-      interval = setInterval(()=>{
-        remaining--;
-        disp.textContent = formatTime(remaining);
-        if(remaining <= 0){
-          clearInterval(interval); interval = null;
-          disp.textContent = 'Fertig';
-          disp.classList.add('done');
-          btn.classList.remove('running');
-          btn.textContent = 'Timer neu starten';
-          remaining = step.timer;
-        }
-      }, 1000);
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+      li.appendChild(box);
+      const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let tot=null, ende=null, rest=0, iv=null; li._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
     });
   }
-});
 
-document.getElementById('notes').innerHTML = `
-  Eigelb-Mengen sind reiner Dotter: 90&nbsp;g entsprechen ca. 4–5 Eiern Grösse M, 60&nbsp;g ca. 3 Eiern.
-  Eier trennen, Dotter sammeln und abwiegen statt zu zählen, da die Grösse stark schwankt.<br><br>
-  Mit Frischhefe geht alles schneller als mit Lievito Madre, das Aroma bleibt aber einfacher und die Haltbarkeit kürzer
-  (ca. 5–7 statt 3+ Wochen). Der <b>Kühlschrank-Retard von Teig 1</b> bringt am meisten zusätzliche Tiefe.<br><br>
-  Trockenhefe als Alternative: ca. 1/3 der Frischhefemenge.<br><br>
-  Bei 0,5× oder 1,5× Skalierung: Vanille/Abrieb-Mengen auf halbe/anderthalb Stück gerundet – nach Geschmack anpassen.
-`;
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  const t=$('#scticks'), sl=$('#sc');
+  for(let v=0.5; v<=3; v+=0.5){ const p=(v-0.5)/2.5*100, gross=v%1===0;
+    const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+    if(gross){ const s=document.createElement('span'); s.textContent=v+'×'; s.style.left=p+'%'; t.appendChild(s); } }
+  sl.addEventListener('input',rechnen);
+  rechnen(); timers(); $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+})();
 </script>
-
+<script>
+(function(){
+  const m=null, t=null;
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
+})();
+</script>
+<style>
+.segs{--s-acc:var(--olive,var(--accent,#5b6b3a));--s-warn:var(--kruste,var(--accent,#a4491f));--s-line:var(--leinen,var(--border,#ddd));
+  flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:6px;margin-top:6px}
+.seg{border:1px solid var(--s-line);border-radius:8px;padding:6px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.seg-lab{font-size:.78rem;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg-zeit{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.05rem}
+.seg.zukunft{opacity:.45;background:var(--s-line)}
+.seg.aktiv{border:2px solid var(--s-acc);padding:5px 7px}
+.seg.aktiv .seg-zeit{color:var(--s-acc)}
+.seg.erledigt{opacity:.6}
+.seg.faellig{border:2px solid var(--s-warn);padding:5px 7px}
+.seg.faellig .seg-zeit,.seg.faellig .seg-lab{color:var(--s-warn);opacity:1}
+.seg-ok{font:inherit;font-size:.8rem;margin-top:3px;padding:3px 8px;border-radius:6px;border:1px solid var(--s-warn);background:var(--s-warn);color:#fff;cursor:pointer;align-self:flex-start}
+@media print{.segs{display:none}}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const mm=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  function bauen(el,st){
+    let bar=el._segbar; const key=st.tot+'|'+st.sigs.map(x=>x.at).join(',');
+    if(bar&&bar._key===key) return bar;
+    if(bar) bar.remove();
+    const box=el.querySelector('.timer,.rt-box'); if(!box) return null;
+    bar=document.createElement('div'); bar.className='segs'; bar._key=key; el._ack=new Set();
+    const b=[0,...st.sigs.map(x=>x.at),st.tot]; bar._b=b;
+    const n=(el.dataset.signame||'Falten').replace('Dehnen und Falten','Falten'), k=b.length-2;
+    for(let i=0;i<b.length-1;i++){
+      const s=document.createElement('div'); s.className='seg';
+      const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
+      const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
+      bar.appendChild(s);
+    }
+    box.appendChild(bar); el._segbar=bar; return bar;
+  }
+  function zeichne(el){
+    const st=el._state&&el._state();
+    if(!st||st.tot===null||!st.sigs||!st.sigs.length){ if(el._segbar){el._segbar.remove();el._segbar=null;} return; }
+    const bar=bauen(el,st); if(!bar) return;
+    const b=bar._b, k=b.length-2, e=st.tot-st.rest;
+    [...bar.children].forEach((s,i)=>{
+      const z=s.querySelector('.seg-zeit'), ok=s.querySelector('.seg-ok'), lab=s.querySelector('.seg-lab');
+      s.className='seg'; lab.textContent=s._lab; if(ok) ok.hidden=true;
+      if(e<b[i]){ s.classList.add('zukunft'); z.textContent=mm(b[i+1]-b[i]); }
+      else if(e<b[i+1]){ s.classList.add('aktiv'); z.textContent=mm(b[i+1]-e); }
+      else if(i<k&&!el._ack.has(i)){ s.classList.add('faellig'); lab.textContent='fällig seit'; z.textContent=mm(e-b[i+1]); if(ok) ok.hidden=false; }
+      else { s.classList.add('erledigt'); z.textContent='✓'; }
+    });
+  }
+  setInterval(()=>document.querySelectorAll('#schritte>li, [data-timer]').forEach(el=>{ if(el._state) zeichne(el); }),500);
+})();
+</script>
 </body>
 </html>
