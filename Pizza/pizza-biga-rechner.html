@@ -156,7 +156,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const st=[
       ['0','Biga ansetzen','<span data-k="bF"></span> Mehl, <span data-k="bW"></span> Wasser und <span data-k="bY"></span> Frischhefe (im Wasser aufgelöst) 1–2 Min. langsam zu einem groben, zottigen Teig verbinden, nicht glatt kneten. Abgedeckt ca. 18 Std. in der Küche (<span data-k="rt"></span>). Die Hefemenge ist auf Küchentemperatur und 55 % Biga-Hydration abgestimmt.'],
       ['5','Kneten, Phase 1','Biga in Stücken<span data-k="extraTxt"></span> und 90 % des Wassers (<span data-k="wq"></span>) 5 Min. langsam kneten.'],
-      ['6','Kneten, Phase 2','<span data-k="sa"></span> Salz<span data-k="maltTxt"></span> zugeben, 4–5 Min. schnell kneten. Restwasser in kleinen Portionen einarbeiten (Bassinage)<span data-k="oilTxt"></span>. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters oben eintragen.'],
+      ['6','Kneten, Phase 2','<span data-k="sa"></span> Salz<span data-k="maltTxt"></span> zugeben, 4–5 Min. schnell kneten. Restwasser in kleinen Portionen einarbeiten (Bassinage)<span data-k="oilTxt"></span>. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters hier eintragen.'],
       [kalt?'30':'60','Stockgare',kalt?'Ca. 30 Min. abgedeckt ruhen lassen, dann direkt zu Teiglingen formen.':'Ca. 60 Min. abgedeckt in der Küche ruhen lassen.'],
       ['10','Teiglinge formen','In <span data-k="n"></span> Teiglinge à <span data-k="w"></span> teilen und straff rundschleifen. In geölte Pizzaboxen oder Dosen mit Deckel legen.'],
       kalt?['kalt','Kühlschrank','Teiglinge <span data-k="kaltH"></span> bei 4–5 °C.']:null,
@@ -300,6 +300,35 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       if(v!==inp.value) push(); }
     d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
   });
+})();
+</script>
+<style>
+.tm-spiegel{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.tm-spiegel label{margin:0;font-size:.95rem;font-weight:600}
+.tm-spiegel input{width:7em}
+.tm-spiegel .tm-info{flex-basis:100%;font-size:.85rem;opacity:.8}
+</style>
+<script>
+(function(){
+  const tm=document.getElementById('tm'), ol=document.getElementById('schritte');
+  if(!tm||!ol) return;
+  const cs=getComputedStyle(tm);
+  const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box'};
+  const info=()=>{ const d=document.getElementById('dth'); const t=document.querySelector('.tm-spiegel .tm-info'); if(d&&t) t.textContent=d.textContent; };
+  function anhaengen(){
+    if(ol.querySelector('.tm-spiegel')) return;
+    const li=[...ol.children].filter(l=>/Teigtemperatur/.test((l.querySelector('p')||l).textContent)).pop();
+    if(!li) return;
+    const w=document.createElement('div'); w.className='tm-spiegel noprint';
+    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="32" step="0.5" inputmode="decimal" placeholder="nach dem Kneten"><span class="tm-info"></span>';
+    const p=li.querySelector('p'); (p||li).insertAdjacentElement(p?'afterend':'beforeend',w);
+    const t2=w.querySelector('input'); Object.assign(t2.style,css); t2.value=tm.value;
+    t2.addEventListener('input',()=>{ tm.value=t2.value; tm.dispatchEvent(new Event('input',{bubbles:true})); tm.dispatchEvent(new Event('change',{bubbles:true})); info(); });
+    info();
+  }
+  tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
+  new MutationObserver(anhaengen).observe(ol,{childList:true});
+  anhaengen();
 })();
 </script>
 </body>

@@ -169,7 +169,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <li data-t="5"><div class="st"><h3>Kneten, Phase 1</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Poolish, <span data-k="hM"></span> Weissmehl, <span data-k="hW"></span> Wasser (<span data-k="wq"></span>) und <span data-k="hH"></span> Hefe 5 Min. langsam kneten.</p></li>
   <li data-t="7"><div class="st"><h3>Kneten, Phase 2</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
-    <p>Brühstück in Stücken zugeben, 2 Min. langsam einarbeiten, dann 4–5 Min. schnell bis zu einem glatten, leicht klebrigen Teig. <span data-k="oe"></span> Olivenöl zuletzt langsam einarbeiten. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters oben eintragen, Stockgare und Zeitplan passen sich an.</p></li>
+    <p>Brühstück in Stücken zugeben, 2 Min. langsam einarbeiten, dann 4–5 Min. schnell bis zu einem glatten, leicht klebrigen Teig. <span data-k="oe"></span> Olivenöl zuletzt langsam einarbeiten. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters hier eintragen, Stockgare und Zeitplan passen sich an.</p></li>
   <li data-t="stock" data-sig="half"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Lieber nach Teig als nach Uhr.</p></li>
   <li data-t="15"><div class="st"><h3>Teilen und vorformen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
@@ -346,6 +346,35 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       if(v!==inp.value) push(); }
     d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
   });
+})();
+</script>
+<style>
+.tm-spiegel{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.tm-spiegel label{margin:0;font-size:.95rem;font-weight:600}
+.tm-spiegel input{width:7em}
+.tm-spiegel .tm-info{flex-basis:100%;font-size:.85rem;opacity:.8}
+</style>
+<script>
+(function(){
+  const tm=document.getElementById('tm'), ol=document.getElementById('schritte');
+  if(!tm||!ol) return;
+  const cs=getComputedStyle(tm);
+  const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box'};
+  const info=()=>{ const d=document.getElementById('dth'); const t=document.querySelector('.tm-spiegel .tm-info'); if(d&&t) t.textContent=d.textContent; };
+  function anhaengen(){
+    if(ol.querySelector('.tm-spiegel')) return;
+    const li=[...ol.children].filter(l=>/Teigtemperatur/.test((l.querySelector('p')||l).textContent)).pop();
+    if(!li) return;
+    const w=document.createElement('div'); w.className='tm-spiegel noprint';
+    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="32" step="0.5" inputmode="decimal" placeholder="nach dem Kneten"><span class="tm-info"></span>';
+    const p=li.querySelector('p'); (p||li).insertAdjacentElement(p?'afterend':'beforeend',w);
+    const t2=w.querySelector('input'); Object.assign(t2.style,css); t2.value=tm.value;
+    t2.addEventListener('input',()=>{ tm.value=t2.value; tm.dispatchEvent(new Event('input',{bubbles:true})); tm.dispatchEvent(new Event('change',{bubbles:true})); info(); });
+    info();
+  }
+  tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
+  new MutationObserver(anhaengen).observe(ol,{childList:true});
+  anhaengen();
 })();
 </script>
 </body>

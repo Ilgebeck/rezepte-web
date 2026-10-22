@@ -183,7 +183,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['0','Nüsse vorbereiten',roest+' Vollständig auskühlen lassen und grob hacken (halbe bis viertel Kerne). Geht gut am Vortag.'],
       ['0','Poolish ansetzen','<span data-k="pM"></span> Ruchmehl, <span data-k="pW"></span> Leitungswasser und <span data-k="pH"></span> Hefe glatt verrühren. Abgedeckt in der Küche stehen lassen, bis die Oberfläche voller Blasen ist und leicht einsinkt.'],
       ['5','Kneten, Phase 1','Poolish, <span data-k="hM"></span> Ruchmehl, <span data-k="rM"></span> Roggenmehl, 90 % des Wassers (<span data-k="wq"></span>), <span data-k="hH"></span> Hefe'+(ho?' und <span data-k="ho"></span> Honig':'')+' 5 Min. langsam kneten.'],
-      ['7','Kneten, Phase 2','<span data-k="sa"></span> Salz zugeben, 4–5 Min. schnell kneten. Restwasser nach Bedarf einarbeiten. Durch den Roggen bleibt der Teig leicht klebrig, das ist richtig. Zuletzt die Nüsse (<span data-k="nTot"></span>) 1–2 Min. langsam unterkneten. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters oben eintragen.'],
+      ['7','Kneten, Phase 2','<span data-k="sa"></span> Salz zugeben, 4–5 Min. schnell kneten. Restwasser nach Bedarf einarbeiten. Durch den Roggen bleibt der Teig leicht klebrig, das ist richtig. Zuletzt die Nüsse (<span data-k="nTot"></span>) 1–2 Min. langsam unterkneten. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters hier eintragen.'],
       ['stock','Stockgare','Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Lieber nach Teig als nach Uhr.'],
       ['15','Teilen und vorformen','In <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen, locker rundwirken, 15 Min. entspannen.'],
       ['stueck','Formen und Stückgare','Länglich oder rund straff formen, mit dem Schluss nach unten auf Backpapier aufs Blech (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen. Kurz vor dem Einschiessen 2–3 Mal schräg einschneiden.'],
@@ -331,6 +331,35 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       if(v!==inp.value) push(); }
     d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
   });
+})();
+</script>
+<style>
+.tm-spiegel{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.tm-spiegel label{margin:0;font-size:.95rem;font-weight:600}
+.tm-spiegel input{width:7em}
+.tm-spiegel .tm-info{flex-basis:100%;font-size:.85rem;opacity:.8}
+</style>
+<script>
+(function(){
+  const tm=document.getElementById('tm'), ol=document.getElementById('schritte');
+  if(!tm||!ol) return;
+  const cs=getComputedStyle(tm);
+  const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box'};
+  const info=()=>{ const d=document.getElementById('dth'); const t=document.querySelector('.tm-spiegel .tm-info'); if(d&&t) t.textContent=d.textContent; };
+  function anhaengen(){
+    if(ol.querySelector('.tm-spiegel')) return;
+    const li=[...ol.children].filter(l=>/Teigtemperatur/.test((l.querySelector('p')||l).textContent)).pop();
+    if(!li) return;
+    const w=document.createElement('div'); w.className='tm-spiegel noprint';
+    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="32" step="0.5" inputmode="decimal" placeholder="nach dem Kneten"><span class="tm-info"></span>';
+    const p=li.querySelector('p'); (p||li).insertAdjacentElement(p?'afterend':'beforeend',w);
+    const t2=w.querySelector('input'); Object.assign(t2.style,css); t2.value=tm.value;
+    t2.addEventListener('input',()=>{ tm.value=t2.value; tm.dispatchEvent(new Event('input',{bubbles:true})); tm.dispatchEvent(new Event('change',{bubbles:true})); info(); });
+    info();
+  }
+  tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
+  new MutationObserver(anhaengen).observe(ol,{childList:true});
+  anhaengen();
 })();
 </script>
 </body>
