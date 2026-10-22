@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nussbrot mit Poolish</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+.sighint{flex-basis:100%;font-size:.9rem;color:var(--grau)}
+.sighint.jetzt{color:var(--kruste);font-weight:700}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<p class="back noprint" style="margin:0 0 1rem;font-size:15px"><a href="index.html" style="color:inherit;font-weight:600;text-decoration:none">← Alle Rezepte</a></p>
+<h1>Nussbrot mit Poolish</h1>
+<p class="sub">Kräftig mit Ruchmehl und 20 % Roggen, gerösteten Nüssen und einem Hauch Honig. Freigeschoben auf dem Backblech.</p>
+
+<section>
+<h2>Variante und Menge</h2>
+<div class="panel">
+  <div class="regler breit"><label for="m">Teigmenge</label><div class="rwrap mit-ticks"><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><div class="ticks" id="mticks" aria-hidden="true"></div></div><output id="mo"></output></div>
+  <div class="grid">
+    <div><label for="sz">Brotgrösse</label><select id="sz"><option value="500" selected>ca. 500 g</option><option value="750">ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
+    <div><label for="nu">Nüsse</label><select id="nu"><option value="b" selected>Baumnüsse</option><option value="h">Haselnüsse</option><option value="m">Gemischt 50/50</option></select></div>
+  </div>
+  <div class="regler" style="margin-top:14px"><label for="c">Nussanteil</label><div class="rwrap"><input id="c" type="range" min="20" max="40" step="10" value="30"></div><output id="co"></output></div>
+  <div class="regler"><label for="rt">Küche</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="ho" checked><span>Honig 3 % (rundet die Gerbstoffe der Baumnüsse ab)</span></div>
+  <div class="check noprint"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="kw">Quooker CUBE (°C)</label><input id="kw" type="number" min="3" max="15" step="1" value="7"></div>
+    <div><label for="lw">Kaltwasser Leitung (°C)</label><input id="lw" type="number" min="3" max="25" step="1" value="10"></div>
+  </div>
+  <p class="kennz" id="kennz"></p>
+</div>
+</section>
+
+<section>
+<h2>Zeitplan</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="bk">Einschiessen am</label><input id="bk" type="datetime-local"></div>
+    <div><label for="pd">Poolish-Dauer</label><select id="pd"><option value="16" selected>16 Std.</option><option value="20">20 Std.</option><option value="24">24 Std.</option></select></div>
+  </div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="tm">Teigtemperatur gemessen (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="nach dem Kneten"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Zutaten</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis">
+  <p><strong>Zur Rezeptlogik</strong></p>
+  <p>Mehl: 80 % Ruchmehl, 20 % Roggenmehl; 30 % des Mehls als Ruchmehl-Poolish. Hydration 72 %, Salz 2,2 %. Geröstete Nüsse nehmen kaum Wasser auf, deshalb bleibt die Wassermenge unabhängig vom Nussanteil. Die Hefe im Hauptteig steigt mit dem Nussanteil (20 % Nüsse: 1,5 %, 30 %: 1,7 %, 40 %: 1,9 %), weil Nüsse, Roggen und Kleie das Glutengerüst belasten. Die Nüsse kommen erst ganz am Schluss langsam dazu, damit sie das Gluten nicht zerreissen und den Teig nicht grau färben.</p>
+  <p>Temperaturanpassung: Stückgare ca. +9 % pro Grad Küche unter 24 °C, Stockgare zusätzlich ca. +4,5 % pro Grad Teigtemperatur unter 25 °C. Erwartete Teigtemperatur nach Bäckerformel mit ca. 12 °C Reibungswärme des Spiralkneters. Richtwerte; massgebend bleibt der Teig.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
+  const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
+  const SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22}, LW={12:8,1:8,2:8,3:8,4:10,11:10,5:12,10:12,6:15,7:15,8:15,9:15};
+  const BZ={500:35,750:42,1000:50}, H=0.72, S=0.022, P=0.30, ROG=0.20, YN={20:0.015,30:0.017,40:0.019};
+  const NU={b:[['Baumnüsse',1]],h:[['Haselnüsse',1]],m:[['Baumnüsse',.5],['Haselnüsse',.5]]};
+  let manuell=false, manuellLW=false, D={stock:75,stueck:50,bake:35};
+  const mon=()=>{const d=new Date($('#bk').value);return isNaN(d)?10:d.getMonth()+1;};
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  const zr=(t,k)=>`<tr><td class="cb"><input type="checkbox"></td><td>${t}</td><td class="menge" data-k="${k}"></td></tr>`;
+
+  function build(){
+    const nu=$('#nu').value, ho=$('#ho').checked;
+    const roest=nu==='b'?'Baumnüsse auf einem Blech bei 160 °C Umluft 8–10 Min. rösten, bis sie duften.'
+      :nu==='h'?'Haselnüsse bei 160 °C Umluft 12–15 Min. rösten und noch warm in einem Tuch kräftig abreiben, damit sich die bitteren Häutchen lösen.'
+      :'Haselnüsse bei 160 °C Umluft 12–15 Min. rösten, Baumnüsse für die letzten 8–10 Min. dazugeben. Haselnüsse noch warm in einem Tuch abreiben.';
+    $('#ztb').innerHTML=grp('Poolish')+zr('Ruchmehl','pM')+zr('Wasser, Leitung (nicht gekühlt)','pW')+zr('Frischhefe','pH')
+      +grp('Hauptteig')+zr('Ruchmehl','hM')+zr('Roggenmehl (Ruch- oder Vollkornroggen)','rM')+zr('Wasser, <span data-k="wq"></span>','hW')
+      +zr('Frischhefe','hH')+zr('Salz','sa')+(ho?zr('Honig (Blüten- oder Waldhonig)','ho'):'')
+      +grp('Nüsse')+NU[nu].map((x,i)=>zr(x[0]+', geröstet und grob gehackt','n'+i)).join('');
+    $$('#ztb input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+    const st=[
+      ['0','Nüsse vorbereiten',roest+' Vollständig auskühlen lassen und grob hacken (halbe bis viertel Kerne). Geht gut am Vortag.'],
+      ['0','Poolish ansetzen','<span data-k="pM"></span> Ruchmehl, <span data-k="pW"></span> Leitungswasser und <span data-k="pH"></span> Hefe glatt verrühren. Abgedeckt in der Küche stehen lassen, bis die Oberfläche voller Blasen ist und leicht einsinkt.'],
+      ['5','Kneten, Phase 1','Poolish, <span data-k="hM"></span> Ruchmehl, <span data-k="rM"></span> Roggenmehl, 90 % des Wassers (<span data-k="wq"></span>), <span data-k="hH"></span> Hefe'+(ho?' und <span data-k="ho"></span> Honig':'')+' 5 Min. langsam kneten.'],
+      ['7','Kneten, Phase 2','<span data-k="sa"></span> Salz zugeben, 4–5 Min. schnell kneten. Restwasser nach Bedarf einarbeiten. Durch den Roggen bleibt der Teig leicht klebrig, das ist richtig. Zuletzt die Nüsse (<span data-k="nTot"></span>) 1–2 Min. langsam unterkneten. Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters oben eintragen.'],
+      ['stock','Stockgare','Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Lieber nach Teig als nach Uhr.'],
+      ['15','Teilen und vorformen','In <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen, locker rundwirken, 15 Min. entspannen.'],
+      ['stueck','Formen und Stückgare','Länglich oder rund straff formen, mit dem Schluss nach unten auf Backpapier aufs Blech (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen. Kurz vor dem Einschiessen 2–3 Mal schräg einschneiden.'],
+      ['bake','Backen','Einschiessen, sofort ein Dampfstoss. Nach 10 Min. auf 200 °C reduzieren. Total ca. <span data-k="bz"></span>, letzte 10 Min. Dampf ablassen. Kerntemperatur 96–98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
+      ['120','Auskühlen','Mindestens 2 Std. auf dem Gitter. Am nächsten Tag schmeckt Nussbrot oft noch besser.']];
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    timers();
+  }
+
+  function rechnen(){
+    if(!manuell) $('#rt').value=SAISON[mon()]||21;
+    if(!manuellLW) $('#lw').value=LW[mon()];
+    const t=+$('#m').value, sz=+$('#sz').value, cp=+$('#c').value, c=cp/100, T=+$('#rt').value, ph=+$('#pd').value;
+    const ho=$('#ho').checked?0.03:0, cube=$('#cube').checked, Y=YN[cp]||0.017, nu=NU[$('#nu').value];
+    const pYf=0.001*Math.pow(1.09,20-T)*(16/ph);
+    const F=t/(1+H+S+Y+ho+c+P*pYf), pM=F*P;
+    const Tc=cube?Math.max(3,Math.min(15,+$('#kw').value||7)):Math.max(3,Math.min(25,+$('#lw').value||10));
+    $('#kw').closest('div').style.opacity=cube?1:.45; $('#lw').closest('div').style.opacity=cube?.45:1;
+    const dtCalc=(Tc+4*T+12)/5, tmv=parseFloat($('#tm').value), gem=!isNaN(tmv)&&tmv>=12&&tmv<=32, DT=gem?tmv:dtCalc;
+    const F1=Math.pow(1.09,24-T), FT=Math.pow(1.045,25-DT);
+    D={stock:r5(75*F1*FT),stueck:r5(50*F1),bake:BZ[sz]};
+    const n=Math.max(1,Math.round(t/sz)), each=t/n;
+    const DTs=(Math.round(DT*2)/2).toLocaleString('de-CH')+' °C', Ts=T.toLocaleString('de-CH')+' °C';
+    $('#mo').textContent=(t/1000).toLocaleString('de-CH',{minimumFractionDigits:2})+' kg';
+    $('#co').textContent=cp+' %'; $('#rto').textContent=Ts;
+    $('#rth').textContent=manuell?'Manuell eingestellt':'Aus der Jahreszeit des Backdatums vorgeschlagen';
+    $('#dth').textContent=(gem?'Gemessene Teigtemperatur '+DTs+', Stockgare danach berechnet.':'Erwartete Teigtemperatur ca. '+DTs+'.')
+      +(DT<21?' Recht kühl: Stockgare wird deutlich länger.':'')+(DT>27?' Recht warm: Teig im Auge behalten.':'');
+    const V={pM:g(pM),pW:g(pM),pH:g1(pM*pYf),hM:g(F*(1-ROG)-pM),rM:g(F*ROG),hW:g(F*H-pM),hH:g1(F*Y),sa:g1(F*S),ho:g(F*ho),
+      wq:(cube?'Quooker CUBE gekühlt, ca. ':'Leitung kalt, ca. ')+Tc+' °C',nTot:g(F*c),
+      n:n,g:g(each),pb:sz==500?'max. 3':'max. 2',bz:BZ[sz]+' Min.',stock:D.stock+' Min.',stueck:D.stueck+' Min.',rt:Ts,dt:DTs};
+    nu.forEach((x,i)=>V['n'+i]=g(F*c*x[1]));
+    $$('[data-k]').forEach(e=>{e.textContent=V[e.dataset.k]??''});
+    $('#kennz').textContent=`${n} Brote à ca. ${Math.round(each)} g · Mehl total ${Math.round(F)} g, davon ${Math.round(F*ROG)} g Roggen · Hefe Hauptteig ${(Y*100).toLocaleString('de-CH')} %`;
+    $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+    plan();
+  }
+
+  function plan(){
+    const b=new Date($('#bk').value); if(isNaN(b)) return;
+    const kn=new Date(b-(D.stueck+10+15+5+D.stock+15)*M), ph=+$('#pd').value;
+    const f=d=>d.toLocaleDateString('de-CH',{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    const rows=[[new Date(kn-ph*60*M),'Poolish ansetzen, Nüsse rösten'],[kn,'Kneten beginnen'],
+      [new Date(+kn+(15+D.stock)*M),'Teilen und vorformen'],[new Date(b-(D.stueck+10)*M),'Formen, Ofen vorheizen'],
+      [b,'Einschiessen'],[new Date(+b+(D.bake+120)*M),'Anschneiden ab']];
+    $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
+
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+      li.appendChild(box);
+      const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let tot=null, ende=null, rest=0, iv=null;
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
+    });
+  }
+
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  const d=new Date(Date.now()+(16*60+220)*M); d.setMinutes(d.getMinutes()<30?30:60,0,0);
+  $('#bk').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('#rt').addEventListener('input',()=>{manuell=true;rechnen();});
+  $('#lw').addEventListener('input',()=>{manuellLW=true;rechnen();});
+  ['#nu','#ho'].forEach(s=>$(s).addEventListener('change',()=>{build();rechnen();}));
+  ['#m','#sz','#c','#bk','#pd','#cube','#kw','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
+  build(); rechnen();
+})();
+</script>
+<script>
+(function(){
+  const m=document.getElementById('m'), t=document.getElementById('mticks');
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
+})();
+</script>
+<style>
+.zeitwahl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.zeitwahl input[type=date]{flex:1 1 150px}
+.zeitwahl-uhr{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.zeitwahl-uhr select{width:4.4em;flex:0 0 auto}
+.zeitwahl-sep{font-weight:600}
+.zeitwahl-suf{font-size:.9rem;opacity:.75}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const sv=(document.documentElement.lang||'').startsWith('sv');
+  document.querySelectorAll('input[type=datetime-local]').forEach(inp=>{
+    const cs=getComputedStyle(inp);
+    const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box',minWidth:'0'};
+    const wrap=document.createElement('div'); wrap.className='zeitwahl';
+    const d=document.createElement('input'); d.type='date'; d.id=inp.id+'_d';
+    const row=document.createElement('div'); row.className='zeitwahl-uhr';
+    const h=document.createElement('select'), m=document.createElement('select');
+    h.setAttribute('aria-label',sv?'Timme':'Stunde'); m.setAttribute('aria-label',sv?'Minut':'Minute');
+    for(let i=0;i<24;i++) h.add(new Option(pad(i),pad(i)));
+    for(let i=0;i<60;i+=10) m.add(new Option(pad(i),pad(i)));
+    const sep=document.createElement('span'); sep.className='zeitwahl-sep'; sep.textContent=':';
+    row.append(h,sep,m);
+    if(!sv){ const suf=document.createElement('span'); suf.className='zeitwahl-suf'; suf.textContent='Uhr'; row.append(suf); }
+    wrap.append(d,row);
+    [d,h,m].forEach(e=>Object.assign(e.style,css)); h.style.paddingLeft=m.style.paddingLeft='8px'; h.style.paddingRight=m.style.paddingRight='4px';
+    const zelle=inp.parentElement; if(zelle&&zelle.parentElement&&/grid/.test(zelle.parentElement.className)) zelle.style.gridColumn='1 / -1';
+    inp.insertAdjacentElement('afterend',wrap); inp.type='hidden';
+    const lab=document.querySelector('label[for="'+inp.id+'"]'); if(lab) lab.htmlFor=d.id;
+    const fmt=t=>t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())+'T'+pad(t.getHours())+':'+pad(t.getMinutes());
+    function push(){ if(!d.value) return; inp.value=d.value+'T'+h.value+':'+m.value;
+      inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true})); }
+    const t=new Date(inp.value);
+    if(!isNaN(t)){ const r=new Date(Math.round(t.getTime()/600000)*600000); const v=fmt(r);
+      d.value=v.slice(0,10); h.value=v.slice(11,13); m.value=v.slice(14,16);
+      if(v!==inp.value) push(); }
+    d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
+  });
+})();
+</script>
+</body>
+</html>
