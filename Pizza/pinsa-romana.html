@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pinsa Romana</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler:has(.mit-ticks){align-items:flex-start}
+.regler:has(.mit-ticks)>label,.regler:has(.mit-ticks)>output{line-height:28px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<p class="back noprint" style="margin:0 0 1rem;font-size:15px"><a href="../index.html" style="color:inherit;font-weight:600;text-decoration:none">← Alle Rezepte</a></p>
+<h1>Pinsa Romana</h1>
+<p class="sub">Mit Poolish und 24–48 Std. kalter Führung, Manitoba mit Reis- und Sojamehl. Luftige Krume, knuspriger Rand. Auf dem Pizzastein bei 280 °C.</p>
+
+<section>
+<h2>Teig berechnen</h2>
+<div class="panel">
+  <div class="regler"><label for="n">Anzahl Pinse</label><div class="rwrap"><input id="n" type="range" min="1" max="20" step="1" value="4"></div><output id="no"></output></div>
+  <div class="regler"><label for="w">Teigling</label><div class="rwrap"><input id="w" type="range" min="180" max="300" step="10" value="230"></div><output id="wo"></output></div>
+  <div class="regler"><label for="h">Hydration</label><div class="rwrap"><input id="h" type="range" min="75" max="80" step="1" value="78"></div><output id="ho"></output></div>
+  <div class="regler"><label for="rt">Küche</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="soja" checked><span>Sojamehl 4 % (sonst durch Manitoba ersetzt)</span></div>
+  <div class="check noprint"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="kw">Quooker CUBE (°C)</label><input id="kw" type="number" min="3" max="15" step="1" value="7"></div>
+    <div><label for="lw">Kaltwasser Leitung (°C)</label><input id="lw" type="number" min="3" max="25" step="1" value="10"></div>
+  </div>
+  <p class="kennz" id="kennz"></p>
+</div>
+</section>
+
+<section>
+<h2>Zeitplan</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="eat">Pinsa essen um</label><input id="eat" type="datetime-local"></div>
+    <div><label for="pl">Kalte Führung</label><select id="pl"><option value="24" selected>24 Std.</option><option value="48">48 Std.</option></select></div>
+  </div>
+  <div class="grid" style="margin-top:12px">
+    <div><label for="pd">Poolish-Dauer</label><select id="pd"><option value="16" selected>16 Std.</option><option value="20">20 Std.</option><option value="24">24 Std.</option></select></div>
+  </div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="tm">Teigtemperatur gemessen (°C)</label><input id="tm" type="number" min="12" max="32" step="0.5" placeholder="nach dem Kneten"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Zutaten</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis">
+  <p><strong>Zur Rezeptlogik</strong></p>
+  <p>Mehlbasis: 86 % Manitoba (W300+), 10 % Reismehl, 4 % Sojamehl. Reis- und Sojamehl sorgen für die typisch leichte, knusprige Krume und begrenzen die Glutenentwicklung trotz hoher Hydration. Sojamehl ist in der Schweiz nicht überall erhältlich; ohne Häkchen wird es durch Manitoba ersetzt. 30 % des Mehls gehen als Poolish an. Salz 2,6 %, Olivenöl 3,6 %, Zusatzhefe im Hauptteig 0,2 %.</p>
+  <p>Die Teiglinge lassen sich nach dem Formen auch einfrieren und direkt aus dem Gefrierfach auf Raumtemperatur bringen. Akklimatisierung nach dem Kühlschrank mindestens 3 Std., bei kühlerer Küche länger. Richtwerte; massgebend bleibt der Teig.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
+  const pad=x=>String(x).padStart(2,'0'), M=60000, H=60*M, r5=x=>Math.round(x/5)*5;
+  const SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22}, LW={12:8,1:8,2:8,3:8,4:10,11:10,5:12,10:12,6:15,7:15,8:15,9:15};
+  const P=0.30, RICE=0.10, SOY=0.04, S=0.026, OIL=0.036, YH=0.002;
+  let manuell=false, manuellLW=false, D={stock:90,app:180};
+  const mon=()=>{const d=new Date($('#eat').value);return isNaN(d)?10:d.getMonth()+1;};
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  const zr=(t,k)=>`<tr><td class="cb"><input type="checkbox"></td><td>${t}</td><td class="menge" data-k="${k}"></td></tr>`;
+
+  function build(){
+    const soja=$('#soja').checked;
+    $('#ztb').innerHTML=grp('Poolish')+zr('Manitoba (W300+)','pM')+zr('Wasser, Leitung','pW')+zr('Frischhefe','pY')
+      +grp('Hauptteig')+zr('Manitoba (W300+)','hM')+zr('Reismehl','ri')+(soja?zr('Sojamehl','so'):'')
+      +zr('Wasser, <span data-k="wq"></span>','hW')+zr('Frischhefe','hY')+zr('Salz','sa')+zr('Olivenöl extra vergine','oe');
+    $$('#ztb input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+    const st=[
+      ['0','Poolish ansetzen','<span data-k="pM"></span> Manitoba, <span data-k="pW"></span> Wasser und <span data-k="pY"></span> Hefe glatt verrühren. Abgedeckt in der Küche reifen lassen, bis die Oberfläche blasig und leicht eingesunken ist.'],
+      ['5','Hauptteig mischen','Poolish, <span data-k="hM"></span> Manitoba, <span data-k="ri"></span> Reismehl'+(soja?' und <span data-k="so"></span> Sojamehl':'')+' auf niedrigster Stufe grob vermengen. Dann <span data-k="hW"></span> Wasser (<span data-k="wq"></span>) mit <span data-k="hY"></span> Hefe in 3–4 Portionen einlaufen lassen (Bassinage), jede Portion erst vollständig aufnehmen lassen.'],
+      ['10','Salz und Öl, fertigkneten','<span data-k="sa"></span> Salz zugeben und kneten, bis sich der Teig wieder vom Rand löst. Dann <span data-k="oe"></span> Olivenöl langsam einlaufen lassen und 8–10 Min. auf höherer Stufe kneten, bis der Teig glatt, glänzend und elastisch ist (Fenstertest). Erwartete Teigtemperatur ca. <span data-k="dt"></span>; den Messwert des Kneters hier eintragen.'],
+      ['stock','Anspringen lassen','Teig in eine geölte Box mit Deckel geben und ca. <span data-k="stock"></span> in der Küche (<span data-k="rt"></span>) anspringen lassen.'],
+      ['kalt','Kalte Führung','Teig <span data-k="plH"></span> bei 5–6 °C im Kühlschrank reifen lassen.'],
+      ['app','Teilen und akklimatisieren','Teig aus dem Kühlschrank nehmen, in <span data-k="n"></span> Stücke à ca. <span data-k="w"></span> teilen, rund vorformen und abgedeckt ca. <span data-k="app"></span> in der Küche akklimatisieren. Die Teiglinge sollen sichtbar entspannt und nicht mehr kühlschrankkalt sein.'],
+      ['60','Ofen vorheizen','Pizzastein auf die zweitoberste Schiene, Ofen auf 280 °C Ober-/Unterhitze, mindestens 60 Min. vorheizen. Läuft parallel zur Akklimatisierung.'],
+      ['0','Ausziehen und belegen','Hände mit reichlich Olivenöl benetzen (kein Mehl), Teigling von innen nach aussen zur typischen ovalen Form ziehen. Ränder nicht flachdrücken, damit die Krume luftig bleibt. Klassisch dünn mit Tomatensauce, Mozzarella und Basilikum, oder mediterran mit Olivenöl, Meersalz und Rosmarin.'],
+      ['7.5','Backen','Auf dem heissen Stein 6–9 Min. backen, bis der Rand kräftig gebräunt und stellenweise leicht verkohlt ist.']];
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    timers();
+  }
+
+  function rechnen(){
+    if(!manuell) $('#rt').value=SAISON[mon()]||21;
+    if(!manuellLW) $('#lw').value=LW[mon()];
+    const n=+$('#n').value, w=+$('#w').value, h=+$('#h').value/100, T=+$('#rt').value, pl=+$('#pl').value, ph=+$('#pd').value;
+    const soja=$('#soja').checked, cube=$('#cube').checked;
+    const pYf=0.001*Math.pow(1.09,20-T)*(16/ph);
+    const total=n*w*1.02, F=total/(1+h+S+OIL+YH+P*pYf), pM=F*P;
+    const Tc=cube?Math.max(3,Math.min(15,+$('#kw').value||7)):Math.max(3,Math.min(25,+$('#lw').value||10));
+    $('#kw').closest('div').style.opacity=cube?1:.45; $('#lw').closest('div').style.opacity=cube?.45:1;
+    const dtCalc=(T+T+Tc+12)/3, tmv=parseFloat($('#tm').value), gem=!isNaN(tmv)&&tmv>=12&&tmv<=32, DT=gem?tmv:dtCalc;
+    D={stock:r5(90*Math.pow(1.09,24-T)*Math.pow(1.045,24-DT)), app:r5(Math.max(180,180*Math.pow(1.09,24-T)))};
+    const Ts=T.toLocaleString('de-CH')+' °C', DTs=(Math.round(DT*2)/2).toLocaleString('de-CH')+' °C';
+    $('#no').textContent=n; $('#wo').textContent=w+' g'; $('#ho').textContent=Math.round(h*100)+' %'; $('#rto').textContent=Ts;
+    $('#rth').textContent=manuell?'Manuell eingestellt':'Aus der Jahreszeit des Termins vorgeschlagen';
+    $('#kennz').textContent=`Teig total ${Math.round(total)} g (inkl. 2 % Verlust), Mehl ${Math.round(F)} g`;
+    $('#dth').textContent=(gem?'Gemessene Teigtemperatur '+DTs+', Gare danach berechnet.':'Erwartete Teigtemperatur ca. '+DTs+'.')+' Ziel für die kalte Führung: 22–24 °C.';
+    const hm=F*(1-RICE-(soja?SOY:0))-pM;
+    const V={pM:g(pM),pW:g(pM),pY:g1(pM*pYf),hM:g(hm),ri:g(F*RICE),so:g(F*SOY),hW:g(F*h-pM),hY:g1(F*YH),sa:g1(F*S),oe:g(F*OIL),
+      wq:(cube?'CUBE gekühlt, ca. ':'Leitung kalt, ca. ')+Tc+' °C',dt:DTs,rt:Ts,n:n,w:w+' g',plH:'ca. '+pl+' Std.',
+      stock:D.stock+' Min.',app:(D.app>=60?Math.floor(D.app/60)+' Std. '+(D.app%60?D.app%60+' Min.':''):D.app+' Min.').trim()};
+    $$('[data-k]').forEach(e=>{e.textContent=V[e.dataset.k]??''});
+    $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+    plan();
+  }
+
+  function plan(){
+    const e=new Date($('#eat').value); if(isNaN(e)) return;
+    const pl=+$('#pl').value, ph=+$('#pd').value;
+    const bake=new Date(e-15*M), appStart=new Date(bake-D.app*M), kalt=new Date(appStart-pl*H), knet=new Date(kalt-(D.stock+20)*M);
+    const f=d=>d.toLocaleDateString('de-CH',{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    const rows=[[new Date(knet-ph*H),'Poolish ansetzen'],[knet,'Kneten beginnen'],[kalt,'Teig in den Kühlschrank'],
+      [appStart,'Teig aus dem Kühlschrank, teilen'],[new Date(bake-60*M),'Ofen mit Stein vorheizen'],[bake,'Erste Pinsa einschiessen']];
+    $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0'||li.dataset.t==='kalt') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+      li.appendChild(box);
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let ende=null, rest=0, iv=null;
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest);
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+        else{ z.classList.remove('ab'); ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;li._reset();};
+    });
+  }
+
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  const d=new Date(Date.now()+50*H);
+  $('#eat').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T19:00`;
+  $('#rt').addEventListener('input',()=>{manuell=true;rechnen();});
+  $('#lw').addEventListener('input',()=>{manuellLW=true;rechnen();});
+  $('#soja').addEventListener('change',()=>{build();rechnen();});
+  ['#n','#w','#h','#eat','#pl','#pd','#cube','#kw','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
+  build(); rechnen();
+})();
+</script>
+<style>
+.zeitwahl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.zeitwahl input[type=date]{flex:1 1 150px}
+.zeitwahl-uhr{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.zeitwahl-uhr select{width:4.4em;flex:0 0 auto}
+.zeitwahl-sep{font-weight:600}
+.zeitwahl-suf{font-size:.9rem;opacity:.75}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const sv=(document.documentElement.lang||'').startsWith('sv');
+  document.querySelectorAll('input[type=datetime-local]').forEach(inp=>{
+    const cs=getComputedStyle(inp);
+    const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box',minWidth:'0'};
+    const wrap=document.createElement('div'); wrap.className='zeitwahl';
+    const d=document.createElement('input'); d.type='date'; d.id=inp.id+'_d';
+    const row=document.createElement('div'); row.className='zeitwahl-uhr';
+    const h=document.createElement('select'), m=document.createElement('select');
+    h.setAttribute('aria-label',sv?'Timme':'Stunde'); m.setAttribute('aria-label',sv?'Minut':'Minute');
+    for(let i=0;i<24;i++) h.add(new Option(pad(i),pad(i)));
+    for(let i=0;i<60;i+=10) m.add(new Option(pad(i),pad(i)));
+    const sep=document.createElement('span'); sep.className='zeitwahl-sep'; sep.textContent=':';
+    row.append(h,sep,m);
+    if(!sv){ const suf=document.createElement('span'); suf.className='zeitwahl-suf'; suf.textContent='Uhr'; row.append(suf); }
+    wrap.append(d,row);
+    [d,h,m].forEach(e=>Object.assign(e.style,css)); h.style.paddingLeft=m.style.paddingLeft='8px'; h.style.paddingRight=m.style.paddingRight='4px';
+    const zelle=inp.parentElement; if(zelle&&zelle.parentElement&&/grid/.test(zelle.parentElement.className)) zelle.style.gridColumn='1 / -1';
+    inp.insertAdjacentElement('afterend',wrap); inp.type='hidden';
+    const lab=document.querySelector('label[for="'+inp.id+'"]'); if(lab) lab.htmlFor=d.id;
+    const fmt=t=>t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())+'T'+pad(t.getHours())+':'+pad(t.getMinutes());
+    function push(){ if(!d.value) return; inp.value=d.value+'T'+h.value+':'+m.value;
+      inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true})); }
+    const t=new Date(inp.value);
+    if(!isNaN(t)){ const r=new Date(Math.round(t.getTime()/600000)*600000); const v=fmt(r);
+      d.value=v.slice(0,10); h.value=v.slice(11,13); m.value=v.slice(14,16);
+      if(v!==inp.value) push(); }
+    d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
+  });
+})();
+</script>
+<style>
+.tm-spiegel{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.tm-spiegel label{margin:0;font-size:.95rem;font-weight:600}
+.tm-spiegel input{width:7em}
+.tm-spiegel .tm-info{flex-basis:100%;font-size:.85rem;opacity:.8}
+</style>
+<script>
+(function(){
+  const tm=document.getElementById('tm'), ol=document.getElementById('schritte');
+  if(!tm||!ol) return;
+  const cs=getComputedStyle(tm);
+  const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box'};
+  const info=()=>{ const d=document.getElementById('dth'); const t=document.querySelector('.tm-spiegel .tm-info'); if(d&&t) t.textContent=d.textContent; };
+  function anhaengen(){
+    if(ol.querySelector('.tm-spiegel')) return;
+    const li=[...ol.children].filter(l=>/Teigtemperatur/.test((l.querySelector('p')||l).textContent)).pop();
+    if(!li) return;
+    const w=document.createElement('div'); w.className='tm-spiegel noprint';
+    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="34" step="0.5" inputmode="decimal" placeholder="z. B. 26"><span class="tm-info"></span>';
+    const p=li.querySelector('p'); (p||li).insertAdjacentElement(p?'afterend':'beforeend',w);
+    const t2=w.querySelector('input'); Object.assign(t2.style,css); t2.value=tm.value;
+    t2.addEventListener('input',()=>{ tm.value=t2.value; tm.dispatchEvent(new Event('input',{bubbles:true})); tm.dispatchEvent(new Event('change',{bubbles:true})); info(); });
+    info();
+  }
+  tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
+  new MutationObserver(anhaengen).observe(ol,{childList:true});
+  anhaengen();
+  const dthEl=document.getElementById('dth'); if(dthEl) new MutationObserver(info).observe(dthEl,{childList:true,characterData:true,subtree:true});
+})();
+</script>
+<script>
+(function(){
+  const m=document.getElementById('m'), t=document.getElementById('mticks');
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
+})();
+</script>
+<script>
+(function(){
+  const r=document.getElementById('rt'); if(!r||r.type!=='range') return;
+  const w=r.closest('.rwrap'); if(!w||w.querySelector('.ticks')) return;
+  w.classList.add('mit-ticks');
+  const t=document.createElement('div'); t.className='ticks'; t.setAttribute('aria-hidden','true'); w.appendChild(t);
+  const lo=+r.min, hi=+r.max;
+  for(let v=Math.ceil(lo); v<=hi; v++){
+    const p=(v-lo)/(hi-lo)*100;
+    const i=document.createElement('i'); i.className='klein'; i.style.left=p+'%'; t.appendChild(i);
+    if(v%2===0){ const s=document.createElement('span'); s.textContent=v+'°'; s.style.left=p+'%'; t.appendChild(s); }
+  }
+})();
+</script>
+</body>
+</html>
