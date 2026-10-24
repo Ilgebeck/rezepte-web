@@ -164,7 +164,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
   const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
   const SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22}, LW={12:8,1:8,2:8,3:8,4:10,11:10,5:12,10:12,6:15,7:15,8:15,9:15};
-  const BZ={500:35,750:42,1000:50}, H=0.72, S=0.022, P=0.30, ROG=0.20, YN={20:0.015,30:0.017,40:0.019};
+  const BZ={500:40,750:47,1000:55}, H=0.72, S=0.022, P=0.30, ROG=0.20, YN={20:0.015,30:0.017,40:0.019};
   const NU={b:[['Baumnüsse',1]],h:[['Haselnüsse',1]],m:[['Baumnüsse',.5],['Haselnüsse',.5]]};
   let manuell=false, manuellLW=false, D={stock:75,stueck:50,bake:35};
   const mon=()=>{const d=new Date($('#bk').value);return isNaN(d)?10:d.getMonth()+1;};
@@ -189,7 +189,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['stock','Stockgare','Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Lieber nach Teig als nach Uhr.'],
       ['15','Teilen und vorformen','In <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen, locker rundwirken, 15 Min. entspannen.'],
       ['stueck','Formen und Stückgare','Länglich oder rund straff formen, mit dem Schluss nach unten auf Backpapier aufs Blech (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen. Kurz vor dem Einschiessen 2–3 Mal schräg einschneiden.'],
-      ['bake','Backen','Einschiessen, sofort ein Dampfstoss. Nach 10 Min. auf 200 °C reduzieren. Total ca. <span data-k="bz"></span>, letzte 10 Min. Dampf ablassen. Kerntemperatur 96–98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
+      ['bake','Backen','Einschiessen, sofort ein Dampfstoss. Nach 15 Min. den Dampf ablassen und auf 210 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Mehrere Bleche nach halber Zeit tauschen. Tipp für mehr Unterhitze: das Lochblech leer mitvorheizen und die Matte mit den Broten mit einem Brett aufs heisse Blech ziehen.'],
+      ['10','Nachbacken','Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 5–10 Min. im Ofen lassen. So trocknet die Kruste durch und wird rösch, ohne dunkler zu werden. Danach sofort aufs Gitter.'],
       ['120','Auskühlen','Mindestens 2 Std. auf dem Gitter. Am nächsten Tag schmeckt Nussbrot oft noch besser.']];
     $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
     timers();

@@ -176,7 +176,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <li data-t="stueck"><div class="st"><h3>Formen und Stückgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Rund oder länglich straff formen, Oberseite in Mehl wälzen und mit dem Schluss nach oben auf Backpapier aufs Blech setzen (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen.</p></li>
   <li data-t="bake"><div class="st"><h3>Backen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
-    <p>Einschiessen, sofort ein Dampfstoss. Nach 10 Min. auf 200 °C reduzieren. Total ca. <span data-k="bz"></span>, letzte 10 Min. Dampf ablassen. Kerntemperatur 96–98 °C. Bei mehreren Blechen nach halber Zeit tauschen.</p></li>
+    <p>Einschiessen, sofort ein Dampfstoss. Nach 15 Min. den Dampf ablassen und auf 210 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Bei mehreren Blechen nach halber Zeit tauschen. Tipp für mehr Unterhitze: das Lochblech leer mitvorheizen und die Matte mit den Broten mit einem Brett aufs heisse Blech ziehen.</p></li>
+  <li data-t="10"><div class="st"><h3>Nachbacken</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 5–10 Min. im Ofen lassen. So trocknet die Kruste durch und wird rösch, ohne dunkler zu werden. Danach sofort aufs Gitter.</p></li>
   <li data-t="120"><div class="st"><h3>Auskühlen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Mindestens 2 Std. auf dem Gitter, sonst bleibt die Krume klebrig.</p></li>
 </ol>
@@ -199,7 +201,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const P={mehl:100,ka:40,w:58,sa:2.2,hh:1.2,ph:0.03,bu:3};
   const SUM=Object.values(P).reduce((a,b)=>a+b,0);
-  const BZ={500:35,750:42,1000:50}, SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22};
+  const BZ={500:40,750:47,1000:55}, SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22};
   const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
   const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
   const LW={12:8,1:8,2:8,3:8,4:10,11:10,5:12,10:12,6:15,7:15,8:15,9:15};
