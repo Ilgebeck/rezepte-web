@@ -168,7 +168,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   const KOK={6:22,7:22,8:22}, LW={12:4,1:4,2:4,3:4,4:5,11:6,5:7,10:8,6:10,9:10,7:12,8:12};
   const AUS={back:0.75,dampf:0.95};
   const R={
-    h:{pool:.25,pu:.40,liq:{back:.52,dampf:.46},sa:.022,hh:.012,fe:.03,ke:.10,stock:70,stueck:50,BZ:{500:35,750:42,1000:50},cool:120},
+    h:{pool:.25,pu:.40,liq:{back:.52,dampf:.46},sa:.022,hh:.012,fe:.01,ke:.10,stock:70,stueck:50,BZ:{500:40,750:47,1000:55},cool:120},
     s:{pool:.20,pu:.40,liq:{back:.15,dampf:.10},ei:.10,zu:.10,bu:.15,sa:.018,hh:.035,zi:.005,ke:.08,stock:90,stueck:60,BZ:{500:28,750:35,1000:42},cool:60}};
   let manuell=false, manuellLW=false, D={}, V={};
   const mon=()=>{const d=new Date($('#bk').value);return isNaN(d)?10:d.getMonth()+1;};
@@ -201,8 +201,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['stueck','Forma och jäs',s?'Rulla ut längderna, fläta och lägg på bakplåtspapper på plåt (<span data-k="pb"></span> per plåt). Pensla med uppvispat ägg. Jäs övertäckt ca. <span data-k="stueck"></span>. Sätt ugnen på 180 °C varmluft.'
         :'Forma stramt, fukta ytan'+(ke?' och rulla i fröna':'')+', lägg skarven nedåt på bakplåtspapper på plåt (<span data-k="pb"></span> per plåt). Jäs övertäckt ca. <span data-k="stueck"></span>. Sätt ugnen på 230 °C varmluft. Snitta precis innan de ska in.'],
       ['bake','Grädda',s?'Pensla en gång till med ägg'+(ke?' och strö över fröna':'')+'. Grädda utan ånga i 180 °C varmluft ca. <span data-k="bz"></span>. Innertemperatur 92–94 °C; blir de för mörka, täck löst med folie efter halva tiden.'
-        :'In i ugnen med ånga direkt (ånginjektion, eller häll kokande vatten i en långpanna i botten av ugnen). Sänk till 200 °C efter 10 min. Totalt ca. <span data-k="bz"></span>, släpp ut ångan de sista 10 min. Innertemperatur 96–98 °C. Byt plats på plåtarna halvvägs.'],
-      [String(R[s?'s':'h'].cool),'Låt svalna',s?'Minst 1 tim på galler.':'Minst 2 tim på galler.']];
+        :'In i ugnen och ge direkt <strong>bara EN ångstöt</strong>, ingen andra (ånginjektion, eller häll en gång lite kokande vatten i en långpanna i botten av ugnen). Efter 15 min: släpp ut ångan och sänk till 210 °C. Totalt ca. <span data-k="bz"></span>, innertemperatur 98 °C. Byt plats på plåtarna halvvägs.'],
+      !s?['10','Eftergrädda','Stäng av ugnen och låt bröden stå kvar 5–10 min med luckan på glänt (kläm in en träslev). Då torkar skorpan och blir frasig utan att bli mörkare. Sedan direkt på galler.']:null,
+      [String(R[s?'s':'h'].cool),'Låt svalna',s?'Minst 1 tim på galler.':'Minst 2 tim på galler.']].filter(Boolean);
     $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Steg klart"></div><p>${x[2]}</p></li>`).join('');
     timers();
   }
