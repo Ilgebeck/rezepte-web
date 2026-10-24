@@ -90,6 +90,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   h2+*{break-before:avoid;page-break-before:avoid}
   tr,.regler{break-inside:avoid;page-break-inside:avoid}
 }
+
+.kacheln{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.kachel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:14px 16px;break-inside:avoid;page-break-inside:avoid}
+.kachel h3{margin:0 0 6px;font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:1.1rem}
+.kachel .tag{display:inline-block;font-size:.75rem;color:var(--olive);background:var(--olive-hell);border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.kachel .kl{margin:8px 0 2px;font-size:.8rem;font-weight:700;color:var(--kruste)}
+.kachel ul{margin:0;padding-left:1.1em;font-size:.92rem;line-height:1.45}
+.kachel li{margin:2px 0}
 </style>
 </head>
 <body>
@@ -149,6 +157,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </div>
 </section>
 
+<section>
+<h2>Belagsideen</h2>
+<p class="kennz" style="margin:0 0 12px">Mengen pro Pinsa (Teigling ca. 230 g). Wasserreiche Beläge wie Zucchini oder Pilze dünn schneiden und leicht salzen. Was nach dem Backen draufkommt, auf die heisse Pinsa legen: Burrata, Schinken und Rucola bleiben so frisch.</p>
+<div class="kacheln"><article class="kachel"><h3>Margherita</h3><span class="tag">Klassisch</span><p class="kl">Vor dem Backen</p><ul><li>60 g passierte Tomaten, mit Salz und etwas Olivenöl verrührt</li><li>80 g Fior di latte, abgetropft und gezupft</li></ul><p class="kl">Nach dem Backen</p><ul><li>Basilikum</li><li>ein Faden Olivenöl</li></ul></article><article class="kachel"><h3>Mortadella, Pistazie, Burrata</h3><span class="tag">Bianca · mit Fleisch</span><p class="kl">Vor dem Backen</p><ul><li>nur Olivenöl und etwas Fleur de Sel, als Bianca backen</li></ul><p class="kl">Nach dem Backen</p><ul><li>60 g Mortadella, hauchdünn</li><li>½ Burrata (ca. 60 g), zerzupft</li><li>10 g Pistazien, geröstet und gehackt</li><li>etwas Zitronenabrieb</li></ul></article><article class="kachel"><h3>Kartoffel und Rosmarin</h3><span class="tag">Bianca · vegetarisch</span><p class="kl">Vor dem Backen</p><ul><li>100 g festkochende Kartoffeln, hauchdünn gehobelt, mit Olivenöl und Salz geschwenkt</li><li>Rosmarinnadeln</li><li>optional 20 g Pecorino, gerieben</li></ul><p class="kl">Nach dem Backen</p><ul><li>Fleur de Sel</li><li>ein Faden Olivenöl</li></ul></article><article class="kachel"><h3>Zucchini, Ricotta, Zitrone</h3><span class="tag">Vegetarisch</span><p class="kl">Vor dem Backen</p><ul><li>80 g Zucchini in dünnen Scheiben, leicht gesalzen</li><li>40 g Fior di latte</li></ul><p class="kl">Nach dem Backen</p><ul><li>50 g Ricotta in Tupfen</li><li>Zitronenabrieb und Minze</li><li>Olivenöl, Pfeffer</li></ul></article><article class="kachel"><h3>Kräuterseitlinge und Taleggio</h3><span class="tag">Vegetarisch</span><p class="kl">Vor dem Backen</p><ul><li>100 g Kräuterseitlinge, in dünnen Scheiben</li><li>50 g Taleggio in Stücken</li><li>Thymian, wenig Knoblauch</li></ul><p class="kl">Nach dem Backen</p><ul><li>glatte Petersilie</li><li>Pfeffer, Olivenöl</li></ul></article><article class="kachel"><h3>Rohschinken, Rucola, Parmesan</h3><span class="tag">Klassisch · mit Fleisch</span><p class="kl">Vor dem Backen</p><ul><li>50 g passierte Tomaten</li><li>50 g Fior di latte</li></ul><p class="kl">Nach dem Backen</p><ul><li>40 g Rohschinken (Prosciutto oder Bündner)</li><li>eine Handvoll Rucola</li><li>Parmesanspäne, Olivenöl</li></ul></article><article class="kachel"><h3>Salsiccia und Broccoli</h3><span class="tag">Mit Fleisch</span><p class="kl">Vor dem Backen</p><ul><li>60 g Salsiccia, aus der Haut gezupft</li><li>60 g Broccoliröschen, kurz blanchiert</li><li>50 g Fior di latte</li><li>etwas Chili</li></ul><p class="kl">Nach dem Backen</p><ul><li>ein Faden Olivenöl</li></ul></article><article class="kachel"><h3>Datterini und Stracciatella</h3><span class="tag">Bianca · vegetarisch</span><p class="kl">Vor dem Backen</p><ul><li>Olivenöl mit einer zerdrückten Knoblauchzehe</li></ul><p class="kl">Nach dem Backen</p><ul><li>80 g Datterini, halbiert und kurz mariniert</li><li>60 g Stracciatella</li><li>Basilikum, Fleur de Sel</li></ul></article><article class="kachel"><h3>Hokkaido, Salbei, Gorgonzola</h3><span class="tag">Saison Herbst · vegetarisch</span><p class="kl">Vor dem Backen</p><ul><li>80 g Hokkaido, hauchdünn gehobelt</li><li>40 g Gorgonzola</li><li>einige Salbeiblätter, mit Öl bepinselt</li></ul><p class="kl">Nach dem Backen</p><ul><li>geröstete Kürbiskerne</li><li>ein Hauch Honig</li></ul></article><article class="kachel"><h3>Feige, Gorgonzola, Baumnüsse</h3><span class="tag">Saison Herbst · vegetarisch</span><p class="kl">Vor dem Backen</p><ul><li>40 g Gorgonzola</li><li>2 frische Feigen in Spalten</li></ul><p class="kl">Nach dem Backen</p><ul><li>15 g Baumnüsse, geröstet</li><li>etwas Honig</li><li>eine Handvoll Rucola</li></ul></article></div>
+</section>
+
 <div class="leiste noprint">
   <button id="wach">Bildschirm wach halten</button>
   <button id="reset">Häkchen zurücksetzen</button>
@@ -182,7 +196,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['kalt','Kalte Führung','Teig <span data-k="plH"></span> bei 5–6 °C im Kühlschrank reifen lassen.'],
       ['app','Teilen und akklimatisieren','Teig aus dem Kühlschrank nehmen, in <span data-k="n"></span> Stücke à ca. <span data-k="w"></span> teilen, rund vorformen und abgedeckt ca. <span data-k="app"></span> in der Küche akklimatisieren. Die Teiglinge sollen sichtbar entspannt und nicht mehr kühlschrankkalt sein.'],
       ['60','Ofen vorheizen','Pizzastein auf die zweitoberste Schiene, Ofen auf 280 °C Ober-/Unterhitze, mindestens 60 Min. vorheizen. Läuft parallel zur Akklimatisierung.'],
-      ['0','Ausziehen und belegen','Hände mit reichlich Olivenöl benetzen (kein Mehl), Teigling von innen nach aussen zur typischen ovalen Form ziehen. Ränder nicht flachdrücken, damit die Krume luftig bleibt. Klassisch dünn mit Tomatensauce, Mozzarella und Basilikum, oder mediterran mit Olivenöl, Meersalz und Rosmarin.'],
+      ['0','Ausziehen und belegen','Hände mit reichlich Olivenöl benetzen (kein Mehl), Teigling von innen nach aussen zur typischen ovalen Form ziehen. Ränder nicht flachdrücken, damit die Krume luftig bleibt. Belegen: Ideen siehe Abschnitt «Belagsideen» weiter unten. Sparsam belegen, damit die Pinsa luftig bleibt.'],
       ['7.5','Backen','Auf dem heissen Stein 6–9 Min. backen, bis der Rand kräftig gebräunt und stellenweise leicht verkohlt ist.']];
     $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
     timers();
