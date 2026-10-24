@@ -370,7 +370,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const li=[...ol.children].filter(l=>/Teigtemperatur/.test((l.querySelector('p')||l).textContent)).pop();
     if(!li) return;
     const w=document.createElement('div'); w.className='tm-spiegel noprint';
-    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="32" step="0.5" inputmode="decimal" placeholder="nach dem Kneten"><span class="tm-info"></span>';
+    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="34" step="0.5" inputmode="decimal" placeholder="z. B. 26"><span class="tm-info"></span>';
     const p=li.querySelector('p'); (p||li).insertAdjacentElement(p?'afterend':'beforeend',w);
     const t2=w.querySelector('input'); Object.assign(t2.style,css); t2.value=tm.value;
     t2.addEventListener('input',()=>{ tm.value=t2.value; tm.dispatchEvent(new Event('input',{bubbles:true})); tm.dispatchEvent(new Event('change',{bubbles:true})); info(); });
@@ -379,6 +379,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
   new MutationObserver(anhaengen).observe(ol,{childList:true});
   anhaengen();
+  const dthEl=document.getElementById('dth'); if(dthEl) new MutationObserver(info).observe(dthEl,{childList:true,characterData:true,subtree:true});
 })();
 </script>
 <script>

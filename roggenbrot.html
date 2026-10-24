@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roggenbrot</title>
+<style>
+:root{
+  --mehl:#F6F6F3; --papier:#FFFFFF; --tinte:#22272A; --grau:#6B7075;
+  --leinen:#DEDAD0; --olive:#55663A; --kruste:#9A5B2E; --olive-hell:#E8ECDF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --mehl:#1C1F21; --papier:#25292C; --tinte:#ECEBE6; --grau:#A3A7AA;
+    --leinen:#3A3F42; --olive:#A7BB84; --kruste:#D39A6C; --olive-hell:#2E3528;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--mehl);color:var(--tinte);
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 18px 64px}
+h1,h2{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:600;line-height:1.15}
+h1{font-size:2.4rem;margin:8px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--grau);margin:0 0 28px}
+h2{font-size:1.45rem;margin:40px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--kruste);
+  break-after:avoid;page-break-after:avoid}
+.panel{background:var(--papier);border:1px solid var(--leinen);border-radius:10px;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:.85rem;color:var(--grau);margin-bottom:4px}
+input,select,button{font:inherit;color:inherit}
+input[type=datetime-local],input[type=number],select{width:100%;padding:8px 10px;border:1px solid var(--leinen);border-radius:8px;background:var(--mehl)}
+.regler{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.regler label{margin:0;min-width:5.5em}
+.rwrap{flex:1;position:relative;padding-bottom:0}
+.rwrap.mit-ticks{padding-bottom:26px}
+.regler:has(.mit-ticks){align-items:flex-start}
+.regler:has(.mit-ticks)>label,.regler:has(.mit-ticks)>output{line-height:28px}
+.regler.breit{flex-wrap:wrap;row-gap:4px}
+.regler.breit label{flex:1}
+.regler.breit .rwrap{order:3;flex-basis:100%}
+.regler input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;margin:0;background:transparent;display:block;--f:0}
+.regler input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(to right,var(--olive) calc(12px + var(--f)*(100% - 24px)),var(--leinen) calc(12px + var(--f)*(100% - 24px)))}
+.regler input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-10px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.regler input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--leinen)}
+.regler input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--olive)}
+.regler input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--olive);border:3px solid var(--papier);box-shadow:0 0 0 1px var(--olive)}
+.ticks{position:absolute;left:12px;right:12px;top:24px;height:24px;pointer-events:none}
+.ticks i{position:absolute;top:0;width:1px;background:var(--grau);transform:translateX(-.5px)}
+.ticks i.gross{height:9px;width:2px;transform:translateX(-1px)}
+.ticks i.klein{height:5px;opacity:.7}
+.ticks span{position:absolute;top:11px;font-size:.72rem;color:var(--grau);transform:translateX(-50%);white-space:nowrap}
+.regler output{font-weight:600;font-variant-numeric:tabular-nums;min-width:4.4em;text-align:right}
+.kennz{margin:10px 0 0;font-size:.9rem;color:var(--grau)}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--grau);margin-top:10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 4px;border-bottom:1px solid var(--leinen);vertical-align:top}
+td.menge{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;width:6.5em}
+tr.gruppe td{border:none;padding-top:18px;font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.05rem;color:var(--kruste)}
+tr.erledigt td{color:var(--grau);text-decoration:line-through}
+td.cb{width:32px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--olive);flex:none}
+.plan td:first-child{font-variant-numeric:tabular-nums;white-space:nowrap;width:9.5em;color:var(--olive);font-weight:600}
+ol.schritte{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.schritte>li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--leinen);
+  break-inside:avoid;page-break-inside:avoid}
+ol.schritte>li::before{content:counter(s);position:absolute;left:0;top:12px;width:32px;height:32px;border-radius:50%;
+  background:var(--olive-hell);color:var(--olive);font-weight:700;display:grid;place-items:center}
+ol.schritte>li.fertig{opacity:.55}
+.st{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.st h3{margin:0 0 4px;font-size:1.05rem}
+ol.schritte p{margin:0}
+.timer{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.zeit{font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;min-width:5.2em}
+.zeit.ab{color:var(--kruste)}
+.sighint{flex-basis:100%;font-size:.9rem;color:var(--grau)}
+.sighint.jetzt{color:var(--kruste);font-weight:700}
+button{border:1px solid var(--olive);background:transparent;color:var(--olive);border-radius:8px;padding:6px 12px;cursor:pointer}
+button.voll{background:var(--olive);color:var(--papier)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--kruste);outline-offset:2px}
+.hinweis{background:var(--olive-hell);border-radius:10px;padding:14px 16px;margin-top:14px;break-inside:avoid;page-break-inside:avoid}
+.hinweis p{margin:.3em 0}
+.leiste{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt}
+  main{padding:0}
+  .leiste,.timer,.noprint{display:none}
+  .panel{border:none;padding:0}
+  h2{break-after:avoid;page-break-after:avoid}
+  h2+*{break-before:avoid;page-break-before:avoid}
+  tr,.regler{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<p class="back noprint" style="margin:0 0 1rem;font-size:15px"><a href="index.html" style="color:inherit;font-weight:600;text-decoration:none">← Alle Rezepte</a></p>
+<h1>Roggenbrot</h1>
+<p class="sub">Weizen- oder Roggenmischbrot mit Ruchmehl, wahlweise mit Roggen-Hefevorteig und Buttermilch oder mit Roggensauerteig. Freigeschoben auf dem Backblech.</p>
+
+<section>
+<h2>Variante und Menge</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="ty">Brottyp</label><select id="ty"><option value="40">Weizenmischbrot (40 % Roggen)</option><option value="65" selected>Roggenmischbrot (65 % Roggen)</option></select></div>
+    <div><label for="sa">Säuerung</label><select id="sa"><option value="ohne" selected>Ohne Sauerteig</option><option value="sauer">Mit Roggensauerteig</option></select></div>
+  </div>
+  <div class="grid" style="margin-top:12px">
+    <div><label for="ex">Extras</label><select id="ex"><option value="pur" selected>Pur</option><option value="sb">Sonnenblumenkerne</option><option value="lein">Leinsamen</option></select></div>
+    <div><label for="sz">Brotgrösse</label><select id="sz"><option value="500" selected>ca. 500 g</option><option value="750">ca. 750 g</option><option value="1000">ca. 1000 g</option></select></div>
+  </div>
+  <div class="regler breit" style="margin-top:14px"><label for="m">Teigmenge</label><div class="rwrap mit-ticks"><input id="m" type="range" min="1000" max="5500" step="250" value="1500"><div class="ticks" id="mticks" aria-hidden="true"></div></div><output id="mo"></output></div>
+  <div class="regler"><label for="rt">Küche</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
+  <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="wa">Wasser Hauptteig</label><select id="wa"><option value="35" selected>Warm vom Hahn (ca. 35 °C)</option><option value="10">Leitung kalt (ca. 10 °C)</option><option value="7">Quooker CUBE (7 °C)</option></select></div>
+  </div>
+  <p class="kennz" id="kennz"></p>
+</div>
+</section>
+
+<section>
+<h2>Zeitplan</h2>
+<div class="panel">
+  <div class="grid">
+    <div><label for="bk">Einschiessen am</label><input id="bk" type="datetime-local"></div>
+    <div><label for="pd" id="pdlab">Vorteig-Dauer</label><select id="pd"><option value="16" selected>16 Std.</option><option value="20">20 Std.</option><option value="24">24 Std.</option></select></div>
+  </div>
+  <div class="grid noprint" style="margin-top:12px">
+    <div><label for="tm">Teigtemperatur gemessen (°C)</label><input id="tm" type="number" min="12" max="34" step="0.5" placeholder="nach dem Kneten"></div>
+  </div>
+  <p class="kennz" id="dth"></p>
+  <table class="plan" style="margin-top:12px"><tbody id="plan"></tbody></table>
+</div>
+</section>
+
+<section>
+<h2>Zutaten</h2>
+<div class="panel"><table id="zutaten"><tbody id="ztb"></tbody></table></div>
+</section>
+
+<section>
+<h2>Schritte</h2>
+<ol class="schritte" id="schritte"></ol>
+<div class="hinweis" id="anst"></div>
+<div class="hinweis">
+  <p><strong>Zur Rezeptlogik</strong></p>
+  <p>Ab etwa 50 % Roggen braucht der Teig Säure, sonst wird die Krume klebrig. Ohne Sauerteig kommt sie aus dem Roggen-Hefevorteig und 20 % Buttermilch: mild, etwas kompakter. Mit Sauerteig wird das Brot aromatischer und hält länger frisch. Die Hälfte des Roggens geht jeweils in die Vorstufe (Teigausbeute 200).</p>
+  <p>Hydration 72 % (Weizenmisch) bzw. 80 % (Roggenmisch), Salz 2 %. Hefe im Hauptteig: 1,2 % bzw. 1,5 % ohne Sauerteig, 0,8 % mit Sauerteig. Roggenteige wollen warm geführt werden (Teigtemperatur 26–28 °C) und nur kurz ruhen. Gare: ca. +9 % Zeit pro Grad Küche unter 24 °C und ca. +4,5 % pro Grad Teigtemperatur unter 27 °C. Richtwerte; massgebend bleibt der Teig, beim Roggenmischbrot vor allem das Rissbild der bemehlten Oberfläche.</p>
+</div>
+</section>
+
+<div class="leiste noprint">
+  <button id="wach">Bildschirm wach halten</button>
+  <button id="reset">Häkchen zurücksetzen</button>
+  <button onclick="window.print()">Drucken</button>
+</div>
+</main>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
+  const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
+  const SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22};
+  let manuell=false, D={stock:30,stueck:45,bake:45,cool:720};
+  const mon=()=>{const d=new Date($('#bk').value);return isNaN(d)?10:d.getMonth()+1;};
+  const grp=t=>`<tr class="gruppe"><td colspan="3">${t}</td></tr>`;
+  const zr=(t,k)=>`<tr><td class="cb"><input type="checkbox"></td><td>${t}</td><td class="menge" data-k="${k}"></td></tr>`;
+  const opt=()=>({r:+$('#ty').value/100, sauer:$('#sa').value==='sauer', ex:$('#ex').value});
+
+  function build(){
+    const {r,sauer,ex}=opt(), R65=r>0.5;
+    const sdName=ex==='sb'?'Sonnenblumenkerne, geröstet':ex==='lein'?'Leinsamen (ganz)':null;
+    $('#ztb').innerHTML=(sauer?grp('Roggensauerteig (am Vorabend)')+zr('Roggenmehl dunkel','vF')+zr('Wasser, ca. 30 °C','vW')+zr('Anstellgut','ag')
+        :grp('Roggen-Hefevorteig (am Vorabend)')+zr('Roggenmehl dunkel','vF')+zr('Wasser, Leitung','vW')+zr('Frischhefe','vY'))
+      +(sdName?grp('Quellstück (am Vorabend)')+zr(sdName,'sdS')+zr('Wasser, kochend','sdW'):'')
+      +grp('Hauptteig')+zr('Roggenmehl dunkel','hR')+zr('Ruchmehl','hW')+(sauer?'':zr('Buttermilch','bm'))
+      +zr('Wasser, <span data-k="wq"></span>','hWa')+zr('Frischhefe','hY')+zr('Salz','sa');
+    $$('#ztb input').forEach(cb=>cb.addEventListener('change',()=>cb.closest('tr').classList.toggle('erledigt',cb.checked)));
+    const st=[
+      ['0',sauer?'Sauerteig ansetzen':'Vorteig ansetzen',sauer?'<span data-k="vF"></span> Roggenmehl, <span data-k="vW"></span> Wasser (ca. 30 °C) und <span data-k="ag"></span> Anstellgut gut verrühren. Abgedeckt in der Küche reifen lassen, bis er deutlich gewachsen ist, mild säuerlich riecht und die Oberfläche Risse zeigt.'
+        :'<span data-k="vF"></span> Roggenmehl, <span data-k="vW"></span> Wasser und <span data-k="vY"></span> Hefe gut verrühren. Abgedeckt in der Küche reifen lassen, bis die Oberfläche blasig und leicht rissig ist.'],
+      sdName?['0','Quellstück ansetzen',(ex==='sb'?'<span data-k="sdS"></span> Sonnenblumenkerne in einer trockenen Pfanne goldbraun rösten, dann ':'<span data-k="sdS"></span> Leinsamen ')+'mit <span data-k="sdW"></span> kochendem Wasser übergiessen, abdecken und mindestens 4 Std., am besten über Nacht, quellen lassen.']:null,
+      sauer?['0','Anstellgut zurückbehalten','Vom fertigen Sauerteig 20 g abnehmen und in einem Glas in den Kühlschrank stellen. Das ist das Anstellgut fürs nächste Mal.']:null,
+      [R65?'10':'10','Kneten',(R65?'Alle Zutaten 8 Min. langsam, dann 2 Min. schnell kneten. Der Teig bleibt klebrig und wird nicht glatt, das ist bei Roggen richtig.':'Alle Zutaten 5 Min. langsam, dann 4–5 Min. schnell kneten, bis sich der Teig vom Rand löst.')
+        +(sdName?' Das Quellstück in den letzten 2 Min. langsam einarbeiten.':'')+' Erwartete Teigtemperatur ca. <span data-k="dt"></span> (Ziel 26–28 °C); den Messwert des Kneters hier eintragen.'],
+      ['stock','Stockgare',R65?'Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>). Roggenteige brauchen nur eine kurze Teigruhe.':'Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten.'],
+      ['stueck','Formen und Stückgare','Mit nassen Händen auf bemehlter Fläche in <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen, rundwirken, rundum in Roggenmehl wälzen und mit dem Schluss nach unten auf die Matte setzen (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt gehen lassen. Ofen mit Klimagaren auf 240 °C Umluft vorheizen.'
+        +(R65?' Fertig, wenn die bemehlte Oberfläche deutliche Risse zeigt. Nicht einschneiden, die Kruste reisst rustikal auf.':' Kurz vor dem Einschiessen 2–3 Mal schräg einschneiden.')],
+      ['bake','Backen','Einschiessen und sofort <strong>nur EINEN Dampfstoss</strong> geben, keinen zweiten. Nach 10 Min. den Dampf ablassen und auf 200 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
+      ['10','Nachbacken','Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 10 Min. im Ofen lassen. Danach sofort aufs Gitter.'],
+      ['cool','Auskühlen',R65?'Mindestens 12 Std., besser 24 Std. auf dem Gitter auskühlen lassen, bevor du anschneidest. Die Roggenkrume muss sich erst setzen, sonst ist sie klebrig.':'Mindestens 3 Std. auf dem Gitter.']].filter(Boolean);
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'&&!R65?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    $('#anst').style.display=sauer?'':'none';
+    $('#anst').innerHTML=sauer?'<p><strong>Anstellgut einmalig ansetzen (5 Tage)</strong></p><p>Tag 1: 20 g Roggenvollkornmehl und 20 g Wasser (ca. 30 °C) in einem Glas verrühren, locker abdecken und warm stellen (26–28 °C, z.B. Ofen mit Licht). Tag 2 bis 5: täglich 20 g davon behalten und mit 20 g Mehl und 20 g Wasser auffrischen. Der kleine Rest kann in den nächsten Brot- oder Pfannkuchenteig.</p><p>Bereit ist es, wenn es mild säuerlich riecht und sich nach dem Auffrischen in 4–8 Std. verdoppelt. Danach im Kühlschrank lagern. Weil du bei jedem Backen 20 g vom fertigen Sauerteig zurückbehältst, musst du es kaum separat pflegen; nach mehr als 3 Wochen Pause einmal auffrischen.</p>':'';
+    $('#pdlab').textContent=sauer?'Sauerteig-Dauer':'Vorteig-Dauer';
+    timers();
+  }
+
+  function rechnen(){
+    if(!manuell) $('#rt').value=SAISON[mon()]||21;
+    const {r,sauer,ex}=opt(), R65=r>0.5;
+    const t=+$('#m').value, sz=+$('#sz').value, T=+$('#rt').value, ph=+$('#pd').value, Tw=+$('#wa').value;
+    const H=R65?0.80:0.72, S=0.02, Y=sauer?0.008:(R65?0.015:0.012), BM=sauer?0:0.20;
+    const sd=ex==='sb'?[0.15,0.15]:ex==='lein'?[0.10,0.20]:[0,0];
+    const vF=0.5*r, ag=sauer?0.1*vF:0, vYf=sauer?0:0.001*Math.pow(1.09,20-T)*(16/ph);
+    const F=t/(1+H+S+Y+ag+sd[0]+sd[1]+vF*vYf), V=F*vF;
+    const dtCalc=(Tw+3*T+12)/4, tmv=parseFloat($('#tm').value), gem=!isNaN(tmv)&&tmv>=12&&tmv<=34, DT=gem?tmv:dtCalc;
+    const F1=Math.pow(1.09,24-T), FT=Math.pow(1.045,27-DT);
+    const BZ=R65?{500:45,750:55,1000:65}:{500:40,750:47,1000:55};
+    D={stock:r5((R65?30:60)*F1*FT),stueck:r5((R65?45:50)*F1*FT),bake:BZ[sz],cool:R65?720:180};
+    const n=Math.max(1,Math.round(t/sz)), each=t/n;
+    const DTs=(Math.round(DT*2)/2).toLocaleString('de-CH')+' °C', Ts=T.toLocaleString('de-CH')+' °C';
+    $('#mo').textContent=(t/1000).toLocaleString('de-CH',{minimumFractionDigits:2})+' kg';
+    $('#rto').textContent=Ts;
+    $('#rth').textContent=manuell?'Manuell eingestellt':'Aus der Jahreszeit des Backdatums vorgeschlagen';
+    $('#dth').textContent=(gem?'Gemessene Teigtemperatur '+DTs+', Gare danach berechnet.':'Erwartete Teigtemperatur ca. '+DTs+'.')+' Ziel für Roggenteige 26–28 °C.'
+      +(DT<25?' Zu kühl: Gare wird lang, Säure und Trieb leiden. Wärmeres Wasser nehmen.':'')+(DT>29?' Recht warm: Teig im Auge behalten.':'');
+    const wqTxt={35:'warm vom Hahn, ca. 35 °C',10:'Leitung kalt, ca. 10 °C',7:'Quooker CUBE, ca. 7 °C'}[Tw];
+    const V2={vF:g(V),vW:g(V),vY:g1(V*vYf),ag:g(F*ag),sdS:g(F*sd[0]),sdW:g(F*sd[1]),hR:g(F*r-V),hW:g(F*(1-r)),bm:g(F*BM),
+      hWa:g(F*H-V-F*BM),hY:g1(F*Y),sa:g1(F*S),wq:wqTxt,dt:DTs,rt:Ts,n:n,g:g(each),pb:sz==500?'max. 3':'max. 2',
+      bz:BZ[sz]+' Min.',stock:D.stock+' Min.',stueck:D.stueck+' Min.'};
+    $$('[data-k]').forEach(e=>{e.textContent=V2[e.dataset.k]??''});
+    $('#kennz').textContent=`${n} Brote à ca. ${Math.round(each)} g · Mehl ${Math.round(F)} g (${Math.round(F*r)} g Roggen, ${Math.round(F*(1-r))} g Ruchmehl) · Hydration ${Math.round(H*100)} %`;
+    $$('#schritte>li').forEach(li=>li._reset&&li._reset());
+    plan();
+  }
+
+  function plan(){
+    const b=new Date($('#bk').value); if(isNaN(b)) return;
+    const {sauer}=opt();
+    const formen=new Date(b-(D.stueck+5)*M), kn=new Date(formen-(D.stock+12)*M), ph=+$('#pd').value;
+    const f=d=>d.toLocaleDateString('de-CH',{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+    const rows=[[new Date(kn-ph*60*M),(sauer?'Sauerteig':'Vorteig')+' ansetzen'+($('#ex').value!=='pur'?', Quellstück':'')],[kn,'Kneten beginnen'],
+      [formen,'Formen, Ofen vorheizen'],[b,'Einschiessen'],[new Date(+b+(D.bake+10+D.cool)*M),'Anschneiden ab']];
+    $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
+  }
+
+  let ctx;
+  function piep(){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    [0,.35,.7].forEach(t=>{const o=ctx.createOscillator(),gn=ctx.createGain();o.frequency.value=880;
+      o.connect(gn);gn.connect(ctx.destination);gn.gain.setValueAtTime(.2,ctx.currentTime+t);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
+    if(navigator.vibrate)navigator.vibrate([300,150,300]);}
+  const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
+
+  function timers(){
+    $$('#schritte>li').forEach(li=>{
+      const cb=li.querySelector('input'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
+      if(li.dataset.t==='0') return;
+      const dur=()=>(isNaN(+li.dataset.t)?D[li.dataset.t]:+li.dataset.t)*60;
+      const box=document.createElement('div'); box.className='timer';
+      box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
+      li.appendChild(box);
+      const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
+      const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
+      let tot=null, ende=null, rest=0, iv=null; li._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
+      li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
+      function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
+        if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
+      bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
+        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+          try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
+      br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
+    });
+  }
+
+  $('#reset').onclick=()=>$$('#ztb input,#schritte input').forEach(cb=>{cb.checked=false;cb.dispatchEvent(new Event('change'))});
+  let lock=null;
+  $('#wach').onclick=async()=>{
+    try{ if(lock){await lock.release();lock=null;$('#wach').textContent='Bildschirm wach halten';return;}
+      lock=await navigator.wakeLock.request('screen'); $('#wach').textContent='Bildschirm bleibt wach';
+      lock.addEventListener('release',()=>{lock=null;$('#wach').textContent='Bildschirm wach halten';});
+    }catch(e){$('#wach').textContent='Wach halten nicht verfügbar';}
+  };
+
+  const d=new Date(Date.now()+(16*60+120)*M); d.setMinutes(d.getMinutes()<30?30:60,0,0);
+  $('#bk').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('#rt').addEventListener('input',()=>{manuell=true;rechnen();});
+  ['#ty','#sa','#ex'].forEach(s=>$(s).addEventListener('change',()=>{build();rechnen();}));
+  ['#m','#sz','#bk','#pd','#wa','#tm'].forEach(s=>{$(s).addEventListener('input',rechnen);$(s).addEventListener('change',rechnen);});
+  build(); rechnen();
+})();
+</script>
+<script>
+(function(){
+  const m=document.getElementById('m'), t=document.getElementById('mticks');
+  if(m&&t){ const lo=+m.min, hi=+m.max;
+    for(let v=lo; v<=hi; v+=500){ const p=(v-lo)/(hi-lo)*100, gross=v%1000===0;
+      const i=document.createElement('i'); i.className=gross?'gross':'klein'; i.style.left=p+'%'; t.appendChild(i);
+      if(gross){ const s=document.createElement('span'); s.textContent=(v/1000)+' kg'; s.style.left=p+'%'; t.appendChild(s); } } }
+  const fill=()=>document.querySelectorAll('.regler input[type=range]').forEach(r=>r.style.setProperty('--f',(r.value-r.min)/(r.max-r.min)));
+  document.addEventListener('input',fill); document.addEventListener('change',fill); fill();
+})();
+</script>
+<style>
+.zeitwahl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.zeitwahl input[type=date]{flex:1 1 150px}
+.zeitwahl-uhr{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.zeitwahl-uhr select{width:4.4em;flex:0 0 auto}
+.zeitwahl-sep{font-weight:600}
+.zeitwahl-suf{font-size:.9rem;opacity:.75}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const sv=(document.documentElement.lang||'').startsWith('sv');
+  document.querySelectorAll('input[type=datetime-local]').forEach(inp=>{
+    const cs=getComputedStyle(inp);
+    const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box',minWidth:'0'};
+    const wrap=document.createElement('div'); wrap.className='zeitwahl';
+    const d=document.createElement('input'); d.type='date'; d.id=inp.id+'_d';
+    const row=document.createElement('div'); row.className='zeitwahl-uhr';
+    const h=document.createElement('select'), m=document.createElement('select');
+    h.setAttribute('aria-label',sv?'Timme':'Stunde'); m.setAttribute('aria-label',sv?'Minut':'Minute');
+    for(let i=0;i<24;i++) h.add(new Option(pad(i),pad(i)));
+    for(let i=0;i<60;i+=10) m.add(new Option(pad(i),pad(i)));
+    const sep=document.createElement('span'); sep.className='zeitwahl-sep'; sep.textContent=':';
+    row.append(h,sep,m);
+    if(!sv){ const suf=document.createElement('span'); suf.className='zeitwahl-suf'; suf.textContent='Uhr'; row.append(suf); }
+    wrap.append(d,row);
+    [d,h,m].forEach(e=>Object.assign(e.style,css)); h.style.paddingLeft=m.style.paddingLeft='8px'; h.style.paddingRight=m.style.paddingRight='4px';
+    const zelle=inp.parentElement; if(zelle&&zelle.parentElement&&/grid/.test(zelle.parentElement.className)) zelle.style.gridColumn='1 / -1';
+    inp.insertAdjacentElement('afterend',wrap); inp.type='hidden';
+    const lab=document.querySelector('label[for="'+inp.id+'"]'); if(lab) lab.htmlFor=d.id;
+    const fmt=t=>t.getFullYear()+'-'+pad(t.getMonth()+1)+'-'+pad(t.getDate())+'T'+pad(t.getHours())+':'+pad(t.getMinutes());
+    function push(){ if(!d.value) return; inp.value=d.value+'T'+h.value+':'+m.value;
+      inp.dispatchEvent(new Event('input',{bubbles:true})); inp.dispatchEvent(new Event('change',{bubbles:true})); }
+    const t=new Date(inp.value);
+    if(!isNaN(t)){ const r=new Date(Math.round(t.getTime()/600000)*600000); const v=fmt(r);
+      d.value=v.slice(0,10); h.value=v.slice(11,13); m.value=v.slice(14,16);
+      if(v!==inp.value) push(); }
+    d.addEventListener('change',push); h.addEventListener('change',push); m.addEventListener('change',push);
+  });
+})();
+</script>
+<style>
+.tm-spiegel{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.tm-spiegel label{margin:0;font-size:.95rem;font-weight:600}
+.tm-spiegel input{width:7em}
+.tm-spiegel .tm-info{flex-basis:100%;font-size:.85rem;opacity:.8}
+</style>
+<script>
+(function(){
+  const tm=document.getElementById('tm'), ol=document.getElementById('schritte');
+  if(!tm||!ol) return;
+  const cs=getComputedStyle(tm);
+  const css={border:cs.border,borderRadius:cs.borderRadius,padding:cs.padding,backgroundColor:cs.backgroundColor,color:cs.color,font:cs.font,boxSizing:'border-box'};
+  const info=()=>{ const d=document.getElementById('dth'); const t=document.querySelector('.tm-spiegel .tm-info'); if(d&&t) t.textContent=d.textContent; };
+  function anhaengen(){
+    if(ol.querySelector('.tm-spiegel')) return;
+    const li=[...ol.children].filter(l=>/Teigtemperatur/.test((l.querySelector('p')||l).textContent)).pop();
+    if(!li) return;
+    const w=document.createElement('div'); w.className='tm-spiegel noprint';
+    w.innerHTML='<label for="tm2">Teigtemperatur gemessen (°C)</label><input id="tm2" type="number" min="12" max="34" step="0.5" inputmode="decimal" placeholder="z. B. 26"><span class="tm-info"></span>';
+    const p=li.querySelector('p'); (p||li).insertAdjacentElement(p?'afterend':'beforeend',w);
+    const t2=w.querySelector('input'); Object.assign(t2.style,css); t2.value=tm.value;
+    t2.addEventListener('input',()=>{ tm.value=t2.value; tm.dispatchEvent(new Event('input',{bubbles:true})); tm.dispatchEvent(new Event('change',{bubbles:true})); info(); });
+    info();
+  }
+  tm.addEventListener('input',()=>{ const t2=document.getElementById('tm2'); if(t2&&document.activeElement!==t2) t2.value=tm.value; info(); });
+  new MutationObserver(anhaengen).observe(ol,{childList:true});
+  anhaengen();
+  const dthEl=document.getElementById('dth'); if(dthEl) new MutationObserver(info).observe(dthEl,{childList:true,characterData:true,subtree:true});
+})();
+</script>
+<script>
+(function(){
+  const r=document.getElementById('rt'); if(!r||r.type!=='range') return;
+  const w=r.closest('.rwrap'); if(!w||w.querySelector('.ticks')) return;
+  w.classList.add('mit-ticks');
+  const t=document.createElement('div'); t.className='ticks'; t.setAttribute('aria-hidden','true'); w.appendChild(t);
+  const lo=+r.min, hi=+r.max;
+  for(let v=Math.ceil(lo); v<=hi; v++){
+    const p=(v-lo)/(hi-lo)*100;
+    const i=document.createElement('i'); i.className='klein'; i.style.left=p+'%'; t.appendChild(i);
+    if(v%2===0){ const s=document.createElement('span'); s.textContent=v+'°'; s.style.left=p+'%'; t.appendChild(s); }
+  }
+})();
+</script>
+<style>
+.segs{--s-acc:var(--olive,var(--accent,#5b6b3a));--s-warn:var(--kruste,var(--accent,#a4491f));--s-line:var(--leinen,var(--border,#ddd));
+  flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:6px;margin-top:6px}
+.seg{border:1px solid var(--s-line);border-radius:8px;padding:6px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.seg-lab{font-size:.78rem;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg-zeit{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.05rem}
+.seg.zukunft{opacity:.45;background:var(--s-line)}
+.seg.aktiv{border:2px solid var(--s-acc);padding:5px 7px}
+.seg.aktiv .seg-zeit{color:var(--s-acc)}
+.seg.erledigt{opacity:.6}
+.seg.faellig{border:2px solid var(--s-warn);padding:5px 7px}
+.seg.faellig .seg-zeit,.seg.faellig .seg-lab{color:var(--s-warn);opacity:1}
+.seg-ok{font:inherit;font-size:.8rem;margin-top:3px;padding:3px 8px;border-radius:6px;border:1px solid var(--s-warn);background:var(--s-warn);color:#fff;cursor:pointer;align-self:flex-start}
+@media print{.segs{display:none}}
+</style>
+<script>
+(function(){
+  const pad=x=>String(x).padStart(2,'0');
+  const mm=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
+  function bauen(el,st){
+    let bar=el._segbar; const key=st.tot+'|'+st.sigs.map(x=>x.at).join(',');
+    if(bar&&bar._key===key) return bar;
+    if(bar) bar.remove();
+    const box=el.querySelector('.timer,.rt-box'); if(!box) return null;
+    bar=document.createElement('div'); bar.className='segs'; bar._key=key; el._ack=new Set();
+    const b=[0,...st.sigs.map(x=>x.at),st.tot]; bar._b=b;
+    const n=(el.dataset.signame||'Falten').replace('Dehnen und Falten','Falten'), k=b.length-2;
+    for(let i=0;i<b.length-1;i++){
+      const s=document.createElement('div'); s.className='seg';
+      const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
+      const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
+      bar.appendChild(s);
+    }
+    box.appendChild(bar); el._segbar=bar; return bar;
+  }
+  function zeichne(el){
+    const st=el._state&&el._state();
+    if(!st||st.tot===null||!st.sigs||!st.sigs.length){ if(el._segbar){el._segbar.remove();el._segbar=null;} return; }
+    const bar=bauen(el,st); if(!bar) return;
+    const b=bar._b, k=b.length-2, e=st.tot-st.rest;
+    [...bar.children].forEach((s,i)=>{
+      const z=s.querySelector('.seg-zeit'), ok=s.querySelector('.seg-ok'), lab=s.querySelector('.seg-lab');
+      s.className='seg'; lab.textContent=s._lab; if(ok) ok.hidden=true;
+      if(e<b[i]){ s.classList.add('zukunft'); z.textContent=mm(b[i+1]-b[i]); }
+      else if(e<b[i+1]){ s.classList.add('aktiv'); z.textContent=mm(b[i+1]-e); }
+      else if(i<k&&!el._ack.has(i)){ s.classList.add('faellig'); lab.textContent='fällig seit'; z.textContent=mm(e-b[i+1]); if(ok) ok.hidden=false; }
+      else { s.classList.add('erledigt'); z.textContent='✓'; }
+    });
+  }
+  setInterval(()=>document.querySelectorAll('#schritte>li, [data-timer]').forEach(el=>{ if(el._state) zeichne(el); }),500);
+})();
+</script>
+</body>
+</html>
