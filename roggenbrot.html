@@ -193,7 +193,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['bake','Backen','Einschiessen und sofort <strong>nur EINEN Dampfstoss</strong> geben, keinen zweiten. Nach 10 Min. den Dampf ablassen und auf 200 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
       ['10','Nachbacken','Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 10 Min. im Ofen lassen. Danach sofort aufs Gitter.'],
       ['cool','Auskühlen',R65?'Mindestens 12 Std., besser 24 Std. auf dem Gitter auskühlen lassen, bevor du anschneidest. Die Roggenkrume muss sich erst setzen, sonst ist sie klebrig.':'Mindestens 3 Std. auf dem Gitter.']].filter(Boolean);
-    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'&&!R65?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'&&!R65?' data-sig="half"':''}${x[0]==='stueck'?' data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
     $('#anst').style.display=sauer?'':'none';
     $('#anst').innerHTML=sauer?'<p><strong>Anstellgut einmalig ansetzen (5 Tage)</strong></p><p>Tag 1: 20 g Roggenvollkornmehl und 20 g Wasser (ca. 30 °C) in einem Glas verrühren, locker abdecken und warm stellen (26–28 °C, z.B. Ofen mit Licht). Tag 2 bis 5: täglich 20 g davon behalten und mit 20 g Mehl und 20 g Wasser auffrischen. Der kleine Rest kann in den nächsten Brot- oder Pfannkuchenteig.</p><p>Bereit ist es, wenn es mild säuerlich riecht und sich nach dem Auffrischen in 4–8 Std. verdoppelt. Danach im Kühlschrank lagern. Weil du bei jedem Backen 20 g vom fertigen Sauerteig zurückbehältst, musst du es kaum separat pflegen; nach mehr als 3 Wochen Pause einmal auffrischen.</p>':'';
     $('#pdlab').textContent=sauer?'Sauerteig-Dauer':'Vorteig-Dauer';
@@ -246,7 +246,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
     if(navigator.vibrate)navigator.vibrate([300,150,300]);}
   const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
-  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>x[0]==='f'?tot*parseFloat(x.slice(1)):+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
   function timers(){
     $$('#schritte>li').forEach(li=>{
@@ -257,14 +257,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
       li.appendChild(box);
       const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
-      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent=li.dataset.sigmsg||'Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
       const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
       let tot=null, ende=null, rest=0, iv=null; li._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
       li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
       function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
         if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
       bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
-        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum '+(li.dataset.signame||'Dehnen und Falten')+' nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
           try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
       br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
     });
@@ -413,7 +413,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     for(let i=0;i<b.length-1;i++){
       const s=document.createElement('div'); s.className='seg';
       const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
-      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>'+(el.dataset.sigok||'Gefaltet')+'</button>':'');
       s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
       const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
       bar.appendChild(s);

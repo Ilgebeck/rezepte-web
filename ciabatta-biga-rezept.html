@@ -220,7 +220,7 @@
     <div class="step" data-timer="4"><div class="step-num">3</div><div class="step-text">Salz und Olivenöl einarbeiten, nochmals <strong>3–4 Min. kneten</strong>.</div></div>
     <div class="step" data-timer="90" data-sig="30,60" data-signame="Stretch &amp; Fold" data-sigmsg="Jetzt Stretch &amp; Fold"><div class="step-num">4</div><div class="step-text"><strong>Stockgare 90 Min.</strong> in geölter Schüssel, abgedeckt. Alle 30 Min. <strong>Stretch & Fold</strong> (3× total) — baut Struktur auf ohne zu entgasen.</div></div>
     <div class="step"><div class="step-num">5</div><div class="step-text">Teig <strong>vorsichtig</strong> auf stark bemehlte Fläche kippen, in <span id="h-stuecke">2</span> Stücke teilen (nur schneiden, nicht kneten/entgasen). Mit Mehl bestäuben, zu Laiben formen — Luftblasen bewusst erhalten.</div></div>
-    <div class="step" data-timer="45"><div class="step-num">6</div><div class="step-text">Auf bemehltem Leinentuch, Naht oben, <strong>45–60 Min. Stückgare</strong> abgedeckt.</div></div>
+    <div class="step" data-timer="45" data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"><div class="step-num">6</div><div class="step-text">Auf bemehltem Leinentuch, Naht oben, <strong>45–60 Min. Stückgare</strong> abgedeckt.</div></div>
   </div>
 
   <p class="section-head">Backen <span class="badge">Klimagaren + Pizzastein</span></p>
@@ -328,7 +328,7 @@ render();
     const z=box.querySelector('.rt-zeit'), [bs,br]=box.querySelectorAll('button'), sh=box.querySelector('.rt-hint');
     let tot=null, ende=null, rest=0, iv=null, sigs=[]; el._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
     const dur=()=>(+el.dataset.timer||0)*60;
-    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
+    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>x[0]==='f'?t*parseFloat(x.slice(1)):+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
     const msg=()=>el.dataset.sigmsg||'Jetzt dehnen und falten';
     function stopp(){ if(iv){clearInterval(iv);iv=null;aktiv--;wach();} }
     function reset(){ if(iv) return; tot=null; rest=dur(); z.textContent=mm(rest); z.classList.remove('ab'); bs.textContent='Start'; sh.textContent=''; sh.classList.remove('jetzt'); }
@@ -380,7 +380,7 @@ render();
     for(let i=0;i<b.length-1;i++){
       const s=document.createElement('div'); s.className='seg';
       const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
-      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>'+(el.dataset.sigok||'Gefaltet')+'</button>':'');
       s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
       const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
       bar.appendChild(s);

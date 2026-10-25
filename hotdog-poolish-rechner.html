@@ -283,7 +283,7 @@
         <strong>Teilen &amp; Formen</strong>
         Teig entgasen, in <span id="stepRollCount"></span> Stücke à ca. <span id="stepRollWeight"></span>&nbsp;g teilen. Zu kurzen, gleichmässig dicken Röllchen von ca. 15&nbsp;cm Länge formen, Enden stumpf auswellen. Auf einem bemehlten Leinentuch (Couche) ablegen.
       </li>
-      <li id="liStueck" data-timer="45">
+      <li id="liStueck" data-timer="45" data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft">
         <strong>Stückgare</strong>
         <span id="stueckgareStep"></span>
       </li>
@@ -444,7 +444,7 @@
     const z=box.querySelector('.rt-zeit'), [bs,br]=box.querySelectorAll('button'), sh=box.querySelector('.rt-hint');
     let tot=null, ende=null, rest=0, iv=null, sigs=[]; el._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
     const dur=()=>(+el.dataset.timer||0)*60;
-    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
+    const mkSig=t=>(el.dataset.sig||'').split(',').filter(Boolean).map(x=>x[0]==='f'?t*parseFloat(x.slice(1)):+x*60).filter(a=>a>0&&a<t).map(a=>({at:a,done:false}));
     const msg=()=>el.dataset.sigmsg||'Jetzt dehnen und falten';
     function stopp(){ if(iv){clearInterval(iv);iv=null;aktiv--;wach();} }
     function reset(){ if(iv) return; tot=null; rest=dur(); z.textContent=mm(rest); z.classList.remove('ab'); bs.textContent='Start'; sh.textContent=''; sh.classList.remove('jetzt'); }
@@ -496,7 +496,7 @@
     for(let i=0;i<b.length-1;i++){
       const s=document.createElement('div'); s.className='seg';
       const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
-      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>'+(el.dataset.sigok||'Gefaltet')+'</button>':'');
       s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
       const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
       bar.appendChild(s);

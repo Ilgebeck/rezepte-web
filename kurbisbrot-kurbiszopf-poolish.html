@@ -210,7 +210,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
         :'Einschiessen und sofort <strong>nur EINEN Dampfstoss</strong> geben, keinen zweiten. Nach 15 Min. den Dampf ablassen und auf 210 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
       !s?['10','Nachbacken','Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 5–10 Min. im Ofen lassen. So trocknet die Kruste durch und wird rösch, ohne dunkler zu werden. Danach sofort aufs Gitter.']:null,
       [String(R[s?'s':'h'].cool),'Auskühlen',s?'Mindestens 1 Std. auf dem Gitter.':'Mindestens 2 Std. auf dem Gitter.']].filter(Boolean);
-    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}${x[0]==='stueck'?' data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
     timers();
   }
 
@@ -265,7 +265,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
     if(navigator.vibrate)navigator.vibrate([300,150,300]);}
   const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
-  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>x[0]==='f'?tot*parseFloat(x.slice(1)):+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
   function timers(){
     $$('#schritte>li').forEach(li=>{
@@ -276,14 +276,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
       li.appendChild(box);
       const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
-      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent=li.dataset.sigmsg||'Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
       const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
       let tot=null, ende=null, rest=0, iv=null; li._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
       li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
       function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
         if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
       bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
-        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+        else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum '+(li.dataset.signame||'Dehnen und Falten')+' nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
           try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
       br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
     });
@@ -433,7 +433,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     for(let i=0;i<b.length-1;i++){
       const s=document.createElement('div'); s.className='seg';
       const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
-      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>'+(el.dataset.sigok||'Gefaltet')+'</button>':'');
       s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
       const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
       bar.appendChild(s);

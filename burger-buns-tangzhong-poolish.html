@@ -191,7 +191,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <p>Teig in geölter Teigwanne, abgedeckt, ca. <span data-k="stock"></span> bei <span data-k="rt"></span>. Ziel: +50–60&nbsp;% Volumen. Nach 30&nbsp;Min. einmal Stretch&nbsp;&amp;&nbsp;Fold.</p></li>
   <li data-t="15"><div class="st"><h3>Portionieren und Vorformen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Teig auf unbemehlter Arbeitsfläche in <span data-k="anz"></span> Stücke à ca. <span data-k="gew"></span> teilen. Jedes Stück straff rund schleifen (tight ball), 10–15&nbsp;Min. abgedeckt entspannen.</p></li>
-  <li data-t="stueck"><div class="st"><h3>Formen und Stückgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+  <li data-t="stueck" data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"><div class="st"><h3>Formen und Stückgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Jede Kugel auf ca. 8&nbsp;cm&nbsp;Ø flach drücken. Auf Backpapier legen, abgedeckt ca. <span data-k="stueck"></span> garen bis die Buns deutlich aufgegangen sind und auf Fingerdruck langsam zurückspringen. Ofen auf 200&nbsp;°C Umluft mit Klimagaren vorheizen.</p></li>
   <li data-t="0"><div class="st"><h3>Bestreichen und Garnitur</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Eistreiche (1 Ei + 1&nbsp;EL Wasser) gleichmässig aufpinseln. Nach Wunsch Sesam aufstreuen. Buns zum Einfrieren: erst nach dem Auftauen bestreichen.</p></li>
@@ -339,7 +339,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.2)});}catch(e){}
     if(navigator.vibrate)navigator.vibrate([300,150,300]);}
   const mmss=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+pad(m):m)+':'+pad(s%60);};
-  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
+  const mkSig=(li,tot)=>{const g=li.dataset.sig;if(!g)return[];const at=g==='half'?[tot/2]:g.split(',').map(x=>x[0]==='f'?tot*parseFloat(x.slice(1)):+x*60);return at.filter(a=>a>0&&a<tot).map(a=>({at:a,done:false}));};
 
   $$('#schritte>li').forEach(li=>{
     const cb=li.querySelector('input[type=checkbox]'); cb.addEventListener('change',()=>li.classList.toggle('fertig',cb.checked));
@@ -349,14 +349,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     box.innerHTML='<span class="zeit"></span><button class="voll">Start</button><button>Zurück</button>';
     li.appendChild(box);
       const sh=document.createElement('span'); sh.className='sighint'; box.appendChild(sh); let sigs=[];
-      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent='Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
+      const sigCheck=()=>{ if(tot===null) return; const el=tot-rest; sigs.forEach(x=>{ if(!x.done&&el>=x.at){ x.done=true; sh.textContent=li.dataset.sigmsg||'Jetzt dehnen und falten'; sh.classList.add('jetzt'); piep(); } }); };
     const z=box.querySelector('.zeit'), [bs,br]=box.querySelectorAll('button');
     let tot=null, ende=null, rest=dur(), iv=null; li._state=()=>({tot,rest:iv?(ende-Date.now())/1000:rest,run:!!iv,sigs});
     li._reset=()=>{ if(iv) return; rest=dur(); z.textContent=mmss(rest); z.classList.remove('ab'); bs.textContent='Start'; };
     function tick(){rest=(ende-Date.now())/1000; z.textContent=mmss(rest); sigCheck();
       if(rest<=0){clearInterval(iv);iv=null;rest=dur();tot=null;sh.textContent='';sh.classList.remove('jetzt');z.classList.add('ab');z.textContent='Fertig';bs.textContent='Start';piep();}}
     bs.onclick=()=>{ if(iv){clearInterval(iv);iv=null;rest=(ende-Date.now())/1000;bs.textContent='Weiter';}
-      else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum Dehnen und Falten nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
+      else{ z.classList.remove('ab'); if(tot===null){ tot=rest; sigs=mkSig(li,tot); sh.classList.remove('jetzt'); sh.textContent=sigs.length?'Signal zum '+(li.dataset.signame||'Dehnen und Falten')+' nach '+sigs.map(x=>mmss(x.at)).join(', '):''; } ende=Date.now()+rest*1000; iv=setInterval(tick,500); tick(); bs.textContent='Pause';
         try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume();}catch(e){} } };
     br.onclick=()=>{clearInterval(iv);iv=null;tot=null;sh.textContent='';sh.classList.remove('jetzt');li._reset();};
   });
@@ -485,7 +485,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     for(let i=0;i<b.length-1;i++){
       const s=document.createElement('div'); s.className='seg';
       const lab=i<k?(k>1?'bis '+(i+1)+'. '+n:'bis '+n):'bis Ende';
-      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>Gefaltet</button>':'');
+      s.innerHTML='<span class="seg-lab"></span><span class="seg-zeit"></span>'+(i<k?'<button type="button" class="seg-ok" hidden>'+(el.dataset.sigok||'Gefaltet')+'</button>':'');
       s.querySelector('.seg-lab').textContent=lab; s._lab=lab;
       const ok=s.querySelector('.seg-ok'); if(ok) ok.addEventListener('click',()=>{el._ack.add(i);zeichne(el);});
       bar.appendChild(s);
