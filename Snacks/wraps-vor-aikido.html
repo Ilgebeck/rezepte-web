@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proteinreiche Wraps vor dem Training</title>
+<style>
+  :root {
+    --bg: #faf6ef;
+    --card: #ffffff;
+    --ink: #2b2420;
+    --muted: #7a6e64;
+    --accent: #b5471f;
+    --accent-soft: #f6e3d9;
+    --line: #e6dccf;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 20px 16px 64px; }
+  .back { font-size: 0.9rem; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  h1 { font-size: 1.9rem; margin: 10px 0 4px; letter-spacing: -0.01em; }
+  .lead { color: var(--muted); margin: 0 0 22px; }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .tile {
+    text-align: left;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 14px 12px;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .tile:hover { border-color: #d3b9a5; transform: translateY(-1px); }
+  .tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tile[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 2px 10px rgba(181, 71, 31, .18);
+  }
+  .tile .emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .tile .t-name { font-weight: 650; display: block; line-height: 1.25; }
+  .tile .t-tag { font-size: 0.82rem; color: var(--muted); display: block; margin-top: 4px; }
+
+  .controls {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin: 6px 0 22px;
+  }
+  .ctl label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; }
+  .ctl output { color: var(--accent); font-weight: 700; }
+  input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
+  .scale { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
+
+  .hint {
+    text-align: center; color: var(--muted); padding: 40px 12px;
+    border: 2px dashed var(--line); border-radius: var(--radius);
+  }
+  .recipe { display: none; }
+  .recipe.show { display: block; }
+  .recipe h2 { font-size: 1.5rem; margin: 0 0 6px; }
+  .meta { color: var(--muted); margin: 0 0 18px; }
+  .meta span + span::before { content: "·"; margin: 0 8px; }
+  .grid { display: grid; grid-template-columns: minmax(240px, 1fr) 1.6fr; gap: 28px; align-items: start; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; gap: 20px; } }
+  h3 { font-size: 1.05rem; margin: 0 0 10px; break-after: avoid; page-break-after: avoid; }
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px;
+  }
+  .ing { list-style: none; margin: 0; padding: 0; }
+  .ing li { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px dotted var(--line); }
+  .ing li:last-child { border-bottom: 0; }
+  .ing .amt { min-width: 84px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .opt { color: var(--muted); font-size: .85rem; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s; position: relative; padding: 0 0 14px 40px;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 0;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tip {
+    margin-top: 8px; padding: 12px 14px; background: var(--accent-soft);
+    border-left: 4px solid var(--accent); border-radius: 8px;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .tip strong { color: var(--accent); }
+
+  @media print {
+    body { background: #fff; }
+    .tiles, .controls, .back, .hint { display: none !important; }
+    .panel { border: 0; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← Alle Rezepte</a>
+  <h1>Proteinreiche Wraps vor dem Training</h1>
+  <p class="lead">Leicht und sättigend, ideal 90–120 Minuten vor dem Aikido. Helle Tortilla, mageres Protein, wenig Fett. Variante wählen, Personenzahl einstellen.</p>
+
+  <div class="tiles" id="tiles" role="group" aria-label="Variante wählen"></div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="persons">Personen <output id="personsOut">2</output></label>
+      <input type="range" id="persons" min="1" max="12" step="1" value="2">
+      <div class="scale"><span>1</span><span>3</span><span>5</span><span>7</span><span>9</span><span>12</span></div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">Wähle oben eine Variante, dann erscheint das Rezept.</div>
+  <article class="recipe" id="recipe" aria-live="polite"></article>
+</div>
+
+<script>
+(function () {
+  // Alle Mengen gelten für 1 Person (1 Wrap). int = ganze Zahl (mindestens 1).
+  const R = [
+    {
+      id: "poulet", emoji: "🍗",
+      name: "Poulet-Skyr-Wrap",
+      tag: "Mit Zitronen-Skyr statt Mayonnaise",
+      time: "ca. 10 Min.", prot: "ca. 35–40 g Protein pro Wrap",
+      intro: "Der Klassiker. Reste von gestern funktionieren hier perfekt, sonst Pouletbrust kurz in der Pfanne braten.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Pouletbrust, gekocht oder gebraten", a: 120, u: "g" },
+        { n: "Skyr oder Magerquark", a: 3, u: "EL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Petersilie oder Minze, gehackt", a: 1, u: "EL" },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Tomate, in Scheiben", a: 0.5, u: "Stk" },
+        { n: "Blattsalat", a: 1, u: "Handvoll" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Skyr mit Zitronensaft, Kräutern, Salz und Pfeffer verrühren.",
+        "Pouletbrust in Streifen schneiden. Falls frisch gebraten: in wenig Öl bei mittlerer Hitze 5–6 Minuten durchgaren, salzen.",
+        "Tortilla kurz in der Pfanne oder im Toaster erwärmen, damit sie geschmeidig wird.",
+        "Skyr-Sauce auf die Tortilla streichen, Salat, Gurke, Tomate und Poulet darauf geben. Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Zum Vorbereiten: Poulet und Sauce am Vorabend zubereiten, den Wrap erst vor dem Essen einrollen, damit die Tortilla nicht durchweicht."
+    },
+    {
+      id: "ruehrei", emoji: "🍳",
+      name: "Rührei-Wrap",
+      tag: "Mit Putenbrust und Spinat",
+      time: "ca. 10 Min.", prot: "ca. 30 g Protein pro Wrap",
+      intro: "Besonders schnell, wenn es zwischen zwei Terminen gehen muss. Das Rührei bleibt weich und wird nur gerade gestockt.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Eier", a: 2, u: "Stk", int: true },
+        { n: "Eiweiss (zusätzlich)", a: 1, u: "Stk", int: true },
+        { n: "Putenbrust oder Kochschinken", a: 2, u: "Scheibe", int: true },
+        { n: "Blattspinat, frisch", a: 1, u: "Handvoll" },
+        { n: "Hüttenkäse", a: 1, u: "EL" },
+        { n: "Butter oder Öl", a: 1, u: "TL" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Eier und Eiweiss mit Salz und Pfeffer verquirlen.",
+        "Butter in einer Pfanne bei mittlerer Hitze schmelzen, Eier zugeben und unter Rühren weich stocken lassen. Pfanne vom Herd nehmen, solange das Ei noch leicht glänzt.",
+        "Tortilla kurz erwärmen. Hüttenkäse darauf streichen, Spinat, Putenbrust und Rührei darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Das Ei gart in der Tortilla noch nach. Deshalb früh vom Herd nehmen, sonst wird es trocken."
+    },
+    {
+      id: "hummus", emoji: "🥕",
+      name: "Hummus-Ei-Wrap",
+      tag: "Vegetarisch und besonders leicht",
+      time: "ca. 15 Min.", prot: "ca. 25 g Protein pro Wrap",
+      intro: "Wenig Fett, aber sättigend. Mit nur 2 EL Hummus bleibt der Wrap leicht, mehr würde zu viel Fett bringen.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Eier, hartgekocht", a: 2, u: "Stk", int: true },
+        { n: "Hummus", a: 2, u: "EL" },
+        { n: "Hüttenkäse", a: 2, u: "EL" },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Rüebli, geraspelt", a: 0.5, u: "Stk" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Eier 9 Minuten hart kochen, abschrecken, schälen und in Scheiben schneiden.",
+        "Hüttenkäse mit Zitronensaft, Salz und Pfeffer abschmecken.",
+        "Tortilla kurz erwärmen. Hummus und Hüttenkäse darauf streichen, Gurke, Rüebli und Eierscheiben darauf legen.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Die Eier lassen sich gut auf Vorrat kochen, im Kühlschrank halten sie sich ungeschält bis zu 7 Tage."
+    },
+    {
+      id: "thunfisch", emoji: "🐟",
+      name: "Thunfisch-Skyr-Wrap",
+      tag: "Mit Fisch (nur für dich)",
+      time: "ca. 10 Min.", prot: "ca. 35 g Protein pro Wrap",
+      intro: "Thunfisch naturell (im eigenen Saft) statt in Öl, damit der Wrap leicht bleibt. Kapern und Zitrone geben Frische.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Thunfisch naturell, gut abgetropft", a: 80, u: "g" },
+        { n: "Skyr oder Magerquark", a: 3, u: "EL" },
+        { n: "Kapern, gehackt", a: 1, u: "TL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Rote Zwiebel, sehr fein gehackt", a: 1, u: "EL", opt: true },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Rucola", a: 1, u: "Handvoll" },
+        { n: "Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Thunfisch in einem Sieb gut abtropfen lassen und mit der Gabel zerpflücken.",
+        "Skyr mit Kapern, Zitronensaft, Zwiebel (falls verwendet) und Pfeffer verrühren, Thunfisch unterheben. Mit Salz erst abschmecken, wenn die Kapern gekostet sind.",
+        "Tortilla kurz erwärmen. Rucola, Gurke und Thunfischmasse darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Thunfisch ist ein Raubfisch mit erhöhtem Quecksilbergehalt. Für Erwachsene ist regelmässiger Verzehr in üblichen Mengen unproblematisch, bei häufigem Konsum lohnt sich Abwechslung mit anderen Fischsorten."
+    }
+  ];
+
+  const tilesEl = document.getElementById("tiles");
+  const recipeEl = document.getElementById("recipe");
+  const hintEl = document.getElementById("hint");
+  const persons = document.getElementById("persons");
+  const personsOut = document.getElementById("personsOut");
+  let current = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  }
+
+  function fmtNum(v, unit, whole) {
+    if (whole) return String(Math.max(1, Math.round(v)));
+    if (unit === "g" || unit === "ml") {
+      const step = v >= 200 ? 10 : 5;
+      return String(Math.max(step, Math.round(v / step) * step));
+    }
+    const r = Math.max(0.5, Math.round(v * 2) / 2);
+    const w = Math.floor(r);
+    const half = r - w === 0.5;
+    return (w > 0 ? String(w) : "") + (half ? "½" : "");
+  }
+
+  function unitLabel(u, t) {
+    const plural = !(t === "1" || t === "½");
+    if (u === "Scheibe") return plural ? "Scheiben" : "Scheibe";
+    return u;
+  }
+
+  function renderTiles() {
+    tilesEl.innerHTML = R.map(r =>
+      '<button type="button" class="tile" data-id="' + r.id + '" aria-pressed="false">' +
+        '<span class="emoji" aria-hidden="true">' + r.emoji + '</span>' +
+        '<span class="t-name">' + esc(r.name) + '</span>' +
+        '<span class="t-tag">' + esc(r.tag) + '</span>' +
+      '</button>'
+    ).join("");
+  }
+
+  function renderRecipe() {
+    const r = R.find(x => x.id === current);
+    if (!r) { recipeEl.classList.remove("show"); hintEl.style.display = ""; return; }
+    hintEl.style.display = "none";
+    const p = parseInt(persons.value, 10);
+
+    const ingHtml = r.ing.map(i => {
+      let amt;
+      if (i.t) {
+        amt = i.t;
+      } else {
+        const t = fmtNum(i.a * p, i.u, i.int);
+        amt = t + " " + unitLabel(i.u, t);
+      }
+      return '<li><span class="amt">' + esc(amt) + '</span><span>' +
+        esc(i.n) + (i.opt ? ' <span class="opt">(optional)</span>' : '') + '</span></li>';
+    }).join("");
+
+    const stepsHtml = r.steps.map(s => "<li>" + esc(s) + "</li>").join("");
+    const note = p > 4
+      ? '<div class="tip"><strong>Bei ' + p + ' Personen:</strong> Pouletstreifen oder Rührei in zwei Portionen zubereiten, damit sie braten und nicht dünsten. Tortillas im Ofen (150 °C, in Alufolie) gemeinsam erwärmen.</div>'
+      : "";
+
+    recipeEl.innerHTML =
+      '<h2>' + r.emoji + " " + esc(r.name) + '</h2>' +
+      '<p class="meta"><span>' + p + (p === 1 ? ' Person' : ' Personen') + '</span><span>' + esc(r.time) + '</span><span>' + esc(r.prot) + '</span></p>' +
+      '<p>' + esc(r.intro) + '</p>' +
+      '<div class="grid">' +
+        '<section class="panel"><h3>Zutaten</h3><ul class="ing">' + ingHtml + '</ul></section>' +
+        '<section class="panel"><h3>Zubereitung</h3><ol class="steps">' + stepsHtml + '</ol>' +
+          (r.tip ? '<div class="tip"><strong>Tipp:</strong> ' + esc(r.tip) + '</div>' : "") +
+          note +
+        '</section>' +
+      '</div>';
+    recipeEl.classList.add("show");
+  }
+
+  function select(id, updateHash) {
+    current = id;
+    tilesEl.querySelectorAll(".tile").forEach(t =>
+      t.setAttribute("aria-pressed", t.dataset.id === id ? "true" : "false"));
+    renderRecipe();
+    if (updateHash && history.replaceState) history.replaceState(null, "", "#" + id);
+  }
+
+  tilesEl.addEventListener("click", e => {
+    const t = e.target.closest(".tile");
+    if (!t) return;
+    select(t.dataset.id, true);
+    recipeEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  persons.addEventListener("input", () => { personsOut.textContent = persons.value; renderRecipe(); });
+
+  renderTiles();
+  const fromHash = location.hash.replace("#", "");
+  if (R.some(r => r.id === fromHash)) select(fromHash, false);
+})();
+</script>
+</body>
+</html>
