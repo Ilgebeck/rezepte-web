@@ -30,6 +30,10 @@
   h1 { font-size: 1.9rem; margin: 10px 0 4px; letter-spacing: -0.01em; }
   .lead { color: var(--muted); margin: 0 0 22px; }
 
+  .group-title {
+    font-size: 0.8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 8px;
+  }
   .tiles {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -110,7 +114,7 @@
 
   @media print {
     body { background: #fff; }
-    .tiles, .controls, .back, .hint { display: none !important; }
+    .tiles, .group-title, .controls, .back, .hint { display: none !important; }
     .panel { border: 0; padding: 0; }
   }
 </style>
@@ -119,9 +123,9 @@
 <div class="wrap">
   <a class="back" href="../index.html">← Alle Rezepte</a>
   <h1>Proteinreiche Wraps vor dem Training</h1>
-  <p class="lead">Leicht und sättigend, ideal 90–120 Minuten vor dem Aikido. Helle Tortilla, mageres Protein, wenig Fett. Variante wählen, Personenzahl einstellen.</p>
+  <p class="lead">Leicht und sättigend, ideal 90–120 Minuten vor dem Aikido. Helle Tortilla, mageres Protein, wenig Fett. Sechzehn Varianten, nach Fleisch, Vegetarisch und Fisch gruppiert. Variante wählen, Personenzahl einstellen.</p>
 
-  <div class="tiles" id="tiles" role="group" aria-label="Variante wählen"></div>
+  <div id="tilesWrap"></div>
 
   <div class="controls">
     <div class="ctl">
@@ -236,10 +240,320 @@
         "Seiten einschlagen und fest einrollen."
       ],
       tip: "Thunfisch ist ein Raubfisch mit erhöhtem Quecksilbergehalt. Für Erwachsene ist regelmässiger Verzehr in üblichen Mengen unproblematisch, bei häufigem Konsum lohnt sich Abwechslung mit anderen Fischsorten."
+    },
+    {
+      id: "tzatziki", emoji: "🥒",
+      name: "Poulet-Tzatziki-Wrap",
+      tag: "Mit Skyr, Gurke und Dill",
+      time: "ca. 10 Min.", prot: "ca. 35–40 g Protein pro Wrap",
+      intro: "Tzatziki aus Skyr statt Joghurt und Öl: mehr Protein, weniger Fett. Das Poulet kann auch vom Vortag sein.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Pouletbrust, gekocht oder gebraten", a: 120, u: "g" },
+        { n: "Skyr", a: 3, u: "EL" },
+        { n: "Gurke, fein gerieben und ausgedrückt", a: 40, u: "g" },
+        { n: "Knoblauch, gepresst", a: 0.5, u: "Zehe" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Dill, gehackt", a: 1, u: "EL" },
+        { n: "Tomate, in Scheiben", a: 0.5, u: "Stk" },
+        { n: "Blattsalat", a: 1, u: "Handvoll" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Geriebene Gurke gut ausdrücken, damit die Sauce nicht wässrig wird. Mit Skyr, Knoblauch, Zitronensaft, Dill, Salz und Pfeffer verrühren.",
+        "Pouletbrust in Streifen schneiden. Falls frisch gebraten: in wenig Öl bei mittlerer Hitze 5–6 Minuten durchgaren, salzen.",
+        "Tortilla kurz erwärmen. Tzatziki auf die Tortilla streichen, Salat, Tomate und Poulet darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Der Knoblauch ist roh. Wer vor dem Training darauf verzichten möchte, lässt ihn weg und nimmt etwas mehr Zitrone."
+    },
+    {
+      id: "honigsenf", emoji: "🍎",
+      name: "Poulet-Honig-Senf-Wrap",
+      tag: "Mit Apfel und Rucola",
+      time: "ca. 10 Min.", prot: "ca. 35 g Protein pro Wrap",
+      intro: "Süsslich-frisch: Honig-Senf-Joghurt, dünne Apfelscheiben und Rucola passen gut zu mildem Poulet.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Pouletbrust, gekocht oder gebraten", a: 120, u: "g" },
+        { n: "Naturjoghurt, mager", a: 3, u: "EL" },
+        { n: "Senf, mild", a: 1, u: "TL" },
+        { n: "Honig", a: 1, u: "TL" },
+        { n: "Apfel, in dünnen Scheiben", a: 0.5, u: "Stk" },
+        { n: "Zitronensaft (gegen das Braunwerden)", a: 1, u: "TL" },
+        { n: "Rucola", a: 1, u: "Handvoll" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Joghurt mit Senf, Honig, Salz und Pfeffer verrühren.",
+        "Apfel in dünne Scheiben schneiden und mit Zitronensaft beträufeln.",
+        "Pouletbrust in Streifen schneiden. Falls frisch gebraten: in wenig Öl bei mittlerer Hitze 5–6 Minuten durchgaren, salzen.",
+        "Tortilla kurz erwärmen. Sauce darauf streichen, Rucola, Apfel und Poulet darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Einen festen, säuerlichen Apfel wählen (z. B. Granny Smith oder Boskoop), damit er knackig bleibt und nicht zu süss wird."
+    },
+    {
+      id: "orangefenchel", emoji: "🍊",
+      name: "Poulet-Orangen-Fenchel-Wrap",
+      tag: "Frisch und leicht",
+      time: "ca. 10 Min.", prot: "ca. 35 g Protein pro Wrap",
+      intro: "Orangenabrieb und fein geschnittener Fenchel machen den Wrap leicht und frisch.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Pouletbrust, gekocht oder gebraten", a: 120, u: "g" },
+        { n: "Skyr", a: 3, u: "EL" },
+        { n: "Orangenabrieb (Bio-Orange)", a: 1, u: "TL" },
+        { n: "Orangensaft", a: 1, u: "EL" },
+        { n: "Fenchel, in feinen Streifen", a: 40, u: "g" },
+        { n: "Fenchelgrün oder Dill, gehackt", a: 1, u: "EL" },
+        { n: "Blattsalat", a: 1, u: "Handvoll" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Skyr mit Orangenabrieb, Orangensaft, Salz und Pfeffer verrühren.",
+        "Fenchel mit dem Messer oder Gemüsehobel sehr fein schneiden.",
+        "Pouletbrust in Streifen schneiden. Falls frisch gebraten: in wenig Öl bei mittlerer Hitze 5–6 Minuten durchgaren, salzen.",
+        "Tortilla kurz erwärmen. Sauce darauf streichen, Salat, Fenchel und Poulet darauf geben, mit Fenchelgrün bestreuen.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Roher Fenchel in feinen Streifen ist gut verträglich. Zu dick geschnitten wird er faserig."
+    },
+    {
+      id: "asia", emoji: "🥢",
+      name: "Poulet-Wrap asiatisch glasiert",
+      tag: "Mit Ingwer, Soja und Rüebli",
+      time: "ca. 20 Min.", prot: "ca. 38 g Protein pro Wrap",
+      intro: "Das Poulet wird kurz mariniert und mit Sojasauce, Honig und Ingwer glasiert. Dazu knackiges Gemüse und Skyr statt Mayonnaise.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Pouletbrust, in Streifen", a: 120, u: "g" },
+        { n: "Sojasauce", a: 1, u: "EL" },
+        { n: "Honig", a: 1, u: "TL" },
+        { n: "Ingwer, frisch gerieben", a: 1, u: "TL" },
+        { n: "Öl zum Braten", a: 1, u: "TL" },
+        { n: "Rüebli, geraspelt", a: 0.5, u: "Stk" },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Skyr", a: 3, u: "EL" },
+        { n: "Limetten- oder Zitronensaft", a: 1, u: "TL" },
+        { n: "Sesam", a: 1, u: "TL", opt: true }
+      ],
+      steps: [
+        "Sojasauce, Honig und Ingwer verrühren. Pouletstreifen darin 10 Minuten marinieren.",
+        "Öl in einer Pfanne bei mittlerer bis hoher Hitze erhitzen. Poulet 4–5 Minuten braten, dann die restliche Marinade zugeben und 1–2 Minuten glasieren, bis sie sirupartig am Fleisch haftet.",
+        "Skyr mit Limettensaft und einer Prise Salz verrühren.",
+        "Tortilla kurz erwärmen. Skyr-Sauce darauf streichen, Rüebli, Gurke und Poulet darauf geben, nach Belieben mit Sesam bestreuen.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Sojasauce ist salzig. Das Poulet deshalb vor dem Braten nicht zusätzlich salzen."
+    },
+    {
+      id: "texmex", emoji: "🌽",
+      name: "Tex-Mex-Poulet-Wrap",
+      tag: "Mild gewürzt mit Bohnen und Mais",
+      time: "ca. 15 Min.", prot: "ca. 40 g Protein pro Wrap",
+      intro: "Mild gewürztes Poulet mit wenigen Bohnen und Mais, dazu Skyr statt Sauerrahm. Bewusst ohne Schärfe, damit der Magen vor dem Training ruhig bleibt.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Pouletbrust, in Streifen", a: 120, u: "g" },
+        { n: "Paprikapulver, edelsüss", a: 1, u: "TL" },
+        { n: "Kreuzkümmel, gemahlen", a: 0.5, u: "TL" },
+        { n: "Öl zum Braten", a: 1, u: "TL" },
+        { n: "Kidneybohnen, abgetropft", a: 40, u: "g" },
+        { n: "Mais, abgetropft", a: 30, u: "g" },
+        { n: "Skyr", a: 3, u: "EL" },
+        { n: "Limetten- oder Zitronensaft", a: 1, u: "TL" },
+        { n: "Tomate, in Scheiben", a: 0.5, u: "Stk" },
+        { n: "Blattsalat", a: 1, u: "Handvoll" },
+        { n: "Salz", t: "nach Belieben" }
+      ],
+      steps: [
+        "Pouletstreifen mit Paprikapulver, Kreuzkümmel und Salz mischen.",
+        "Öl in einer Pfanne bei mittlerer bis hoher Hitze erhitzen. Poulet 5–6 Minuten braten, bis es durch ist. Bohnen und Mais zugeben und 1–2 Minuten mitwärmen.",
+        "Skyr mit Limettensaft und einer Prise Salz verrühren.",
+        "Tortilla kurz erwärmen. Skyr-Sauce darauf streichen, Salat, Tomate und die Poulet-Bohnen-Mischung darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Die Bohnenmenge bewusst klein halten. Grössere Mengen Hülsenfrüchte können vor dem Training Blähungen machen."
+    },
+    {
+      id: "pute", emoji: "🦃",
+      name: "Putenbrust-Frischkäse-Wrap",
+      tag: "Mit Rüebli und Rucola",
+      time: "ca. 5 Min.", prot: "ca. 30 g Protein pro Wrap",
+      intro: "Der schnellste Wrap ohne Kochen: Putenbrust, Hüttenkäse, Senf und knackiges Gemüse.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Putenbrust, in Scheiben", a: 100, u: "g" },
+        { n: "Hüttenkäse oder Magerfrischkäse", a: 3, u: "EL" },
+        { n: "Senf, mild", a: 1, u: "TL" },
+        { n: "Rüebli, geraspelt", a: 0.5, u: "Stk" },
+        { n: "Rucola", a: 1, u: "Handvoll" },
+        { n: "Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Hüttenkäse mit Senf und Pfeffer verrühren.",
+        "Tortilla kurz erwärmen. Käsemischung darauf streichen, Putenbrust, Rüebli und Rucola darauf legen.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Aufschnitt ist oft salzreich. Beim Einkaufen Putenbrust mit kurzer Zutatenliste wählen."
+    },
+    {
+      id: "rind", emoji: "🥩",
+      name: "Rindfleisch-Wrap mit Joghurtsauce",
+      tag: "Mageres Rind, Gurke und Paprika",
+      time: "ca. 15 Min.", prot: "ca. 35 g Protein pro Wrap",
+      intro: "Mageres Rindsfilet oder Huft, kurz und heiss gebraten, mit Gurke, Paprika und einer leichten Joghurt-Zitronen-Sauce.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Rindsfilet oder Huft, mager", a: 120, u: "g" },
+        { n: "Öl zum Braten", a: 1, u: "TL" },
+        { n: "Naturjoghurt, mager", a: 3, u: "EL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Petersilie, gehackt", a: 1, u: "EL" },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Rote Peperoni, in dünnen Streifen", a: 0.5, u: "Stk" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Fleisch 20 Minuten vor dem Braten aus dem Kühlschrank nehmen und trocken tupfen. Joghurt mit Zitronensaft, Petersilie, Salz und Pfeffer verrühren.",
+        "Öl in einer Pfanne stark erhitzen. Fleisch pro Seite 1,5–2 Minuten braten (medium), erst nach dem Braten salzen und pfeffern.",
+        "Fleisch 3 Minuten ruhen lassen, dann quer zur Faser in dünne Streifen schneiden.",
+        "Tortilla kurz erwärmen. Sauce darauf streichen, Gurke, Peperoni und Fleisch darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Das Fleisch ruhen lassen und quer zur Faser schneiden, dann bleibt es zart. Wer es lieber durchgebraten mag, gibt 1 Minute pro Seite zu."
+    },
+    {
+      id: "tofu", emoji: "🟡",
+      name: "Tofu-Rührei-Wrap",
+      tag: "Räuchertofu, Kurkuma und Spinat",
+      time: "ca. 10 Min.", prot: "ca. 30 g Protein pro Wrap",
+      intro: "Zerbröselter Räuchertofu mit Kurkuma erinnert an Rührei, ist aber fast fettfrei. Der Hüttenkäse sorgt für zusätzliches Protein und Cremigkeit.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Räuchertofu, zerbröselt", a: 120, u: "g" },
+        { n: "Öl zum Braten", a: 1, u: "TL" },
+        { n: "Kurkuma", a: 0.5, u: "TL" },
+        { n: "Blattspinat, frisch", a: 1, u: "Handvoll" },
+        { n: "Hüttenkäse", a: 2, u: "EL" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Räuchertofu mit den Fingern oder einer Gabel grob zerbröseln.",
+        "Öl in einer Pfanne bei mittlerer Hitze erhitzen. Tofu 3–4 Minuten anbraten, Kurkuma zugeben und kurz mitbraten.",
+        "Spinat zugeben und zusammenfallen lassen. Mit Pfeffer abschmecken, Salz nur vorsichtig zugeben, da der Räuchertofu bereits salzig ist.",
+        "Tortilla kurz erwärmen. Hüttenkäse darauf streichen, Tofu-Spinat-Mischung darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Kurkuma färbt stark. Den Wrap beim Essen am besten in Backpapier oder Küchenpapier halten."
+    },
+    {
+      id: "halloumi", emoji: "🧀",
+      name: "Halloumi-Wrap mit Minzjoghurt",
+      tag: "Gebraten, mit Gurke und Tomate",
+      time: "ca. 10 Min.", prot: "ca. 25 g Protein pro Wrap",
+      intro: "Halloumi light ohne zusätzliches Fett goldbraun gebraten, dazu frischer Minzjoghurt. Etwas mehr Fett als die anderen Wraps, deshalb eher bei 2 Stunden Abstand.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Halloumi light, in dünnen Scheiben", a: 60, u: "g" },
+        { n: "Naturjoghurt, mager", a: 3, u: "EL" },
+        { n: "Minze, gehackt", a: 1, u: "EL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Hüttenkäse", a: 2, u: "EL" },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Tomate, in Scheiben", a: 0.5, u: "Stk" },
+        { n: "Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Joghurt mit Minze, Zitronensaft und Pfeffer verrühren. Salz ist nicht nötig, der Halloumi ist salzig.",
+        "Halloumi in einer beschichteten Pfanne ohne Öl bei mittlerer Hitze pro Seite 1–2 Minuten goldbraun braten.",
+        "Tortilla kurz erwärmen. Hüttenkäse und Minzjoghurt darauf streichen, Gurke, Tomate und Halloumi darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Halloumi light ist fettärmer als der normale. Ist er nicht erhältlich, den normalen Halloumi nur in der halben Menge verwenden."
+    },
+    {
+      id: "kichererbsen", emoji: "🫘",
+      name: "Kichererbsen-Quark-Wrap",
+      tag: "Vegetarisch mit Ei",
+      time: "ca. 10 Min.", prot: "ca. 25 g Protein pro Wrap",
+      intro: "Leicht zerdrückte Kichererbsen mit Magerquark, Zitrone und Petersilie. Das Ei sorgt für zusätzliches Protein.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Kichererbsen, abgetropft", a: 80, u: "g" },
+        { n: "Magerquark", a: 3, u: "EL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Petersilie, gehackt", a: 1, u: "EL" },
+        { n: "Ei, hartgekocht", a: 1, u: "Stk", int: true },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Kichererbsen in einer Schüssel mit einer Gabel grob zerdrücken.",
+        "Magerquark, Zitronensaft, Petersilie, Salz und Pfeffer unterrühren.",
+        "Ei in Scheiben schneiden. Tortilla kurz erwärmen, Kichererbsen-Quark darauf streichen, Gurke und Ei darauf legen.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Die Kichererbsen vorher gut abspülen und abtropfen lassen. Das macht sie bekömmlicher."
+    },
+    {
+      id: "linsen", emoji: "🍅",
+      name: "Linsen-Wrap",
+      tag: "Rote Linsen, Skyr und Rüebli",
+      time: "ca. 20 Min.", prot: "ca. 25 g Protein pro Wrap",
+      intro: "Rote Linsen werden schnell weich und lassen sich gut vorbereiten. Mit Skyr, Kreuzkümmel und Rüebli. Etwas mehr Ballaststoffe, deshalb besser mit vollen 2 Stunden Abstand.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Rote Linsen, trocken", a: 50, u: "g" },
+        { n: "Skyr", a: 4, u: "EL" },
+        { n: "Kreuzkümmel, gemahlen", a: 0.5, u: "TL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Rüebli, geraspelt", a: 0.5, u: "Stk" },
+        { n: "Petersilie, gehackt", a: 1, u: "EL" },
+        { n: "Salz, Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Linsen in der 2,5-fachen Menge Wasser 8–10 Minuten kochen, bis sie weich sind, aber noch Form haben. Gut abgiessen und abkühlen lassen.",
+        "Linsen mit Skyr, Kreuzkümmel, Zitronensaft, Salz und Pfeffer vermischen.",
+        "Tortilla kurz erwärmen. Linsenmasse darauf streichen, Rüebli und Petersilie darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Die Linsen am Vorabend kochen und im Kühlschrank aufbewahren. Dann ist der Wrap in 3 Minuten fertig."
+    },
+    {
+      id: "lachs", emoji: "🍣",
+      name: "Räucherlachs-Skyr-Wrap",
+      tag: "Mit Gurke, Dill und Zitrone",
+      time: "ca. 5 Min.", prot: "ca. 30 g Protein pro Wrap",
+      intro: "Räucherlachs, Skyr und Hüttenkäse mit Gurke und Dill. Eine kleine Menge Lachs genügt, da er sehr aromatisch ist.",
+      ing: [
+        { n: "Weizentortilla (ca. 60 g)", a: 1, u: "Stk", int: true },
+        { n: "Räucherlachs", a: 60, u: "g" },
+        { n: "Skyr", a: 3, u: "EL" },
+        { n: "Hüttenkäse", a: 2, u: "EL" },
+        { n: "Zitronensaft", a: 1, u: "TL" },
+        { n: "Dill, gehackt", a: 1, u: "EL" },
+        { n: "Gurke, in Streifen", a: 60, u: "g" },
+        { n: "Kapern", a: 1, u: "TL", opt: true },
+        { n: "Pfeffer", t: "nach Belieben" }
+      ],
+      steps: [
+        "Skyr mit Hüttenkäse, Zitronensaft, Dill und Pfeffer verrühren. Salz ist nicht nötig, der Räucherlachs ist salzig.",
+        "Tortilla kurz erwärmen. Skyr-Mischung darauf streichen, Gurke, Räucherlachs und optional Kapern darauf geben.",
+        "Seiten einschlagen und fest einrollen."
+      ],
+      tip: "Räucherlachs ist salzig und enthält etwas mehr Fett als Poulet. Bei knapper Zeit vor dem Training eher die kleinere Menge nehmen."
     }
   ];
 
-  const tilesEl = document.getElementById("tiles");
+  const GROUPS = [
+    { title: "Mit Fleisch", ids: ["poulet", "tzatziki", "honigsenf", "orangefenchel", "asia", "texmex", "pute", "rind", "ruehrei"] },
+    { title: "Vegetarisch", ids: ["hummus", "tofu", "halloumi", "kichererbsen", "linsen"] },
+    { title: "Mit Fisch (nur für dich)", ids: ["thunfisch", "lachs"] }
+  ];
+
+  const tilesEl = document.getElementById("tilesWrap");
   const recipeEl = document.getElementById("recipe");
   const hintEl = document.getElementById("hint");
   const persons = document.getElementById("persons");
@@ -265,16 +579,20 @@
   function unitLabel(u, t) {
     const plural = !(t === "1" || t === "½");
     if (u === "Scheibe") return plural ? "Scheiben" : "Scheibe";
+    if (u === "Zehe") return plural ? "Zehen" : "Zehe";
     return u;
   }
 
   function renderTiles() {
-    tilesEl.innerHTML = R.map(r =>
-      '<button type="button" class="tile" data-id="' + r.id + '" aria-pressed="false">' +
-        '<span class="emoji" aria-hidden="true">' + r.emoji + '</span>' +
-        '<span class="t-name">' + esc(r.name) + '</span>' +
-        '<span class="t-tag">' + esc(r.tag) + '</span>' +
-      '</button>'
+    tilesEl.innerHTML = GROUPS.map(g =>
+      '<h2 class="group-title">' + esc(g.title) + '</h2><div class="tiles" role="group" aria-label="' + esc(g.title) + '">' +
+      g.ids.map(id => {
+        const r = R.find(x => x.id === id);
+        return '<button type="button" class="tile" data-id="' + r.id + '" aria-pressed="false">' +
+          '<span class="emoji" aria-hidden="true">' + r.emoji + '</span>' +
+          '<span class="t-name">' + esc(r.name) + '</span>' +
+          '<span class="t-tag">' + esc(r.tag) + '</span></button>';
+      }).join("") + '</div>'
     ).join("");
   }
 
