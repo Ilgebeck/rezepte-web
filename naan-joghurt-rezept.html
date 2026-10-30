@@ -31,6 +31,10 @@
   .wrap { max-width: 680px; margin: 0 auto; }
 
   header { margin-bottom: 2rem; }
+  .hdr { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .hdr-text { flex: 1; min-width: 0; }
+  .hdr-photo { width: 150px; height: 150px; object-fit: cover; object-position: 50% 50%; border-radius: var(--radius);
+    border: 1px solid var(--border); flex-shrink: 0; display: block; }
   h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; }
   .subtitle { font-size: 14px; color: var(--text-secondary); margin: 0; }
 
@@ -152,7 +156,7 @@
     text-align: center;
   }
 
-  @media (max-width: 480px) { .var-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .var-grid { grid-template-columns: 1fr; } .hdr-photo { width: 100px; height: 100px; } }
   @media print {
     body { background: white; padding: 0; }
     .ctrls-box { border: 1px solid #ccc; }
@@ -164,9 +168,12 @@
 <p class="back noprint" style="margin:0 0 1rem;font-size:15px"><a href="index.html" style="color:inherit;font-weight:600;text-decoration:none">← Alle Rezepte</a></p>
 
 
-  <header>
-    <h1>Naan mit Joghurt</h1>
-    <p class="subtitle">Hefeteig, ca. 1,5–2 Std. Gare · AMC-Bratpfanne</p>
+  <header class="hdr">
+    <div class="hdr-text">
+      <h1>Naan mit Joghurt</h1>
+      <p class="subtitle">Hefeteig, ca. 1,5–2 Std. Gare · AMC-Bratpfanne</p>
+    </div>
+    <img class="hdr-photo" src="bilder/naan-joghurt.jpg" alt="Frisch gebratenes Naan in der Pfanne" width="150" height="150">
   </header>
 
   <div class="ctrls-box">
