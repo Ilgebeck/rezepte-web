@@ -33,11 +33,20 @@
   .ctrl-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
   .ctrl-label { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
   .ctrl-val { font-size: 15px; font-weight: 600; }
-  input[type=range] { width: 100%; accent-color: var(--accent); margin: 4px 0 0; }
-  .ticks { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-tertiary); margin-top: 2px; }
-  .ticks span { flex: 1; text-align: center; }
-  .ticks span:first-child { text-align: left; }
-  .ticks span:last-child { text-align: right; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 24px; margin: 4px 0 0; padding: 0;
+    background: transparent; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--border); }
+  input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--border); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; box-sizing: border-box;
+    width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--accent);
+    border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  input[type=range]::-moz-range-thumb { box-sizing: border-box; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  /* Beschriftung: Mitte jedes Labels liegt genau unter der Mitte des Reglerknopfs (Knopfbreite 22 px = 2 x 11 px Rand) */
+  .ticks { position: relative; height: 16px; margin: 4px 11px 0; font-size: 11.5px; color: var(--text-tertiary); }
+  .ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; text-align: center; }
+  .ticks span.edge-r { transform: translateX(-80%); }
   .ctrl-note { font-size: 12.5px; color: var(--text-tertiary); margin: 8px 0 0; }
 
   .section-head { font-size: 17px; font-weight: 600; margin: 1.75rem 0 0.75rem; display: flex;
@@ -94,13 +103,13 @@
     <div class="ctrl-row">
       <div class="ctrl-top"><span class="ctrl-label">Portionen</span><span class="ctrl-val" id="p-out"></span></div>
       <input type="range" id="p-range" min="2" max="12" step="1" aria-label="Anzahl Personen">
-      <div class="ticks"><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span></div>
+      <div class="ticks"><span style="left:0%">2</span><span style="left:20%">4</span><span style="left:40%">6</span><span style="left:60%">8</span><span style="left:80%">10</span><span style="left:100%">12</span></div>
       <p class="ctrl-note" id="info"></p>
     </div>
     <div class="ctrl-row">
       <div class="ctrl-top"><span class="ctrl-label">Schärfe</span><span class="ctrl-val" id="h-out"></span></div>
       <input type="range" id="h-range" min="0" max="3" step="1" aria-label="Schärfe">
-      <div class="ticks"><span>mild</span><span>leicht scharf</span><span>scharf</span><span>indisch scharf</span></div>
+      <div class="ticks"><span style="left:0%">mild</span><span style="left:33.333%">leicht scharf</span><span style="left:66.667%">scharf</span><span class="edge-r" style="left:100%">indisch scharf</span></div>
       <p class="ctrl-note" id="h-desc"></p>
     </div>
   </div>
@@ -108,7 +117,7 @@
   <div id="content"></div>
 
   <div class="var-grid">
-    <div class="var-card"><p class="var-tag">Dazu</p><p class="var-name">Brot und Variationen</p><p class="var-desc">Dazu passt warmes Fladenbrot oder <a href="../naan-joghurt-rezept.html">Naan</a>. Obendrauf: geröstete Mandeln, Granatapfelkerne oder Feta.</p></div>
+    <div class="var-card"><p class="var-tag">Dazu</p><p class="var-name">Brot und Variationen</p><p class="var-desc">Dazu passt warmes Fladenbrot oder <a href="../Indische-Spezialitaeten/naan-joghurt-rezept.html">Naan</a>. Obendrauf: geröstete Mandeln, Granatapfelkerne oder Feta.</p></div>
     <div class="var-card"><p class="var-tag">Vorbereiten</p><p class="var-name">Salat vorbereiten</p><p class="var-desc">Der Linsen-Bulgur-Salat schmeckt auch lauwarm oder am nächsten Tag. Kräuter und Tomaten dann erst kurz vor dem Servieren unterheben.</p></div>
   </div>
 

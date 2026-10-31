@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naan mit Joghurt — Rezept</title>
+<style>
+  :root {
+    --bg: #FBFAF7;
+    --card: #FFFFFF;
+    --border: #E5E2D8;
+    --border-strong: #D3CFC0;
+    --text: #2C2C2A;
+    --text-secondary: #5F5E5A;
+    --text-tertiary: #888780;
+    --accent: #B97A4A;
+    --accent-bg: #F5EEE3;
+    --accent-text: #6B4524;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 2rem 1rem 4rem;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+
+  header { margin-bottom: 2rem; }
+  .hdr { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .hdr-text { flex: 1; min-width: 0; }
+  .hdr-photo { width: 150px; height: 150px; object-fit: cover; object-position: 50% 50%; border-radius: var(--radius);
+    border: 1px solid var(--border); flex-shrink: 0; display: block; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .subtitle { font-size: 14px; color: var(--text-secondary); margin: 0; }
+
+  .ctrls-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+  .ctrl-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+  }
+  .ctrl-label { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+  .stepper { display: flex; align-items: center; gap: 14px; }
+  .stepper button {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    padding: 0;
+  }
+  .stepper button:hover { background: var(--accent-bg); border-color: var(--accent); }
+  .stepper button:active { transform: scale(0.92); }
+  .stepper button:disabled { opacity: 0.35; cursor: not-allowed; }
+  .stepper-val {
+    min-width: 92px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .section-head {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 1.75rem 0 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    white-space: nowrap;
+  }
+  .section-note { font-size: 12.5px; font-weight: 400; color: var(--text-tertiary); }
+
+  .phase {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .phase-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-tertiary);
+    margin: 0 0 10px;
+  }
+  .ing {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14.5px;
+    gap: 12px;
+  }
+  .ing:last-child { border-bottom: none; }
+  .ing-name { line-height: 1.5; }
+  .ing-alt { font-size: 12px; color: var(--text-tertiary); display: block; margin-top: 2px; }
+  .ing-amt { font-weight: 600; min-width: 90px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .steps { margin-top: 1.1rem; }
+  .step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .step-num {
+    min-width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-text { font-size: 14.5px; color: var(--text); }
+  .step-text strong { font-weight: 700; }
+
+  .var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 0.5rem; }
+  .var-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .var-name { font-size: 13.5px; font-weight: 700; color: var(--text); margin: 0 0 4px; }
+  .var-tag { font-size: 10.5px; font-weight: 600; color: var(--accent-text); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 4px; }
+  .var-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin: 0; }
+
+  footer {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  @media (max-width: 480px) { .var-grid { grid-template-columns: 1fr; } .hdr-photo { width: 100px; height: 100px; } }
+  @media print {
+    body { background: white; padding: 0; }
+    .ctrls-box { border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="back noprint" style="margin:0 0 1rem;font-size:15px"><a href="../index.html" style="color:inherit;font-weight:600;text-decoration:none">← Alle Rezepte</a></p>
+
+
+  <header class="hdr">
+    <div class="hdr-text">
+      <h1>Naan mit Joghurt</h1>
+      <p class="subtitle">Hefeteig, ca. 1,5–2 Std. Gare · AMC-Bratpfanne</p>
+    </div>
+    <img class="hdr-photo" src="bilder/naan-joghurt.jpg" alt="Frisch gebratenes Naan in der Pfanne" width="150" height="150">
+  </header>
+
+  <div class="ctrls-box">
+    <div class="ctrl-row">
+      <span class="ctrl-label">Anzahl Naan</span>
+      <div class="stepper">
+        <button onclick="changeCount(-1)" aria-label="Weniger Naan">−</button>
+        <span class="stepper-val" id="count-out">6 Stück</span>
+        <button onclick="changeCount(1)" aria-label="Mehr Naan">+</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-head">Teig <span class="section-note">— Hefe in Milch 5–10 Min. anschäumen lassen</span></p>
+  <div class="phase">
+    <p class="phase-title">Zutaten</p>
+    <div class="ing"><span class="ing-name">Weissmehl (Type 550)<span class="ing-alt">oder zur Hälfte mit Vollkorn</span></span><span class="ing-amt" id="n-mehl">400 g</span></div>
+    <div class="ing"><span class="ing-name">Joghurt, Vollfett, Zimmertemp.<span class="ing-alt">griechischer Joghurt: gleiche Menge + <span id="n-joghurt-extra">25 g</span> Milch extra</span></span><span class="ing-amt" id="n-joghurt">150 g</span></div>
+    <div class="ing"><span class="ing-name">Milch, lauwarm</span><span class="ing-amt" id="n-milch">120 g</span></div>
+    <div class="ing"><span class="ing-name">Öl oder zerlassene Butter</span><span class="ing-amt" id="n-oel">25 g</span></div>
+    <div class="ing"><span class="ing-name">Frischhefe<span class="ing-alt">oder Trockenhefe: ca. halbe Menge</span></span><span class="ing-amt" id="n-hefe">7 g</span></div>
+    <div class="ing"><span class="ing-name">Zucker</span><span class="ing-amt" id="n-zucker">8 g</span></div>
+    <div class="ing"><span class="ing-name">Salz</span><span class="ing-amt" id="n-salz">8 g</span></div>
+    <div class="ing"><span class="ing-name">Ei <span class="ing-alt" style="display:inline; margin:0;">(optional, für geschmeidigeren Teig)</span></span><span class="ing-amt" id="n-ei">1 Stk.</span></div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text">Hefe und Zucker in der lauwarmen Milch auflösen, <strong>5–10 Min.</strong> stehen lassen bis es schäumt.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Joghurt, Öl, (Ei) und Hefe-Milch verrühren.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Mehl und Salz dazu, in der Sunmix <strong>8–10 Min. kneten</strong> bis ein glatter, leicht klebriger Teig entsteht — bewusst weicher als Brotteig.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Abgedeckt <strong>1,5–2 Std.</strong> an warmer Stelle gehen lassen, bis sich das Volumen verdoppelt hat.</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text">In <span id="n-stuecke">6</span> Stücke à <span id="n-gewicht">~118 g</span> teilen, rund schleifen, <strong>15 Min. entspannen</strong> lassen.</div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-text">Tropfenförmig oder oval auf ca. <strong>0,5 cm</strong> ausziehen/ausrollen — bewusst nicht hauchdünn.</div></div>
+  </div>
+
+  <p class="section-head">Backen <span class="badge">AMC-Bratpfanne</span></p>
+  <div class="phase">
+    <p class="phase-title">Ablauf</p>
+    <div class="ing"><span class="ing-name">Pfanne</span><span class="ing-amt">AMC, langsam vorgeheizt</span></div>
+    <div class="ing"><span class="ing-name">Hitze-Test</span><span class="ing-amt">Wassertropfen perlt ab</span></div>
+    <div class="ing"><span class="ing-name">Fett</span><span class="ing-amt">hauchdünn Öl</span></div>
+    <div class="ing"><span class="ing-name">Zeit pro Seite</span><span class="ing-amt">1–2 Min.</span></div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text">AMC-Pfanne auf <strong>niedriger bis mittlerer Stufe langsam</strong> aufheizen — typischer AMC-Weg. Bereit, wenn ein Wassertropfen abperlt statt zu verdampfen.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Mit einem ölbenetzten Stück Küchenpapier <strong>hauchdünn</strong> über den Boden wischen, nicht schwimmend.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Naan einlegen, <strong>nicht zu früh bewegen</strong> — erst antasten, wenn sich die Unterseite von selbst gelöst hat und Blasen aufsteigen.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><strong>1–2 Min. pro Seite</strong> wenden, bis goldbraune Flecken entstehen. Direkt danach mit zerlassener Butter (Ghee) bestreichen.</div></div>
+  </div>
+
+  <p class="section-head">Traditionelle Varianten <span class="section-note">— keine Fusion-Küche</span></p>
+  <div class="var-grid">
+    <div class="var-card"><p class="var-tag">Pur</p><p class="var-name">Plain / Butter Naan</p><p class="var-desc">Die Referenz-Variante: nur nach dem Backen grosszügig mit zerlassener Butter oder Ghee bestrichen, sonst nichts.</p></div>
+    <div class="var-card"><p class="var-tag">Pur</p><p class="var-name">Roghani Naan</p><p class="var-desc">Vor dem Backen mit Milch statt Wasser bestrichen, Gitter-/Rautenmuster eingeritzt. Klassisch aus dem Punjab.</p></div>
+    <div class="var-card"><p class="var-tag">Gewürzt</p><p class="var-name">Garlic Naan</p><p class="var-desc">Nach dem Backen: Butter + geriebener Knoblauch + Petersilie/Koriander sofort aufstreichen.</p></div>
+    <div class="var-card"><p class="var-tag">Gewürzt</p><p class="var-name">Koriander-Naan</p><p class="var-desc">Gehackter Koriander in der letzten Knetminute einarbeiten, zusätzlich mit Koriander-Butter bestreichen.</p></div>
+    <div class="var-card"><p class="var-tag">Gewürzt</p><p class="var-name">Kalonji-Naan</p><p class="var-desc">Schwarzkümmel vor dem Backen auf die Oberfläche gedrückt — klassisch-authentisch.</p></div>
+    <div class="var-card"><p class="var-tag">Gewürzt</p><p class="var-name">Ajwain-Naan</p><p class="var-desc">Ajwain-Samen (thymianartig, intensiv) im Teig oder obenauf — verdauungsfördernd, sehr klassisch in Nordindien.</p></div>
+    <div class="var-card"><p class="var-tag">Herzhaft gefüllt</p><p class="var-name">Amritsari Naan</p><p class="var-desc">Gefüllt mit gewürzter Kartoffelmasse (Koriander, Kreuzkümmel, grüne Chili) — herzhaft, sättigend.</p></div>
+    <div class="var-card"><p class="var-tag">Süss gefüllt</p><p class="var-name">Peshawari / Kashmiri Naan</p><p class="var-desc">Gefüllt mit Kokosraspeln, Rosinen und gehackten Nüssen — die süsse Variante, traditionell zu mildem Korma.</p></div>
+  </div>
+
+  <footer>Naan mit Joghurt — zum Drucken oder offline Nachschlagen</footer>
+
+</div>
+
+<script>
+const base = {
+  mehl: 400, joghurt: 150, milch: 120, oel: 25, hefe: 7, zucker: 8, salz: 8,
+  joghurtExtra: 25,
+  totalTeig: 710
+};
+const baseCount = 6;
+let state = { count: 6 };
+
+function fmt(val) {
+  if (val < 1) return (Math.round(val * 10) / 10) + ' g';
+  return Math.round(val) + ' g';
+}
+
+function changeCount(delta) {
+  const next = state.count + delta;
+  if (next < 2 || next > 16) return;
+  state.count = next;
+  render();
+}
+
+function render() {
+  const count = state.count;
+  const r = count / baseCount;
+  document.getElementById('count-out').textContent = count + ' Stück';
+
+  document.getElementById('n-mehl').textContent = fmt(base.mehl * r);
+  document.getElementById('n-joghurt').textContent = fmt(base.joghurt * r);
+  document.getElementById('n-joghurt-extra').textContent = fmt(base.joghurtExtra * r);
+  document.getElementById('n-milch').textContent = fmt(base.milch * r);
+  document.getElementById('n-oel').textContent = fmt(base.oel * r);
+  document.getElementById('n-hefe').textContent = fmt(base.hefe * r);
+  document.getElementById('n-zucker').textContent = fmt(base.zucker * r);
+  document.getElementById('n-salz').textContent = fmt(base.salz * r);
+
+  const eier = Math.max(1, Math.round(r));
+  document.getElementById('n-ei').textContent = eier + ' Stk.';
+
+  document.getElementById('n-stuecke').textContent = count;
+  const stueckGewicht = Math.round((base.totalTeig * r) / count);
+  document.getElementById('n-gewicht').textContent = '~' + stueckGewicht + ' g';
+}
+
+render();
+</script>
+</body>
+</html>
