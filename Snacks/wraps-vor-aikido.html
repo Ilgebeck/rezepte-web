@@ -71,8 +71,14 @@
   }
   .ctl label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; }
   .ctl output { color: var(--accent); font-weight: 700; }
-  input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
-  .scale { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; margin: 0; background: transparent; display: block; }
+  input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--line); }
+  input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  .scale { position: relative; height: 16px; margin: 2px 11px 0; font-size: 0.75rem; color: var(--muted); }
+  .scale span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+  .scale span.edge-r { transform: translateX(-80%); }
 
   .hint {
     text-align: center; color: var(--muted); padding: 40px 12px;
@@ -131,7 +137,7 @@
     <div class="ctl">
       <label for="persons">Personen <output id="personsOut">2</output></label>
       <input type="range" id="persons" min="1" max="12" step="1" value="2">
-      <div class="scale"><span>1</span><span>3</span><span>5</span><span>7</span><span>9</span><span>12</span></div>
+      <div class="scale"><span style="left:0.000%">1</span><span style="left:18.182%">3</span><span style="left:36.364%">5</span><span style="left:54.545%">7</span><span style="left:72.727%">9</span><span style="left:100.000%">12</span></div>
     </div>
   </div>
 
