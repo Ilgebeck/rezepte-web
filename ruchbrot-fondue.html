@@ -198,7 +198,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       ['bake','Backen','Einschiessen und sofort <strong>nur EINEN Dampfstoss</strong> geben, keinen zweiten. Nach 15 Min. den Dampf ablassen und auf 210 °C reduzieren. Kräftig dunkel ausbacken, total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
       ['10','Nachbacken','Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 10 Min. im Ofen lassen. Danach sofort aufs Gitter.'],
       ['120','Auskühlen und lagern','Auf dem Gitter vollständig auskühlen lassen, dann über Nacht in einem Tuch oder Papiersack lagern. Am Fonduetag in Würfel von 2–3 cm schneiden, jeder mit einem Stück Kruste.']].filter(Boolean);
-    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}${x[0]==='stueck'?FTA:''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}${x[0]==='stueck'?FTA:''}${x[0]==='bake'?' data-sig="15" data-signame="Dampf ablassen" data-sigmsg="Jetzt Dampf ablassen und auf 210 °C umstellen" data-sigok="Erledigt"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
     $('#pdlab').textContent=biga?'Biga-Dauer':'Poolish-Dauer';
     $('#kdbox').style.display=kalt?'':'none';
     timers();

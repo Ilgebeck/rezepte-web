@@ -210,7 +210,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
         :'Einschiessen und sofort <strong>nur EINEN Dampfstoss</strong> geben, keinen zweiten. Nach 15 Min. den Dampf ablassen und auf 210 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Mehrere Bleche nach halber Zeit tauschen.'],
       !s?['10','Nachbacken','Ofen ausschalten und die Brote bei leicht geöffneter Tür (Holzlöffel einklemmen) noch 5–10 Min. im Ofen lassen. So trocknet die Kruste durch und wird rösch, ohne dunkler zu werden. Danach sofort aufs Gitter.']:null,
       [String(R[s?'s':'h'].cool),'Auskühlen',s?'Mindestens 1 Std. auf dem Gitter.':'Mindestens 2 Std. auf dem Gitter.']].filter(Boolean);
-    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}${x[0]==='stueck'?' data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
+    $('#schritte').innerHTML=st.map(x=>`<li data-t="${x[0]}"${x[0]==='stock'?' data-sig="half"':''}${x[0]==='stueck'?' data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"':''}${x[0]==='bake'?' data-sig="15" data-signame="Dampf ablassen" data-sigmsg="Jetzt Dampf ablassen und auf 210 °C umstellen" data-sigok="Erledigt"':''}><div class="st"><h3>${x[1]}</h3><input type="checkbox" aria-label="Schritt erledigt"></div><p>${x[2]}</p></li>`).join('');
     timers();
   }
 
