@@ -112,6 +112,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   </div>
   <div class="regler" style="margin-top:14px"><label for="rt">Küche</label><div class="rwrap"><input id="rt" type="range" min="18" max="25" step="0.5" value="21"></div><output id="rto"></output></div>
   <p class="kennz" id="rth" style="margin-top:-8px"></p>
+  <div class="check noprint"><input type="checkbox" id="nu"><span>Mit Baumnüssen (15 %)</span></div>
   <div class="check noprint"><input type="checkbox" id="kk"><span>Kartoffeln kommen aus dem Kühlschrank</span></div>
   <div class="check noprint"><input type="checkbox" id="cube" checked><span>Gekühltes Wasser aus dem Quooker CUBE</span></div>
   <div class="grid noprint" style="margin-top:12px">
@@ -154,6 +155,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <tr><td class="cb"><input type="checkbox"></td><td>Frischhefe</td><td class="menge" data-k="hH"></td></tr>
   <tr><td class="cb"><input type="checkbox"></td><td>Salz</td><td class="menge" data-k="sa"></td></tr>
   <tr><td class="cb"><input type="checkbox"></td><td>Butter, weich</td><td class="menge" data-k="bu"></td></tr>
+  <tr id="rowNu" style="display:none"><td class="cb"><input type="checkbox"></td><td>Baumnüsse, geröstet und grob gehackt</td><td class="menge" data-k="nu"></td></tr>
 </tbody></table>
 </div>
 </section>
@@ -163,18 +165,20 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <ol class="schritte" id="schritte">
   <li data-t="0"><div class="st"><h3>Poolish ansetzen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p><span data-k="pM"></span> Mehl, <span data-k="pW"></span> Leitungswasser und <span data-k="pH"></span> Hefe glatt verrühren. Abgedeckt in der Küche stehen lassen, bis die Oberfläche voller Blasen ist und leicht einsinkt.</p></li>
+  <li data-t="0" id="liNu" style="display:none"><div class="st"><h3>Baumnüsse rösten</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
+    <p>Gleich nach dem Poolish erledigen, damit die Nüsse bis zum Kneten vollständig ausgekühlt sind. <span data-k="nu"></span> Baumnüsse auf einem Blech bei 160 °C Umluft 8–10 Min. rösten, bis sie duften. Flach ausgebreitet auskühlen lassen und grob hacken (halbe bis viertel Kerne).</p></li>
   <li data-t="0"><div class="st"><h3>Kartoffeln vorbereiten</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Mehligkochende Kartoffeln in der Schale weich kochen, schälen, warm pressen und flach ausgebreitet abkühlen. Am Vortag gekocht und gekühlt geht ebenso; dann oben das Häkchen setzen, die Wassertemperatur wird angepasst.</p></li>
   <li data-t="5"><div class="st"><h3>Kneten, Phase 1</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Poolish, <span data-k="hM"></span> Weissmehl, <span data-k="rM"></span> Ruchmehl, <span data-k="ka"></span> Kartoffeln, <span data-k="hH"></span> Hefe und 90 % des Wassers (<span data-k="wq"></span>) 5 Min. langsam kneten. Restwasser nur zugeben, wenn der Teig fest wirkt; die Kartoffeln geben beim Kneten Feuchtigkeit ab.</p></li>
   <li data-t="6"><div class="st"><h3>Kneten, Phase 2</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
-    <p><span data-k="sa"></span> Salz zugeben, 4–6 Min. schnell kneten, dann <span data-k="bu"></span> Butter in 2 Min. langsam einarbeiten. Weich, leicht klebrig, guter Fenstertest. Erwartete Teigtemperatur ca. <span data-k="dt"></span>. Nach dem Kneten messen und hier eintragen; Stockgare und Zeitplan passen sich an.</p></li>
+    <p><span data-k="sa"></span> Salz zugeben, 4–6 Min. schnell kneten, dann <span data-k="bu"></span> Butter in 2 Min. langsam einarbeiten. Weich, leicht klebrig, guter Fenstertest.<span id="nuKnet" style="display:none"> Zuletzt die Baumnüsse (<span data-k="nu"></span>) 1–2 Min. langsam unterkneten.</span> Erwartete Teigtemperatur ca. <span data-k="dt"></span>. Nach dem Kneten messen und hier eintragen; Stockgare und Zeitplan passen sich an.</p></li>
   <li data-t="stock" data-sig="half"><div class="st"><h3>Stockgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Ca. <span data-k="stock"></span> abgedeckt in der Küche (<span data-k="rt"></span>), nach der Hälfte einmal dehnen und falten. Der Teig soll gut sichtbar aufgegangen sein; lieber nach Teig als nach Uhr.</p></li>
   <li data-t="15"><div class="st"><h3>Teilen und vorformen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>In <span data-k="n"></span> Stücke à ca. <span data-k="g"></span> teilen, locker rundwirken, 15 Min. entspannen.</p></li>
   <li data-t="stueck" data-sig="f0.67" data-signame="Fingertest" data-sigmsg="Jetzt Fingertest machen" data-sigok="Geprüft"><div class="st"><h3>Formen und Stückgare</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
-    <p>Rund oder länglich straff formen, Oberseite in Mehl wälzen und mit dem Schluss nach oben auf Backpapier aufs Blech setzen (<span data-k="pb"></span> pro Blech). Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen.</p></li>
+    <p><span id="formOhne">Rund oder länglich straff formen, Oberseite in Mehl wälzen und mit dem Schluss nach oben aufs Blech setzen (<span data-k="pb"></span> pro Blech).</span><span id="formMit" style="display:none">Rund oder länglich wirklich straff formen, die Oberfläche soll gespannt sein. Mit dem Schluss nach unten aufs Blech setzen (<span data-k="pb"></span> pro Blech). Kurz vor dem Einschiessen 2–3 Mal schräg einschneiden: So reisst das Brot kontrolliert auf und nicht entlang der Nüsse.</span> Ca. <span data-k="stueck"></span> abgedeckt. Ofen mit Klimagaren auf 230 °C Umluft vorheizen.</p></li>
   <li data-t="bake"><div class="st"><h3>Backen</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
     <p>Einschiessen und sofort <strong>nur EINEN Dampfstoss</strong> geben, keinen zweiten. Nach 15 Min. den Dampf ablassen und auf 210 °C reduzieren. Total ca. <span data-k="bz"></span>, Kerntemperatur 98 °C. Bei mehreren Blechen nach halber Zeit tauschen.</p></li>
   <li data-t="10"><div class="st"><h3>Nachbacken</h3><input type="checkbox" aria-label="Schritt erledigt"></div>
@@ -183,6 +187,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <p>Mindestens 2 Std. auf dem Gitter, sonst bleibt die Krume klebrig.</p></li>
 </ol>
 
+<div class="hinweis" id="hiNu" style="display:none">
+  <p><strong>Variante mit Baumnüssen</strong></p>
+  <p>15 % geröstete Baumnüsse aufs Mehl. Weil Nüsse das Glutengerüst schwächen, sinkt das zugegebene Wasser von 58 % auf 55 % und die Hefe steigt nur leicht von 1,2 % auf 1,4 %, damit der Teig formstabil bleibt und nicht übergart. Backzeit ca. 3 Min. länger. Die Krume färbt sich durch die Gerbstoffe der Baumnüsse leicht grau-violett, das ist normal.</p>
+</div>
 <div class="hinweis">
   <p><strong>Zur Temperaturanpassung</strong></p>
   <p>Stückgare: ca. +9 % Zeit pro Grad Küche unter 24 °C. Stockgare: zusätzlich ca. +4,5 % pro Grad Teigtemperatur unter 25 °C, weil sich der Teig während der Gare an die Küche angleicht. Poolish-Hefe: an Küchentemperatur und Poolish-Dauer angepasst. Erwartete Teigtemperatur: Bäckerformel mit Mehl, Poolish und Kartoffeln auf Küchentemperatur (bzw. 5 °C aus dem Kühlschrank) und ca. 12 °C Reibungswärme des Spiralkneters. Das sind Richtwerte; massgebend bleibt der Teig.</p>
@@ -200,7 +208,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 (function(){
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const P={mehl:100,ka:40,w:58,sa:2.2,hh:1.2,ph:0.03,bu:3};
-  const SUM=Object.values(P).reduce((a,b)=>a+b,0);
   const BZ={500:40,750:47,1000:55}, SAISON={4:22,5:23,6:24,7:24,8:24,9:23,10:22};
   const g=x=>Math.round(x)+' g', g1=x=>(Math.round(x*10)/10).toLocaleString('de-CH',{minimumFractionDigits:1})+' g';
   const pad=x=>String(x).padStart(2,'0'), M=60000, r5=x=>Math.round(x/5)*5;
@@ -216,12 +223,16 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const cube=$('#cube').checked;
     const Tc=cube?Math.max(3,Math.min(15,+$('#kw').value||7)):Math.max(3,Math.min(25,+$('#lw').value||10));
     $('#kw').closest('div').style.opacity=cube?1:.45; $('#lw').closest('div').style.opacity=cube?.45:1;
+    const nuss=$('#nu').checked, W=nuss?55:P.w, HH=nuss?1.4:P.hh, NU=nuss?15:0;
+    const SUM=P.mehl+P.ka+W+P.sa+HH+P.ph+P.bu+NU;
     const t=+$('#m').value, sz=+$('#sz').value, f=t/SUM, T=+$('#rt').value, ph=+$('#pd').value, kk=$('#kk').checked;
+    ['#rowNu','#liNu','#hiNu'].forEach(x=>$(x).style.display=nuss?'':'none'); $('#nuKnet').style.display=nuss?'':'none';
+    $('#formOhne').style.display=nuss?'none':''; $('#formMit').style.display=nuss?'':'none';
     const dtCalc=kk?(Tc+3*T+5+12)/5:(Tc+4*T+12)/5;
     const tmv=parseFloat($('#tm').value), gemessen=!isNaN(tmv)&&tmv>=12&&tmv<=32;
     const DT=gemessen?tmv:dtCalc;
     const F=Math.pow(1.09,24-T), FT=Math.pow(1.045,25-DT);
-    D={stock:r5(70*F*FT),stueck:r5(50*F),bake:BZ[sz]};
+    D={stock:r5(70*F*FT),stueck:r5(50*F),bake:BZ[sz]+(nuss?3:0)};
     const DTs=(Math.round(DT*2)/2).toLocaleString('de-CH')+' °C';
     $('#dth').textContent=(gemessen?'Gemessene Teigtemperatur '+DTs+', Stockgare danach berechnet.':'Erwartete Teigtemperatur ca. '+DTs+'.')
       +(DT<21?' Recht kühl: Stockgare wird deutlich länger. Kartoffeln vorher auf Küchentemperatur bringen hilft am meisten.':'')
@@ -233,11 +244,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     $('#rto').textContent=Ts;
     $('#rth').textContent=manuell?'Manuell eingestellt':'Aus der Jahreszeit des Backdatums vorgeschlagen';
     const v={pM:g(pM),pW:g(pM),pH:g1(pHe),hM:g(mehl*0.8-pM),rM:g(mehl*0.2),ka:g(f*P.ka),roh:g(f*P.ka*1.12),
-      hW:g(f*P.w-pM),hH:g1(f*P.hh),sa:g1(f*P.sa),bu:g(f*P.bu),n:n,g:g(each),pb:sz==500?'max. 3':'max. 2',
-      dt:DTs,wq:(cube?'Quooker CUBE gekühlt, ca. ':'Leitung kalt, ca. ')+Tc+' °C',bz:BZ[sz]+' Min.',stock:D.stock+' Min.',stueck:D.stueck+' Min.',rt:Ts};
+      hW:g(f*W-pM),hH:g1(f*HH),nu:g(f*NU),sa:g1(f*P.sa),bu:g(f*P.bu),n:n,g:g(each),pb:sz==500?'max. 3':'max. 2',
+      dt:DTs,wq:(cube?'Quooker CUBE gekühlt, ca. ':'Leitung kalt, ca. ')+Tc+' °C',bz:D.bake+' Min.',stock:D.stock+' Min.',stueck:D.stueck+' Min.',rt:Ts};
     $$('[data-k]').forEach(e=>{e.textContent=v[e.dataset.k]??''});
     $('#erg').textContent=n+(n==1?' Brot':' Brote')+' à ca. '+Math.round(each)+' g';
-    $('#kennz').textContent=`Mehl total ${Math.round(mehl)} g, Kartoffelanteil 40 %, zugegebenes Wasser 58 %`;
+    $('#kennz').textContent=`Mehl total ${Math.round(mehl)} g, Kartoffelanteil 40 %, zugegebenes Wasser ${W} %`+(nuss?`, Baumnüsse ${Math.round(f*NU)} g (15 %)`:'');
     $$('#schritte>li').forEach(li=>li._reset&&li._reset());
     plan();
   }
@@ -246,7 +257,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     const b=new Date($('#bk').value); if(isNaN(b)) return;
     const kn=new Date(b-(D.stueck+10+15+5+D.stock+15)*M), ph=+$('#pd').value;
     const f=d=>d.toLocaleDateString('de-CH',{weekday:'short',day:'numeric',month:'numeric'})+' '+pad(d.getHours())+':'+pad(d.getMinutes());
-    const rows=[[new Date(kn-ph*60*M),'Poolish ansetzen'],[new Date(kn-120*M),'Kartoffeln kochen (oder am Vortag)'],[kn,'Kneten beginnen'],
+    const rows=[[new Date(kn-ph*60*M),'Poolish ansetzen'+($('#nu').checked?', Baumnüsse rösten':'')],[new Date(kn-120*M),'Kartoffeln kochen (oder am Vortag)'],[kn,'Kneten beginnen'],
       [new Date(+kn+(15+D.stock)*M),'Teilen und vorformen'],[new Date(b-(D.stueck+10)*M),'Formen, Ofen vorheizen'],
       [b,'Einschiessen'],[new Date(+b+(D.bake+120)*M),'Anschneiden ab']];
     $('#plan').innerHTML=rows.map(([d,t])=>`<tr><td>${f(d)}</td><td>${t}</td></tr>`).join('');
@@ -301,6 +312,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   $('#lw').addEventListener('input',()=>{manuellLW=true;rechnen();});
   ['#m','#sz','#bk','#pd','#kk'].forEach(s=>$(s).addEventListener('input',rechnen));
   $('#kk').addEventListener('change',rechnen);
+  $('#nu').addEventListener('change',rechnen);
   rechnen();
 })();
 </script>
