@@ -91,10 +91,7 @@
   <h1 id="h1"></h1>
   <p class="lead" id="lead"></p>
 
-  <div class="variant-block" id="variantBlock" hidden>
-    <div class="group-title" id="variantTitle"></div>
-    <div class="tiles" id="tiles"></div>
-  </div>
+  <div id="groups"></div>
 
   <div class="controls">
     <div class="ctl">
@@ -109,10 +106,12 @@
 
 <script>
 (function () {
-  const R = {"title": "Mailänderli", "lead": "Buttriger Mürbeteig mit Zitronenduft und goldenem Eigelbglanz. Menge einstellen, Rezept folgt.", "base": 70, "perBlech": 30, "time": "Aktiv ca. 1 Std., dazu 2 Std. Kühlzeit", "ing": [{"n": "Butter, weich", "a": 250, "u": "g"}, {"n": "Zucker", "a": 200, "u": "g"}, {"n": "Salz", "a": 1, "u": "g"}, {"n": "Bio-Zitrone(n), nur die abgeriebene Schale", "a": 1, "u": "", "count": true}, {"n": "Eier (Grösse M)", "a": 2, "u": "", "count": true}, {"n": "Weissmehl", "a": 500, "u": "g"}, {"n": "Eigelb zum Bestreichen", "a": 2, "u": "", "count": true}, {"n": "Rahm oder Milch zum Bestreichen", "a": 15, "u": "ml"}], "steps": [{"t": "Butter schaumig rühren", "d": "Butter, Zucker, Salz und Zitronenschale mit Handrührgerät oder Küchenmaschine hell und cremig rühren.", "timer": 300}, {"t": "Eier einarbeiten", "d": "Die Eier einzeln unterrühren, jedes ca. 1 Min., bis die Masse wieder glatt ist."}, {"t": "Teig kneten", "d": "Mehl sieben und rasch unterkneten, nur bis der Teig bindet (zu langes Kneten macht ihn zäh)."}, {"t": "Teig kühlen", "d": "Teig in 2 flache Scheiben teilen, in Folie oder Backpapier wickeln und mindestens 2 Std. kühlen. Über Nacht geht auch.", "timer": 7200}, {"t": "Ausrollen und ausstechen", "d": "Teig zwischen 2 Backpapieren 5–6 mm dick ausrollen, ausstechen (Ausstecher in Mehl tauchen) und aufs Blech setzen. Teigreste kühl zusammenkneten und nochmals ausrollen. Blech 15 Min. kühl stellen, damit die Form hält.", "timer": 900}, {"t": "Bestreichen", "d": "Eigelb mit Rahm oder Milch verquirlen und die Mailänderli bestreichen. 10 Min. antrocknen lassen, dann ein zweites Mal bestreichen. Nach Wunsch mit der Gabel ein Muster ziehen.", "timer": 600}, {"t": "Backen", "d": "Bei 170 °C Umluft (190 °C Ober-/Unterhitze) in der Ofenmitte 10–12 Min. backen, bis sie goldgelb sind und die Ränder leicht bräunen.", "timer": 660}, {"t": "Auskühlen und lagern", "d": "Auf dem Gitter auskühlen lassen. In der Dose 2–3 Wochen haltbar."}], "tips": ["Gleichmässig dick ausrollen, sonst bräunen die Mailänderli ungleich.", "Wer es weniger süss mag: Zucker auf 180 g reduzieren (Grundmenge)."]};
+  const R = {"title": "Mailänderli", "lead": "Buttriger Mürbeteig mit Zitronenduft und goldenem Eigelbglanz. Menge einstellen, Rezept folgt.", "base": 70, "perBlech": 30, "time": "Aktiv ca. 1 Std., dazu 2 Std. Kühlzeit", "ing": [{"n": "Butter, weich", "a": 250, "u": "g"}, {"n": "Zucker", "a": 200, "u": "g"}, {"n": "Salz", "a": 1, "u": "g"}, {"n": "Bio-Zitrone(n), nur die abgeriebene Schale", "a": 1, "u": "", "count": true}, {"n": "Ei(er), Grösse M", "a": 2, "u": "", "count": true}, {"n": "Weissmehl", "a": 500, "u": "g"}, {"n": "Eigelb zum Bestreichen", "a": 2, "u": "", "count": true}, {"n": "Rahm oder Milch zum Bestreichen", "a": 15, "u": "ml"}], "steps": [{"t": "Butter schaumig rühren", "d": "Butter, Zucker, Salz und Zitronenschale mit Handrührgerät oder Küchenmaschine hell und cremig rühren.", "timer": 300}, {"t": "Eier einarbeiten", "d": "Die Eier einzeln unterrühren, jedes ca. 1 Min., bis die Masse wieder glatt ist."}, {"t": "Teig kneten", "d": "Mehl sieben und rasch unterkneten, nur bis der Teig bindet (zu langes Kneten macht ihn zäh)."}, {"t": "Teig kühlen", "d": "Teig in 2 flache Scheiben teilen, in Folie oder Backpapier wickeln und mindestens 2 Std. kühlen. Über Nacht geht auch.", "timer": 7200}, {"t": "Ausrollen und ausstechen", "d": "Teig zwischen 2 Backpapieren 5–6 mm dick ausrollen, ausstechen (Ausstecher in Mehl tauchen) und aufs Blech setzen. Teigreste kühl zusammenkneten und nochmals ausrollen. Blech 15 Min. kühl stellen, damit die Form hält.", "timer": 900}, {"t": "Bestreichen", "d": "Eigelb mit Rahm oder Milch verquirlen und die Mailänderli bestreichen. 10 Min. antrocknen lassen, dann ein zweites Mal bestreichen. Nach Wunsch mit der Gabel ein Muster ziehen.", "timer": 600}, {"t": "Backen", "d": "Bei 170 °C Umluft (190 °C Ober-/Unterhitze) in der Ofenmitte 10–12 Min. backen, bis sie goldgelb sind und die Ränder leicht bräunen.", "timer": 660}, {"t": "Auskühlen und lagern", "d": "Auf dem Gitter auskühlen lassen. In der Dose 2–3 Wochen haltbar."}], "tips": ["Gleichmässig dick ausrollen, sonst bräunen die Mailänderli ungleich.", "Wer es weniger süss mag: Zucker auf 180 g reduzieren (Grundmenge)."]};
   const F = [0.5, 1, 1.5, 2, 3];
   let idx = 1;
-  let variant = R.variants ? R.variants[0].id : null;
+  const sel = {};
+  (R.groups || []).forEach((g) => { sel[g.id] = g.options[0].id; });
+  const UNIT = R.unit || "Stück";
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -186,9 +185,9 @@
     const f = F[idx];
     const stk = Math.round(R.base * f);
     const bl = Math.ceil(stk / R.perBlech);
-    $("amountOut").textContent = "ca. " + stk + " Stück";
+    $("amountOut").textContent = "ca. " + stk + " " + UNIT;
     const ing = R.ing.map((it) => {
-      const name = it.nByVar ? it.nByVar[variant] : it.n;
+      const name = it.byGroup ? it.names[sel[it.byGroup]] : it.n;
       let approx = "";
       if (it.each) {
         const n = Math.round((it.a * f / it.each) * 2) / 2;
@@ -198,12 +197,13 @@
     }).join("");
     const steps = R.steps.map((s, i) => {
       const tb = s.timer ? '<button class="tbtn" data-sec="' + s.timer + '" data-key="t' + i + '"></button>' : "";
-      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + "</span>" + tb + "</li>";
+      const extra = s.by ? " " + esc(s.by.texts[sel[s.by.group]]) : "";
+      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + extra + "</span>" + tb + "</li>";
     }).join("");
     const tips = R.tips.map((t) => '<div class="tip"><strong>Tipp:</strong> ' + esc(t) + "</div>").join("");
     $("recipe").innerHTML =
       '<h2>' + esc(R.title) + "</h2>" +
-      '<p class="meta"><span>ca. ' + stk + " Stück</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
+      '<p class="meta"><span>ca. ' + stk + " " + UNIT + "</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
       '<div class="grid"><div class="panel"><h3>Zutaten</h3><ul class="ing">' + ing + "</ul></div>" +
       '<div class="panel"><h3>Zubereitung</h3><ol class="steps">' + steps + "</ol></div></div>" +
       '<div class="tips">' + tips + "</div>";
@@ -217,19 +217,19 @@
     const pos = (i / (F.length - 1)) * 100;
     return '<span class="' + (i === F.length - 1 ? "edge-r" : "") + '" style="left:' + pos.toFixed(3) + '%">' + Math.round(R.base * f) + "</span>";
   }).join("");
-  if (R.variants) {
-    $("variantBlock").hidden = false;
-    $("variantTitle").textContent = R.variantTitle;
-    $("tiles").innerHTML = R.variants.map((v) =>
-      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === variant) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
-    ).join("");
-    $("tiles").addEventListener("click", (e) => {
-      const b = e.target.closest(".tile"); if (!b) return;
-      variant = b.dataset.v;
-      document.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === variant));
-      render();
-    });
-  }
+  $("groups").innerHTML = (R.groups || []).map((g) =>
+    '<div class="variant-block"><div class="group-title">' + esc(g.title) + '</div><div class="tiles" data-g="' + g.id + '">' +
+    g.options.map((v) =>
+      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === sel[g.id]) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
+    ).join("") + "</div></div>"
+  ).join("");
+  $("groups").addEventListener("click", (e) => {
+    const b = e.target.closest(".tile"); if (!b) return;
+    const box = b.parentElement, gid = box.dataset.g;
+    sel[gid] = b.dataset.v;
+    box.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === sel[gid]));
+    render();
+  });
   $("amount").addEventListener("input", (e) => { idx = parseInt(e.target.value, 10); render(); });
   render();
 })();
