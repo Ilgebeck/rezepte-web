@@ -91,10 +91,7 @@
   <h1 id="h1"></h1>
   <p class="lead" id="lead"></p>
 
-  <div class="variant-block" id="variantBlock" hidden>
-    <div class="group-title" id="variantTitle"></div>
-    <div class="tiles" id="tiles"></div>
-  </div>
+  <div id="groups"></div>
 
   <div class="controls">
     <div class="ctl">
@@ -112,7 +109,9 @@
   const R = {"title": "Vanillekipferli", "lead": "Zarte Halbmonde aus Mandel-Sandteig, noch warm im Vanille-Puderzucker gewendet. Menge einstellen, Rezept folgt.", "base": 80, "perBlech": 40, "time": "Aktiv ca. 1¼ Std., dazu 1–2 Std. Kühlzeit", "ing": [{"n": "Butter, kalt, in Würfeln", "a": 250, "u": "g"}, {"n": "Weissmehl", "a": 330, "u": "g"}, {"n": "Mandeln, gemahlen, geschält", "a": 120, "u": "g"}, {"n": "Puderzucker", "a": 80, "u": "g"}, {"n": "Salz", "a": 1, "u": "g"}, {"n": "Vanilleschote, Mark davon", "a": 1, "u": "", "count": true}, {"n": "Eigelb", "a": 20, "u": "g", "each": 20, "noun": "Eigelb"}, {"n": "Puderzucker für den Mantel", "a": 120, "u": "g"}, {"n": "Vanilleschote, ausgekratzt (die aus dem Teig)", "a": 1, "u": "", "count": true}], "steps": [{"t": "Mandeln rösten (optional)", "d": "Für kräftigeres Aroma die Mandeln in einer trockenen Pfanne bei mittlerer Hitze goldgelb rösten und vollständig auskühlen lassen.", "timer": 180}, {"t": "Sandteig kneten", "d": "Mehl, Mandeln, Puderzucker, Salz und Vanillemark mit der Butter und dem Eigelb rasch zu einem glatten Sandteig verkneten. So wenig wie möglich kneten, damit die Butter kühl bleibt."}, {"t": "Teig kühlen", "d": "Teig zu einer flachen Scheibe formen, in Folie wickeln und 1–2 Std. kühlen. Über Nacht geht auch.", "timer": 3600}, {"t": "Kipferli formen", "d": "Teig vierteln, jedes Stück zu einer Rolle von ca. 1.5 cm Ø formen und in ca. 10 g schwere Stücke schneiden. Jedes Stück zu einer ca. 5 cm langen Rolle mit etwas dünneren Enden rollen und zum Halbmond biegen. Aufs Blech setzen und 15 Min. kühl stellen, damit sie formstabil bleiben.", "timer": 900}, {"t": "Backen", "d": "Bei 160 °C Umluft (175 °C Ober-/Unterhitze) in der Ofenmitte 10–12 Min. backen, bis die Ränder goldgelb sind. Die Oberseite bleibt hell.", "timer": 660}, {"t": "Vanille-Puderzucker mahlen", "d": "Während des Backens Puderzucker und die ausgekratzte Vanilleschote im Gewürzmahlwerk fein mahlen und durch ein Sieb in eine flache Schale geben."}, {"t": "Wenden", "d": "Die Kipferli ca. 5 Min. auf dem Blech abkühlen lassen (zu heiss: der Zucker schmilzt und wird pappig; zu kalt: er haftet nicht). Dann vorsichtig mit dem Spachtel im Vanille-Zucker wenden und auf dem Gitter ganz auskühlen lassen.", "timer": 300}, {"t": "Lagern", "d": "Nach dem Auskühlen bei Bedarf nochmals leicht pudern. In der Dose 3–4 Wochen haltbar."}], "tips": ["Sehr zerbrechlich: beim Wenden und Umschichten sanft arbeiten.", "Statt Mandeln gehen auch gemahlene Haselnüsse (gleiche Menge, geröstet) für eine kräftigere Note."]};
   const F = [0.5, 1, 1.5, 2, 3];
   let idx = 1;
-  let variant = R.variants ? R.variants[0].id : null;
+  const sel = {};
+  (R.groups || []).forEach((g) => { sel[g.id] = g.options[0].id; });
+  const UNIT = R.unit || "Stück";
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -186,9 +185,9 @@
     const f = F[idx];
     const stk = Math.round(R.base * f);
     const bl = Math.ceil(stk / R.perBlech);
-    $("amountOut").textContent = "ca. " + stk + " Stück";
+    $("amountOut").textContent = "ca. " + stk + " " + UNIT;
     const ing = R.ing.map((it) => {
-      const name = it.nByVar ? it.nByVar[variant] : it.n;
+      const name = it.byGroup ? it.names[sel[it.byGroup]] : it.n;
       let approx = "";
       if (it.each) {
         const n = Math.round((it.a * f / it.each) * 2) / 2;
@@ -198,12 +197,13 @@
     }).join("");
     const steps = R.steps.map((s, i) => {
       const tb = s.timer ? '<button class="tbtn" data-sec="' + s.timer + '" data-key="t' + i + '"></button>' : "";
-      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + "</span>" + tb + "</li>";
+      const extra = s.by ? " " + esc(s.by.texts[sel[s.by.group]]) : "";
+      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + extra + "</span>" + tb + "</li>";
     }).join("");
     const tips = R.tips.map((t) => '<div class="tip"><strong>Tipp:</strong> ' + esc(t) + "</div>").join("");
     $("recipe").innerHTML =
       '<h2>' + esc(R.title) + "</h2>" +
-      '<p class="meta"><span>ca. ' + stk + " Stück</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
+      '<p class="meta"><span>ca. ' + stk + " " + UNIT + "</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
       '<div class="grid"><div class="panel"><h3>Zutaten</h3><ul class="ing">' + ing + "</ul></div>" +
       '<div class="panel"><h3>Zubereitung</h3><ol class="steps">' + steps + "</ol></div></div>" +
       '<div class="tips">' + tips + "</div>";
@@ -217,19 +217,19 @@
     const pos = (i / (F.length - 1)) * 100;
     return '<span class="' + (i === F.length - 1 ? "edge-r" : "") + '" style="left:' + pos.toFixed(3) + '%">' + Math.round(R.base * f) + "</span>";
   }).join("");
-  if (R.variants) {
-    $("variantBlock").hidden = false;
-    $("variantTitle").textContent = R.variantTitle;
-    $("tiles").innerHTML = R.variants.map((v) =>
-      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === variant) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
-    ).join("");
-    $("tiles").addEventListener("click", (e) => {
-      const b = e.target.closest(".tile"); if (!b) return;
-      variant = b.dataset.v;
-      document.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === variant));
-      render();
-    });
-  }
+  $("groups").innerHTML = (R.groups || []).map((g) =>
+    '<div class="variant-block"><div class="group-title">' + esc(g.title) + '</div><div class="tiles" data-g="' + g.id + '">' +
+    g.options.map((v) =>
+      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === sel[g.id]) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
+    ).join("") + "</div></div>"
+  ).join("");
+  $("groups").addEventListener("click", (e) => {
+    const b = e.target.closest(".tile"); if (!b) return;
+    const box = b.parentElement, gid = box.dataset.g;
+    sel[gid] = b.dataset.v;
+    box.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === sel[gid]));
+    render();
+  });
   $("amount").addEventListener("input", (e) => { idx = parseInt(e.target.value, 10); render(); });
   render();
 })();

@@ -91,10 +91,7 @@
   <h1 id="h1"></h1>
   <p class="lead" id="lead"></p>
 
-  <div class="variant-block" id="variantBlock" hidden>
-    <div class="group-title" id="variantTitle"></div>
-    <div class="tiles" id="tiles"></div>
-  </div>
+  <div id="groups"></div>
 
   <div class="controls">
     <div class="ctl">
@@ -109,10 +106,12 @@
 
 <script>
 (function () {
-  const R = {"title": "Zimtsterne", "lead": "Saftig-weich, mit weisser Eischnee-Glasur. Mandeln wählbar: ungeschält oder geschält. Menge einstellen, Rezept folgt.", "base": 50, "perBlech": 25, "time": "Aktiv ca. 1½ Std., dazu Ruhe- und Trockenzeit", "variantTitle": "Mandeln", "variants": [{"id": "ungeschaelt", "emoji": "🌰", "name": "Mandeln ungeschält", "tag": "Dunklerer Teig, kräftiges, leicht herbes Mandelaroma"}, {"id": "geschaelt", "emoji": "🤍", "name": "Mandeln geschält", "tag": "Hellerer Teig, feines, mildes Mandelaroma"}], "ing": [{"n": "Eiweiss", "a": 100, "u": "g", "each": 33, "noun": "Stück"}, {"n": "Puderzucker", "a": 250, "u": "g"}, {"n": "Salz", "a": 1, "u": "g"}, {"n": "Zitronensaft", "a": 5, "u": "ml"}, {"nByVar": {"ungeschaelt": "Mandeln, gemahlen, ungeschält", "geschaelt": "Mandeln, gemahlen, geschält"}, "a": 400, "u": "g"}, {"n": "Zimt, frisch gemahlen", "a": 6, "u": "g"}, {"n": "Puderzucker zum Auswallen", "a": 40, "u": "g"}], "steps": [{"t": "Eischnee schlagen", "d": "Eiweiss, Salz und Zitronensaft in einer fettfreien Schüssel steif schlagen. Puderzucker löffelweise einrieseln lassen und weiterschlagen, bis die Masse dick, glänzend und schnittfest ist.", "timer": 600}, {"t": "Glasur abnehmen", "d": "Ca. [[80|g]] Eischnee in ein kleines Schälchen geben, abdecken und kühl stellen. Das ist die Glasur."}, {"t": "Teig kneten", "d": "Mandeln und Zimt zum restlichen Eischnee geben. Zuerst mit dem Spatel, dann kurz von Hand zu einem weichen, formbaren Teig verkneten. Klebt er zu stark, nach und nach etwas mehr Mandeln einarbeiten; bröselt er, ein paar Tropfen Wasser zugeben."}, {"t": "Teig ruhen lassen", "d": "Zugedeckt ruhen lassen, damit die Mandeln quellen und sich der Teig besser auswallen lässt.", "timer": 1800}, {"t": "Auswallen", "d": "Arbeitsfläche mit dem Puderzucker zum Auswallen bestäuben (kein Mehl). Teig portionsweise ca. 1 cm dick auswallen, den Rest zugedeckt lassen."}, {"t": "Glasieren und ausstechen", "d": "Glasur dünn (1–2 mm) mit Palettenmesser oder Löffelrücken aufstreichen. Sternausstecher (4–5 cm) immer wieder in Wasser tauchen, Sterne ausstechen und auf ein mit Backpapier oder Silikonmatte belegtes Blech setzen. Teigreste zusammenkneten und weiterverwenden."}, {"t": "Antrocknen lassen", "d": "Bei Raumtemperatur antrocknen lassen, bis die Glasur eine Haut bildet. Das verhindert Risse beim Backen. Über Nacht geht auch.", "timer": 7200}, {"t": "Backen", "d": "Ofen auf 160 °C Ober-/Unterhitze vorheizen (nicht Umluft, sonst bräunt die Glasur). Blech in der Mitte ca. 10–12 Min. backen: Die Glasur bleibt weiss, die Sterne sind innen noch weich. Ein Blech nach dem anderen backen.", "timer": 660}, {"t": "Auskühlen und lagern", "d": "Auf dem Blech auskühlen lassen, dann mit dem Palettenmesser lösen. In der Blechdose 2–3 Wochen haltbar; die Sterne werden nach einigen Tagen noch weicher."}], "tips": ["Beim ersten Blech 3–4 Sterne als Probe backen und Zeit und Temperatur an den eigenen Ofen anpassen.", "Die Zimtmenge lässt sich nach Geschmack auf 8 g erhöhen.", "Keine Verschwendung: Die übrig bleibenden Eigelb (bei der Grundmenge 3) gehen genau auf in den Mailänderli (2, zum Bestreichen) und den Vanillekipferli (1)."]};
+  const R = {"title": "Zimtsterne", "lead": "Saftig-weich, mit weisser Eischnee-Glasur. Mandeln wählbar: ungeschält oder geschält. Menge einstellen, Rezept folgt.", "base": 50, "perBlech": 25, "time": "Aktiv ca. 1½ Std., dazu Ruhe- und Trockenzeit", "groups": [{"id": "mandeln", "title": "Mandeln", "options": [{"id": "ungeschaelt", "emoji": "🌰", "name": "Mandeln ungeschält", "tag": "Dunklerer Teig, kräftiges, leicht herbes Mandelaroma"}, {"id": "geschaelt", "emoji": "🤍", "name": "Mandeln geschält", "tag": "Hellerer Teig, feines, mildes Mandelaroma"}]}], "ing": [{"n": "Eiweiss", "a": 100, "u": "g", "each": 33, "noun": "Stück"}, {"n": "Puderzucker", "a": 250, "u": "g"}, {"n": "Salz", "a": 1, "u": "g"}, {"n": "Zitronensaft", "a": 5, "u": "ml"}, {"byGroup": "mandeln", "names": {"ungeschaelt": "Mandeln, gemahlen, ungeschält", "geschaelt": "Mandeln, gemahlen, geschält"}, "a": 400, "u": "g"}, {"n": "Zimt, frisch gemahlen", "a": 6, "u": "g"}, {"n": "Puderzucker zum Auswallen", "a": 40, "u": "g"}], "steps": [{"t": "Eischnee schlagen", "d": "Eiweiss, Salz und Zitronensaft in einer fettfreien Schüssel steif schlagen. Puderzucker löffelweise einrieseln lassen und weiterschlagen, bis die Masse dick, glänzend und schnittfest ist.", "timer": 600}, {"t": "Glasur abnehmen", "d": "Ca. [[80|g]] Eischnee in ein kleines Schälchen geben, abdecken und kühl stellen. Das ist die Glasur."}, {"t": "Teig kneten", "d": "Mandeln und Zimt zum restlichen Eischnee geben. Zuerst mit dem Spatel, dann kurz von Hand zu einem weichen, formbaren Teig verkneten. Klebt er zu stark, nach und nach etwas mehr Mandeln einarbeiten; bröselt er, ein paar Tropfen Wasser zugeben."}, {"t": "Teig ruhen lassen", "d": "Zugedeckt ruhen lassen, damit die Mandeln quellen und sich der Teig besser auswallen lässt.", "timer": 1800}, {"t": "Auswallen", "d": "Arbeitsfläche mit dem Puderzucker zum Auswallen bestäuben (kein Mehl). Teig portionsweise ca. 1 cm dick auswallen, den Rest zugedeckt lassen."}, {"t": "Glasieren und ausstechen", "d": "Glasur dünn (1–2 mm) mit Palettenmesser oder Löffelrücken aufstreichen. Sternausstecher (4–5 cm) immer wieder in Wasser tauchen, Sterne ausstechen und auf ein mit Backpapier oder Silikonmatte belegtes Blech setzen. Teigreste zusammenkneten und weiterverwenden."}, {"t": "Antrocknen lassen", "d": "Bei Raumtemperatur antrocknen lassen, bis die Glasur eine Haut bildet. Das verhindert Risse beim Backen. Über Nacht geht auch.", "timer": 7200}, {"t": "Backen", "d": "Ofen auf 160 °C Ober-/Unterhitze vorheizen (nicht Umluft, sonst bräunt die Glasur). Blech in der Mitte ca. 10–12 Min. backen: Die Glasur bleibt weiss, die Sterne sind innen noch weich. Ein Blech nach dem anderen backen.", "timer": 660}, {"t": "Auskühlen und lagern", "d": "Auf dem Blech auskühlen lassen, dann mit dem Palettenmesser lösen. In der Blechdose 2–3 Wochen haltbar; die Sterne werden nach einigen Tagen noch weicher."}], "tips": ["Beim ersten Blech 3–4 Sterne als Probe backen und Zeit und Temperatur an den eigenen Ofen anpassen.", "Die Zimtmenge lässt sich nach Geschmack auf 8 g erhöhen.", "Keine Verschwendung: Die übrig bleibenden Eigelb (bei der Grundmenge 3) gehen genau auf in den Mailänderli (2, zum Bestreichen) und den Vanillekipferli (1)."]};
   const F = [0.5, 1, 1.5, 2, 3];
   let idx = 1;
-  let variant = R.variants ? R.variants[0].id : null;
+  const sel = {};
+  (R.groups || []).forEach((g) => { sel[g.id] = g.options[0].id; });
+  const UNIT = R.unit || "Stück";
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -186,9 +185,9 @@
     const f = F[idx];
     const stk = Math.round(R.base * f);
     const bl = Math.ceil(stk / R.perBlech);
-    $("amountOut").textContent = "ca. " + stk + " Stück";
+    $("amountOut").textContent = "ca. " + stk + " " + UNIT;
     const ing = R.ing.map((it) => {
-      const name = it.nByVar ? it.nByVar[variant] : it.n;
+      const name = it.byGroup ? it.names[sel[it.byGroup]] : it.n;
       let approx = "";
       if (it.each) {
         const n = Math.round((it.a * f / it.each) * 2) / 2;
@@ -198,12 +197,13 @@
     }).join("");
     const steps = R.steps.map((s, i) => {
       const tb = s.timer ? '<button class="tbtn" data-sec="' + s.timer + '" data-key="t' + i + '"></button>' : "";
-      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + "</span>" + tb + "</li>";
+      const extra = s.by ? " " + esc(s.by.texts[sel[s.by.group]]) : "";
+      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + extra + "</span>" + tb + "</li>";
     }).join("");
     const tips = R.tips.map((t) => '<div class="tip"><strong>Tipp:</strong> ' + esc(t) + "</div>").join("");
     $("recipe").innerHTML =
       '<h2>' + esc(R.title) + "</h2>" +
-      '<p class="meta"><span>ca. ' + stk + " Stück</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
+      '<p class="meta"><span>ca. ' + stk + " " + UNIT + "</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
       '<div class="grid"><div class="panel"><h3>Zutaten</h3><ul class="ing">' + ing + "</ul></div>" +
       '<div class="panel"><h3>Zubereitung</h3><ol class="steps">' + steps + "</ol></div></div>" +
       '<div class="tips">' + tips + "</div>";
@@ -217,19 +217,19 @@
     const pos = (i / (F.length - 1)) * 100;
     return '<span class="' + (i === F.length - 1 ? "edge-r" : "") + '" style="left:' + pos.toFixed(3) + '%">' + Math.round(R.base * f) + "</span>";
   }).join("");
-  if (R.variants) {
-    $("variantBlock").hidden = false;
-    $("variantTitle").textContent = R.variantTitle;
-    $("tiles").innerHTML = R.variants.map((v) =>
-      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === variant) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
-    ).join("");
-    $("tiles").addEventListener("click", (e) => {
-      const b = e.target.closest(".tile"); if (!b) return;
-      variant = b.dataset.v;
-      document.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === variant));
-      render();
-    });
-  }
+  $("groups").innerHTML = (R.groups || []).map((g) =>
+    '<div class="variant-block"><div class="group-title">' + esc(g.title) + '</div><div class="tiles" data-g="' + g.id + '">' +
+    g.options.map((v) =>
+      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === sel[g.id]) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
+    ).join("") + "</div></div>"
+  ).join("");
+  $("groups").addEventListener("click", (e) => {
+    const b = e.target.closest(".tile"); if (!b) return;
+    const box = b.parentElement, gid = box.dataset.g;
+    sel[gid] = b.dataset.v;
+    box.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === sel[gid]));
+    render();
+  });
   $("amount").addEventListener("input", (e) => { idx = parseInt(e.target.value, 10); render(); });
   render();
 })();
