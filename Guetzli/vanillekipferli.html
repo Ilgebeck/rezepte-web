@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vanillekipferli</title>
+<style>
+  :root {
+    --bg: #faf6ef; --card: #ffffff; --ink: #2b2420; --muted: #7a6e64;
+    --accent: #b5471f; --accent-soft: #f6e3d9; --line: #e6dccf; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 20px 16px 64px; }
+  .back { font-size: 0.9rem; color: var(--muted); text-decoration: none; }
+  .back:hover { color: var(--accent); }
+  h1 { font-size: 1.9rem; margin: 10px 0 4px; letter-spacing: -0.01em; }
+  .lead { color: var(--muted); margin: 0 0 22px; }
+  .group-title { font-size: 0.8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 8px; }
+  .tile {
+    text-align: left; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius);
+    padding: 14px 14px 12px; cursor: pointer; font: inherit; color: inherit;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+  }
+  .tile:hover { border-color: #d3b9a5; transform: translateY(-1px); }
+  .tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 2px 10px rgba(181,71,31,.18); }
+  .tile .emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .tile .t-name { font-weight: 650; display: block; line-height: 1.25; }
+  .tile .t-tag { font-size: 0.82rem; color: var(--muted); display: block; margin-top: 4px; }
+  .variant-block { margin-bottom: 18px; }
+  .controls { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin: 6px 0 22px; }
+  .ctl label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; }
+  .ctl output { color: var(--accent); font-weight: 700; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; margin: 0; background: transparent; display: block; }
+  input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--line); }
+  input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--line); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card); box-shadow: 0 0 0 1px var(--accent); }
+  .scale { position: relative; height: 16px; margin: 2px 11px 0; font-size: 0.75rem; color: var(--muted); }
+  .scale span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+  .scale span.edge-r { transform: translateX(-80%); }
+  .meta { color: var(--muted); margin: 0 0 18px; }
+  .meta span + span::before { content: "·"; margin: 0 8px; }
+  .grid { display: grid; grid-template-columns: minmax(240px, 1fr) 1.6fr; gap: 28px; align-items: start; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; gap: 20px; } }
+  h2 { font-size: 1.5rem; margin: 0 0 6px; }
+  h3 { font-size: 1.05rem; margin: 0 0 10px; break-after: avoid; page-break-after: avoid; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+  .ing { list-style: none; margin: 0; padding: 0; }
+  .ing li { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px dotted var(--line); }
+  .ing li:last-child { border-bottom: 0; }
+  .ing .amt { min-width: 84px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .ing .approx { color: var(--muted); font-size: .85rem; }
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li { counter-increment: s; position: relative; padding: 0 0 14px 40px; break-inside: avoid; page-break-inside: avoid; }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .st { font-weight: 650; display: block; break-after: avoid; page-break-after: avoid; }
+  .sd { display: block; }
+  .tbtn {
+    margin-top: 8px; font: inherit; font-size: .9rem; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); border: 1.5px solid var(--accent); border-radius: 999px;
+    padding: 6px 14px; cursor: pointer; font-variant-numeric: tabular-nums;
+  }
+  .tbtn.run { background: var(--accent); color: #fff; }
+  .tbtn.done { background: #2f7d4f; border-color: #2f7d4f; color: #fff; animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .55; } }
+  .tips { margin-top: 8px; }
+  .tip { margin-top: 8px; padding: 12px 14px; background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 8px; break-inside: avoid; page-break-inside: avoid; }
+  .tip strong { color: var(--accent); }
+  @media print {
+    body { background: #fff; }
+    .tiles, .group-title, .controls, .back, .tbtn { display: none !important; }
+    .panel { border: 0; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← Alle Rezepte</a>
+  <h1 id="h1"></h1>
+  <p class="lead" id="lead"></p>
+
+  <div class="variant-block" id="variantBlock" hidden>
+    <div class="group-title" id="variantTitle"></div>
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="amount">Menge <output id="amountOut"></output></label>
+      <input type="range" id="amount" min="0" max="4" step="1" value="1">
+      <div class="scale" id="scale"></div>
+    </div>
+  </div>
+
+  <article id="recipe" aria-live="polite"></article>
+</div>
+
+<script>
+(function () {
+  const R = {"title": "Vanillekipferli", "lead": "Zarte Halbmonde aus Mandel-Sandteig, noch warm im Vanille-Puderzucker gewendet. Menge einstellen, Rezept folgt.", "base": 80, "perBlech": 40, "time": "Aktiv ca. 1¼ Std., dazu 1–2 Std. Kühlzeit", "ing": [{"n": "Butter, kalt, in Würfeln", "a": 250, "u": "g"}, {"n": "Weissmehl", "a": 330, "u": "g"}, {"n": "Mandeln, gemahlen, geschält", "a": 120, "u": "g"}, {"n": "Puderzucker", "a": 80, "u": "g"}, {"n": "Salz", "a": 1, "u": "g"}, {"n": "Vanilleschote, Mark davon", "a": 1, "u": "", "count": true}, {"n": "Eigelb", "a": 20, "u": "g", "each": 20, "noun": "Eigelb"}, {"n": "Puderzucker für den Mantel", "a": 120, "u": "g"}, {"n": "Vanilleschote, ausgekratzt (die aus dem Teig)", "a": 1, "u": "", "count": true}], "steps": [{"t": "Mandeln rösten (optional)", "d": "Für kräftigeres Aroma die Mandeln in einer trockenen Pfanne bei mittlerer Hitze goldgelb rösten und vollständig auskühlen lassen.", "timer": 180}, {"t": "Sandteig kneten", "d": "Mehl, Mandeln, Puderzucker, Salz und Vanillemark mit der Butter und dem Eigelb rasch zu einem glatten Sandteig verkneten. So wenig wie möglich kneten, damit die Butter kühl bleibt."}, {"t": "Teig kühlen", "d": "Teig zu einer flachen Scheibe formen, in Folie wickeln und 1–2 Std. kühlen. Über Nacht geht auch.", "timer": 3600}, {"t": "Kipferli formen", "d": "Teig vierteln, jedes Stück zu einer Rolle von ca. 1.5 cm Ø formen und in ca. 10 g schwere Stücke schneiden. Jedes Stück zu einer ca. 5 cm langen Rolle mit etwas dünneren Enden rollen und zum Halbmond biegen. Aufs Blech setzen und 15 Min. kühl stellen, damit sie formstabil bleiben.", "timer": 900}, {"t": "Backen", "d": "Bei 160 °C Umluft (175 °C Ober-/Unterhitze) in der Ofenmitte 10–12 Min. backen, bis die Ränder goldgelb sind. Die Oberseite bleibt hell.", "timer": 660}, {"t": "Vanille-Puderzucker mahlen", "d": "Während des Backens Puderzucker und die ausgekratzte Vanilleschote im Gewürzmahlwerk fein mahlen und durch ein Sieb in eine flache Schale geben."}, {"t": "Wenden", "d": "Die Kipferli ca. 5 Min. auf dem Blech abkühlen lassen (zu heiss: der Zucker schmilzt und wird pappig; zu kalt: er haftet nicht). Dann vorsichtig mit dem Spachtel im Vanille-Zucker wenden und auf dem Gitter ganz auskühlen lassen.", "timer": 300}, {"t": "Lagern", "d": "Nach dem Auskühlen bei Bedarf nochmals leicht pudern. In der Dose 3–4 Wochen haltbar."}], "tips": ["Sehr zerbrechlich: beim Wenden und Umschichten sanft arbeiten.", "Statt Mandeln gehen auch gemahlene Haselnüsse (gleiche Menge, geröstet) für eine kräftigere Note."]};
+  const F = [0.5, 1, 1.5, 2, 3];
+  let idx = 1;
+  let variant = R.variants ? R.variants[0].id : null;
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function fmtNum(x) {
+    if (x < 10) x = Math.round(x * 2) / 2; else x = Math.round(x);
+    return String(x);
+  }
+  function fmtFrac(x) {
+    const q = Math.round(x * 4) / 4;
+    const whole = Math.floor(q), frac = q - whole;
+    const g = { 0: "", 0.25: "¼", 0.5: "½", 0.75: "¾" }[frac];
+    if (whole === 0) return g || "0";
+    return whole + g;
+  }
+  function amtText(it, f) {
+    const v = it.a * f;
+    if (it.count) return fmtFrac(v);
+    return fmtNum(v) + " " + it.u;
+  }
+  function stepText(s, f) {
+    return esc(s).replace(/\[\[(\d+(?:\.\d+)?)\|(\w+)\]\]/g, (m, n, u) => fmtNum(parseFloat(n) * f) + " " + u);
+  }
+
+  // --- Timer ---
+  let actx = null;
+  function beep() {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.35, 0.7].forEach((t) => {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.frequency.value = 880; o.connect(g); g.connect(actx.destination);
+        const now = actx.currentTime + t;
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.4, now + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        o.start(now); o.stop(now + 0.3);
+      });
+    } catch (e) {}
+    try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {}
+  }
+  const mmss = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+  const label = (s) => s >= 3600 ? (s / 3600 + " Std.").replace(".5", "½").replace(/^(\d+)\.\d+/, "$1") : Math.round(s / 60) + " Min.";
+  const T = {};
+  function paintTimers() {
+    document.querySelectorAll(".tbtn").forEach((btn) => {
+      const t = T[btn.dataset.key], sec = parseInt(btn.dataset.sec, 10);
+      if (!t) { btn.className = "tbtn"; btn.textContent = "⏱ " + label(sec) + " starten"; }
+      else if (t.done) { btn.className = "tbtn done"; btn.textContent = "✓ Fertig, Tippen zum Zurücksetzen"; }
+      else {
+        const left = Math.max(0, Math.round((t.end - Date.now()) / 1000));
+        btn.className = "tbtn run"; btn.textContent = "⏱ " + mmss(left) + " (Tippen: stoppen)";
+      }
+    });
+  }
+  setInterval(() => {
+    let fin = false;
+    for (const k in T) if (!T[k].done && Date.now() >= T[k].end) { T[k].done = true; fin = true; }
+    if (fin) beep();
+    paintTimers();
+  }, 250);
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".tbtn"); if (!b) return;
+    try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.resume) actx.resume(); } catch (err) {}
+    const k = b.dataset.key;
+    if (T[k]) delete T[k]; else T[k] = { end: Date.now() + parseInt(b.dataset.sec, 10) * 1000 };
+    paintTimers();
+  });
+
+  function render() {
+    const f = F[idx];
+    const stk = Math.round(R.base * f);
+    const bl = Math.ceil(stk / R.perBlech);
+    $("amountOut").textContent = "ca. " + stk + " Stück";
+    const ing = R.ing.map((it) => {
+      const name = it.nByVar ? it.nByVar[variant] : it.n;
+      let approx = "";
+      if (it.each) {
+        const n = Math.round((it.a * f / it.each) * 2) / 2;
+        approx = ' <span class="approx">(ca. ' + fmtFrac(n) + " " + esc(it.noun) + ")</span>";
+      }
+      return '<li><span class="amt">' + esc(amtText(it, f)) + "</span><span>" + esc(name) + approx + "</span></li>";
+    }).join("");
+    const steps = R.steps.map((s, i) => {
+      const tb = s.timer ? '<button class="tbtn" data-sec="' + s.timer + '" data-key="t' + i + '"></button>' : "";
+      return '<li><span class="st">' + esc(s.t) + '</span><span class="sd">' + stepText(s.d, f) + "</span>" + tb + "</li>";
+    }).join("");
+    const tips = R.tips.map((t) => '<div class="tip"><strong>Tipp:</strong> ' + esc(t) + "</div>").join("");
+    $("recipe").innerHTML =
+      '<h2>' + esc(R.title) + "</h2>" +
+      '<p class="meta"><span>ca. ' + stk + " Stück</span><span>ca. " + bl + (bl === 1 ? " Blech" : " Bleche") + "</span><span>" + esc(R.time) + "</span></p>" +
+      '<div class="grid"><div class="panel"><h3>Zutaten</h3><ul class="ing">' + ing + "</ul></div>" +
+      '<div class="panel"><h3>Zubereitung</h3><ol class="steps">' + steps + "</ol></div></div>" +
+      '<div class="tips">' + tips + "</div>";
+    paintTimers();
+  }
+
+  $("h1").textContent = R.title;
+  $("lead").textContent = R.lead;
+  document.title = R.title;
+  $("scale").innerHTML = F.map((f, i) => {
+    const pos = (i / (F.length - 1)) * 100;
+    return '<span class="' + (i === F.length - 1 ? "edge-r" : "") + '" style="left:' + pos.toFixed(3) + '%">' + Math.round(R.base * f) + "</span>";
+  }).join("");
+  if (R.variants) {
+    $("variantBlock").hidden = false;
+    $("variantTitle").textContent = R.variantTitle;
+    $("tiles").innerHTML = R.variants.map((v) =>
+      '<button class="tile" type="button" data-v="' + v.id + '" aria-pressed="' + (v.id === variant) + '"><span class="emoji">' + v.emoji + '</span><span class="t-name">' + esc(v.name) + '</span><span class="t-tag">' + esc(v.tag) + "</span></button>"
+    ).join("");
+    $("tiles").addEventListener("click", (e) => {
+      const b = e.target.closest(".tile"); if (!b) return;
+      variant = b.dataset.v;
+      document.querySelectorAll(".tile").forEach((t) => t.setAttribute("aria-pressed", t.dataset.v === variant));
+      render();
+    });
+  }
+  $("amount").addEventListener("input", (e) => { idx = parseInt(e.target.value, 10); render(); });
+  render();
+})();
+</script>
+</body>
+</html>
